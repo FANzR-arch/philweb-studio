@@ -1,0 +1,15 @@
+person:
+  displayName: "林小满 Momo"
+  legalName: "Xiaoman Lin"
+assets:
+  avatarLight: "../../media/profile/avatar.svg"
+  avatarDark: "../../media/profile/avatar-dark.svg"
+  wechatQr: "../../media/qrcodes/wx.svg"
+  talkAvatar: "../../media/qrcodes/talklogo.svg"
+  brandMark: "../../media/logos/nocolor/mark.svg"
+links:
+  wechatId: "your-wechat-id"
+  x: "https://x.com/yourname"
+  xiaohongshu: "https://www.xiaohongshu.com/user/profile/yourname"
+  github: "https://github.com/yourname"
+  email: "mailto:hello@example.com"

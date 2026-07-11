@@ -1,0 +1,17 @@
+id: palette-lab
+order: 20
+published: true
+isPrimary: true
+year: "2025"
+role: "独立设计与开发"
+outcome: "品牌配色生成器"
+icon: "palette"
+themeColor: "#2A9D8F"
+webLink: ""
+version: "v0.9"
+coverLight: "../../../media/projects/palette-lab/cover-light.svg"
+coverDark: "../../../media/projects/palette-lab/cover-dark.svg"
+status:
+  zh: "公测中"
+  en: "Beta"
+  tone: "beta"

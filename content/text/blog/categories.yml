@@ -1,0 +1,43 @@
+categories:
+  - id: prompt-aesthetic
+    title:
+      zh: "提示词美学解码"
+      en: "Prompt Aesthetic Decode"
+    description:
+      zh: "设计风格、视觉语言和图像提示词的拆解。"
+      en: "Design styles, visual language, and image prompt breakdowns."
+  - id: less-is-more
+    title:
+      zh: "少即是多"
+      en: "Less Is More"
+    description:
+      zh: "围绕“少即是多”的设计与提示词系列。"
+      en: "A series on restraint in design and prompting."
+  - id: prompt-sharing
+    title:
+      zh: "提示词分享"
+      en: "Prompt Sharing"
+    description:
+      zh: "可直接复用或改写的提示词案例。"
+      en: "Reusable prompt cases and examples."
+  - id: ai-knowledge
+    title:
+      zh: "AI知识分享"
+      en: "AI Knowledge"
+    description:
+      zh: "AI 概念、术语和基础认知。"
+      en: "AI concepts, terms, and basic mental models."
+  - id: ai-practice
+    title:
+      zh: "AI实践分享"
+      en: "AI Practice"
+    description:
+      zh: "工具、流程和真实使用经验。"
+      en: "Tools, workflows, and real usage notes."
+  - id: personal-thinking
+    title:
+      zh: "个人思考类"
+      en: "Personal Notes"
+    description:
+      zh: "和表达、职业、增长有关的个人判断。"
+      en: "Personal notes on expression, work, and growth."

@@ -1,0 +1,17 @@
+id: flowcard
+order: 10
+published: true
+isPrimary: true
+year: "2026"
+role: "独立设计与开发"
+outcome: "灵感整理小工具"
+icon: "style"
+themeColor: "#E0745C"
+webLink: ""
+version: "v1.0"
+coverLight: "../../../media/projects/flowcard/cover-light.svg"
+coverDark: "../../../media/projects/flowcard/cover-dark.svg"
+status:
+  zh: "已上线"
+  en: "Live"
+  tone: "live"

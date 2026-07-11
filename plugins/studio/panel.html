@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>网站定制器 · Studio</title>
+<style>
+  :root {
+    --ink: #0f172a; --muted: #64748b; --line: #e2e8f0; --bg: #f1f5f9;
+    --card: #ffffff; --accent: #c13b25; --ok: #047857; --err: #b91c1c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: var(--ink); background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+  header {
+    display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+    background: var(--card); border-bottom: 1px solid var(--line); flex-shrink: 0;
+  }
+  header h1 { font-size: 16px; font-weight: 700; }
+  header .hint { font-size: 12px; color: var(--muted); }
+  header a { margin-left: auto; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; }
+  main { flex: 1; display: flex; min-height: 0; }
+  nav {
+    width: 132px; flex-shrink: 0; background: var(--card); border-right: 1px solid var(--line);
+    padding: 12px 8px; display: flex; flex-direction: column; gap: 4px;
+  }
+  nav button {
+    text-align: left; padding: 9px 12px; border: none; background: none; border-radius: 8px;
+    font-size: 13.5px; color: var(--muted); cursor: pointer; font-weight: 500;
+  }
+  nav button:hover { background: var(--bg); }
+  nav button.active { background: var(--ink); color: #fff; }
+  .panel { width: 460px; flex-shrink: 0; overflow-y: auto; padding: 20px; }
+  .preview { flex: 1; display: flex; flex-direction: column; min-width: 320px; background: #e5e7eb; }
+  .preview-bar {
+    display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+    background: var(--card); border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--muted);
+  }
+  .preview-bar button {
+    border: 1px solid var(--line); background: var(--card); border-radius: 6px;
+    padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--ink);
+  }
+  .preview-bar button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .preview-frame-wrap { flex: 1; display: flex; justify-content: center; overflow: hidden; padding: 0; }
+  .preview-frame-wrap.mobile { padding: 16px 0; }
+  iframe { border: none; width: 100%; height: 100%; background: #fff; }
+  .preview-frame-wrap.mobile iframe {
+    width: 390px; border-radius: 18px; box-shadow: 0 8px 40px rgba(0,0,0,.25);
+  }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+  .card h2 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .card .desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.6; }
+  label.field { display: block; margin-bottom: 10px; }
+  label.field span { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+    font-size: 13.5px; font-family: inherit; color: var(--ink); background: #fff;
+  }
+  input:focus, textarea:focus, select:focus { outline: 2px solid rgba(193,59,37,.25); border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 64px; line-height: 1.6; }
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 8px;
+    padding: 9px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+    background: var(--ink); color: #fff;
+  }
+  .btn:hover { opacity: .88; }
+  .btn.ghost { background: var(--bg); color: var(--ink); border: 1px solid var(--line); }
+  .btn.small { padding: 5px 10px; font-size: 12px; }
+  .btn.danger { background: #fee2e2; color: var(--err); }
+  .save-row { display: flex; justify-content: flex-end; margin-top: 4px; }
+  .upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .upload-box {
+    border: 1.5px dashed var(--line); border-radius: 10px; padding: 10px; text-align: center;
+    cursor: pointer; font-size: 12px; color: var(--muted); background: #fafafa;
+  }
+  .upload-box:hover { border-color: var(--accent); color: var(--accent); }
+  .upload-box img { width: 100%; height: 72px; object-fit: contain; border-radius: 6px; margin-bottom: 6px; background: #fff; }
+  .upload-box .ph { width: 100%; height: 72px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: #fff; border-radius: 6px; margin-bottom: 6px; }
+  .pack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .pack {
+    border: 1.5px solid var(--line); border-radius: 10px; padding: 10px; cursor: pointer;
+    background: var(--card); text-align: center; transition: border-color .15s, transform .15s;
+  }
+  .pack:hover { border-color: var(--ink); transform: translateY(-2px); }
+  .pack.on { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(193,59,37,.15); }
+  .pack .strip { display: flex; height: 34px; overflow: hidden; margin-bottom: 6px; }
+  .pack .strip i { flex: 1; }
+  .pack .nm { font-size: 12px; font-weight: 600; }
+  .pack .ft { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+  .color-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .color-row span { font-size: 12.5px; color: var(--muted); width: 110px; flex-shrink: 0; }
+  .color-row input[type="color"] { width: 44px; height: 32px; border: 1px solid var(--line); border-radius: 6px; padding: 2px; cursor: pointer; background: #fff; }
+  .color-row input[type="text"] { width: 100px; flex: none; }
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .slider-row span.lbl { font-size: 12.5px; color: var(--muted); width: 110px; flex-shrink: 0; }
+  .slider-row input[type="range"] { flex: 1; accent-color: var(--accent); }
+  .slider-row output { font-size: 12.5px; width: 48px; text-align: right; color: var(--ink); font-weight: 600; }
+  .radius-demo { width: 56px; height: 36px; background: var(--bg); border: 1.5px solid var(--ink); flex-shrink: 0; }
+  .lang-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .lang-tabs button {
+    border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+    padding: 4px 14px; font-size: 12.5px; cursor: pointer; color: var(--muted);
+  }
+  .lang-tabs button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .chips button {
+    border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+    padding: 5px 14px; font-size: 12.5px; cursor: pointer; color: var(--ink);
+  }
+  .chips button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+  .detail-item { position: relative; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .detail-item img { width: 100%; height: 64px; object-fit: cover; display: block; }
+  .detail-item button {
+    position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%;
+    border: none; background: rgba(15,23,42,.75); color: #fff; font-size: 11px; cursor: pointer; line-height: 1;
+  }
+  .post-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; max-height: 220px; overflow-y: auto; }
+  .post-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 8px; cursor: pointer; font-size: 12.5px; background: var(--card);
+  }
+  .post-item:hover { border-color: var(--accent); }
+  .post-item.on { border-color: var(--ink); background: var(--bg); }
+  .post-item .date { color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .post-item .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px;
+    transition: transform .25s ease; z-index: 99; max-width: 80vw;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.err { background: var(--err); }
+  @keyframes flashField {
+    0%, 60% { outline: 3px solid rgba(224, 116, 92, .9); outline-offset: 2px; }
+    100% { outline: 3px solid transparent; outline-offset: 2px; }
+  }
+  .flash-target { animation: flashField 1.6s ease-out 2; border-radius: 8px; }
+  #checklist .card { padding: 12px 16px; }
+  .check-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .check-head b { font-size: 13px; }
+  .check-head .bar { flex: 1; height: 6px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+  .check-head .bar i { display: block; height: 100%; background: var(--ok); border-radius: 99px; transition: width .4s; }
+  .check-head button { border: none; background: none; color: var(--muted); font-size: 11px; cursor: pointer; }
+  .check-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .check-items button {
+    display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line);
+    background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; color: var(--ink);
+  }
+  .check-items button.done { color: var(--ok); border-color: rgba(4,120,87,.25); background: rgba(4,120,87,.06); }
+  .help p { font-size: 13px; line-height: 1.8; color: var(--ink); margin-bottom: 8px; }
+  .help code { background: var(--bg); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+  .muted-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>🎨 网站定制器</h1>
+    <span class="hint">改完点"保存"，右侧预览会自动刷新 · 所有修改都写入 content/ 文件夹</span>
+    <button class="btn ghost small" style="margin-left:auto" onclick="restoreSession()" title="恢复到本次打开定制器之前的内容">↩ 撤销本次修改</button>
+    <a href="/" target="_blank" style="margin-left:12px">在新窗口打开网站 ↗</a>
+  </header>
+  <main>
+    <nav id="nav">
+      <button data-tab="basic" class="active">👤 基本信息</button>
+      <button data-tab="home">📝 首页文案</button>
+      <button data-tab="theme">🎨 外观配色</button>
+      <button data-tab="projects">📦 项目作品</button>
+      <button data-tab="blog">✍️ 博客文章</button>
+      <button data-tab="deploy">🚀 发布上线</button>
+      <button data-tab="help">❓ 帮助</button>
+    </nav>
+
+    <div class="panel">
+      <div id="checklist"></div>
+      <!-- 基本信息 -->
+      <section class="tab active" id="tab-basic">
+        <div class="card">
+          <h2>我是谁</h2>
+          <p class="desc">姓名和联系方式，显示在侧边栏、联系弹窗和页脚。</p>
+          <div class="row">
+            <label class="field"><span>显示名称（昵称）</span><input type="text" id="b-displayName" placeholder="例如：林小满 Momo"></label>
+            <label class="field"><span>正式姓名（拼音/英文）</span><input type="text" id="b-legalName" placeholder="例如：Xiaoman Lin"></label>
+          </div>
+          <div class="row">
+            <label class="field"><span>微信号</span><input type="text" id="b-wechatId" placeholder="微信搜索用"></label>
+            <label class="field"><span>邮箱</span><input type="text" id="b-email" placeholder="you@example.com"></label>
+          </div>
+          <label class="field"><span>X（推特）主页链接 · 不用可留空</span><input type="text" id="b-x" placeholder="https://x.com/..."></label>
+          <label class="field"><span>小红书主页链接 · 不用可留空</span><input type="text" id="b-xiaohongshu" placeholder="https://xhslink.com/..."></label>
+          <label class="field"><span>GitHub 主页链接 · 不用可留空</span><input type="text" id="b-github" placeholder="https://github.com/..."></label>
+          <div class="save-row"><button class="btn" onclick="saveBasic()">保存基本信息</button></div>
+        </div>
+        <div class="card">
+          <h2>我的图片</h2>
+          <p class="desc">点击方块选择图片即可替换，会自动压缩到合适大小。</p>
+          <div class="upload-grid">
+            <div class="upload-box" onclick="pickImage('avatarLight')">
+              <div id="img-avatarLight"><div class="ph">🙂</div></div>头像（浅色模式）
+            </div>
+            <div class="upload-box" onclick="pickImage('avatarDark')">
+              <div id="img-avatarDark"><div class="ph">🌙</div></div>头像（深色模式）
+            </div>
+            <div class="upload-box" onclick="pickImage('wechatQr')">
+              <div id="img-wechatQr"><div class="ph">🔳</div></div>微信二维码
+            </div>
+          </div>
+          <p class="muted-note">深色头像可以和浅色用同一张图；微信二维码显示在"联系我"弹窗里。</p>
+        </div>
+      </section>
+
+      <!-- 首页文案 -->
+      <section class="tab" id="tab-home">
+        <div class="lang-tabs">
+          <button class="on" data-lang="zh" onclick="switchLang('zh')">中文</button>
+          <button data-lang="en" onclick="switchLang('en')">English</button>
+        </div>
+        <div class="card">
+          <h2>首屏与侧边栏</h2>
+          <p class="desc">网站支持中英双语，两种语言分别填写（先保存一种再切换也可以）。</p>
+          <label class="field"><span>首屏大标题</span><input type="text" id="h-greeting"></label>
+          <label class="field"><span>首屏一句话介绍</span><textarea id="h-description" rows="2"></textarea></label>
+          <label class="field"><span>侧边栏名字</span><input type="text" id="h-name"></label>
+          <div class="row">
+            <label class="field"><span>城市</span><input type="text" id="h-city"></label>
+            <label class="field"><span>MBTI · 可留空</span><input type="text" id="h-mbti"></label>
+          </div>
+          <label class="field"><span>一句话经历（例如：设计+AI产品+增长）</span><input type="text" id="h-experience"></label>
+          <label class="field"><span>个人签名</span><input type="text" id="h-profileStatement"></label>
+          <label class="field"><span>技能/身份列表（每行一条）</span><textarea id="h-skillList" rows="3"></textarea></label>
+          <label class="field"><span>技能标签（用中文或英文逗号分隔）</span><input type="text" id="h-skillTags"></label>
+        </div>
+        <div class="card">
+          <h2>板块标题与页脚</h2>
+          <div class="row">
+            <label class="field"><span>作品板块标题</span><input type="text" id="h-projectTitle"></label>
+            <label class="field"><span>时间线板块标题</span><input type="text" id="h-timelineTitle"></label>
+          </div>
+          <div class="row">
+            <label class="field"><span>联系按钮文字</span><input type="text" id="h-explore"></label>
+            <label class="field"><span>页脚标语</span><input type="text" id="h-footerStyle"></label>
+          </div>
+          <div class="save-row"><button class="btn" onclick="saveHome()">保存当前语言的文案</button></div>
+        </div>
+        <div class="card">
+          <h2>更深入的修改</h2>
+          <p class="desc">时间线的具体条目、数据指标等更复杂的内容，直接编辑
+            <code>content/text/site/home.zh.md</code>，或让 Claude 帮你改（见"帮助"）。</p>
+        </div>
+      </section>
+
+      <!-- 外观配色 -->
+      <section class="tab" id="tab-theme">
+        <div class="card">
+          <h2>整套风格包</h2>
+          <p class="desc">点一下立即在右侧预览（还没保存），喜欢就点底部"应用外观设置"。</p>
+          <div class="pack-grid" id="style-packs"></div>
+        </div>
+        <div class="card">
+          <h2>细节微调</h2>
+          <p class="desc">所有改动都会实时出现在右侧预览里。</p>
+          <div class="color-row">
+            <span>主色（浅色模式）</span>
+            <input type="color" id="t-accentLight"><input type="text" id="t-accentLightHex">
+          </div>
+          <div class="color-row">
+            <span>主色（深色模式）</span>
+            <input type="color" id="t-accentDark"><input type="text" id="t-accentDarkHex">
+          </div>
+          <div class="slider-row">
+            <span class="lbl">卡片圆角</span>
+            <input type="range" id="t-radius" min="0" max="48" step="2">
+            <output id="t-radius-out">24px</output>
+            <div class="radius-demo" id="radius-demo"></div>
+          </div>
+          <div class="slider-row">
+            <span class="lbl">背景光晕强度</span>
+            <input type="range" id="t-aurora" min="0" max="200" step="5">
+            <output id="t-aurora-out">100%</output>
+          </div>
+          <div class="color-row">
+            <span>页面底色（浅色）</span>
+            <input type="color" id="t-pageLight"><input type="text" id="t-pageLightHex">
+          </div>
+          <div class="color-row">
+            <span>页面底色（深色）</span>
+            <input type="color" id="t-pageDark"><input type="text" id="t-pageDarkHex">
+          </div>
+          <div class="row">
+            <label class="field"><span>字体</span>
+              <select id="t-font" onchange="previewTheme()"></select>
+            </label>
+            <label class="field"><span>页面疏密</span>
+              <select id="t-density" onchange="previewTheme()">
+                <option value="compact">紧凑</option>
+                <option value="normal">标准</option>
+                <option value="relaxed">宽松</option>
+              </select>
+            </label>
+          </div>
+          <p class="muted-note">深色模式的主色建议比浅色模式的更亮一点，在黑底上才看得清。</p>
+          <div class="save-row">
+            <button class="btn ghost" onclick="renderTheme(); previewTheme(); toast('已恢复为当前已保存的外观')">还原预览</button>
+            <button class="btn" style="margin-left:8px" onclick="saveTheme()">应用外观设置</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 项目作品 -->
+      <section class="tab" id="tab-projects">
+        <div class="chips" id="project-chips"></div>
+        <div id="project-form"></div>
+      </section>
+
+      <!-- 博客 -->
+      <section class="tab" id="tab-blog">
+        <div class="card">
+          <h2>文章列表</h2>
+          <p class="desc">点击一篇编辑，或新建。每天最多一篇（按日期归档）。</p>
+          <div class="post-list" id="post-list"></div>
+          <button class="btn ghost" onclick="newBlogPost()">＋ 新建文章</button>
+        </div>
+        <div class="card">
+          <h2 id="blog-form-title">编辑文章</h2>
+          <div class="row">
+            <label class="field"><span>日期</span><input type="date" id="bl-date"></label>
+            <label class="field"><span>分类</span><select id="bl-category"></select></label>
+          </div>
+          <label class="field"><span>标题</span><input type="text" id="bl-title"></label>
+          <label class="field"><span>摘要（在卡片上显示的简介）</span><textarea id="bl-summary" rows="3"></textarea></label>
+          <label class="field"><span>微信文章链接 · 可留空</span><input type="text" id="bl-linkWechat" placeholder="https://mp.weixin.qq.com/..."></label>
+          <label class="field"><span>X（推特）链接 · 可留空</span><input type="text" id="bl-linkX" placeholder="https://x.com/..."></label>
+          <div class="row" style="align-items:center">
+            <div class="upload-box" style="flex:none;width:140px" onclick="uploadBlogCover()">
+              <div id="img-blogCover"><div class="ph">🖼️</div></div>封面图
+            </div>
+            <div class="save-row" style="flex:1"><button class="btn" onclick="saveBlog()">保存文章</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 发布上线 -->
+      <section class="tab" id="tab-deploy">
+        <div class="card">
+          <h2>第 1 步 · 体检</h2>
+          <p class="desc">检查所有内容文件是否完整合法（缺图、格式错误都会在这里报出来）。</p>
+          <button class="btn" onclick="deployCheck()">🩺 一键体检</button>
+          <span id="check-result" style="font-size:12.5px;margin-left:10px"></span>
+        </div>
+        <div class="card">
+          <h2>第 2 步 · 打包</h2>
+          <p class="desc">生成可部署的静态网站（dist/ 文件夹），大约需要 1~2 分钟。</p>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+            <button class="btn" id="build-btn" onclick="deployBuild()">📦 开始打包</button>
+            <button class="btn ghost" onclick="openDist()">📂 打开 dist 文件夹</button>
+          </div>
+          <pre id="build-log" style="display:none;background:#0f172a;color:#a5f3c4;font-size:11px;line-height:1.6;border-radius:8px;padding:10px 12px;max-height:180px;overflow-y:auto;white-space:pre-wrap"></pre>
+        </div>
+        <div class="card">
+          <h2>第 3 步 · 上传到托管平台（免费）</h2>
+          <p class="desc">推荐拖拽上传，不需要懂 Git。三选一即可：</p>
+          <details style="margin-bottom:8px">
+            <summary style="cursor:pointer;font-size:13px;font-weight:600">🟢 Netlify Drop（最简单）</summary>
+            <ol style="font-size:12.5px;line-height:1.9;padding:8px 0 4px 20px;color:#334155">
+              <li>打开 <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a>（需注册，免费）</li>
+              <li>把整个 <b>dist 文件夹</b>拖进页面虚线框里</li>
+              <li>等几十秒，得到一个 xxx.netlify.app 网址，完成 🎉</li>
+            </ol>
+          </details>
+          <details style="margin-bottom:8px">
+            <summary style="cursor:pointer;font-size:13px;font-weight:600">🟠 Cloudflare Pages（国内访问相对稳定）</summary>
+            <ol style="font-size:12.5px;line-height:1.9;padding:8px 0 4px 20px;color:#334155">
+              <li>打开 <a href="https://dash.cloudflare.com" target="_blank">dash.cloudflare.com</a> → Workers 和 Pages → 创建 → Pages</li>
+              <li>选择"直接上传"，把 dist 文件夹拖进去</li>
+              <li>得到 xxx.pages.dev 网址，完成 🎉</li>
+            </ol>
+          </details>
+          <details>
+            <summary style="cursor:pointer;font-size:13px;font-weight:600">⚫ Vercel / 绑定自己的域名（进阶）</summary>
+            <p style="font-size:12.5px;line-height:1.8;padding:8px 0 4px;color:#334155">
+              把项目推到 GitHub 后在 <a href="https://vercel.com" target="_blank">vercel.com</a> 导入仓库（构建命令 npm run build，输出目录 dist），以后改完内容推送即自动更新。绑定自有域名在各平台的"Custom domains"设置里，详见 docs/CUSTOMIZE.md。
+            </p>
+          </details>
+          <p class="muted-note" style="margin-top:10px">上线后回到顶部进度条，点"发布上线"标记完成 ✅</p>
+        </div>
+        <div class="card">
+          <h2>模板署名</h2>
+          <p class="desc">在页脚显示一行"基于 RZC 开源模板搭建"的小字链接，支持模板作者。</p>
+          <label class="field" style="display:flex;align-items:center;gap:8px">
+            <input type="checkbox" id="attr-enabled" style="width:auto" onchange="saveAttribution()">
+            <span style="margin:0">显示页脚署名</span>
+          </label>
+          <p class="muted-note">署名文字和链接可在 content/config/site.yml 修改。</p>
+        </div>
+      </section>
+
+      <!-- 帮助 -->
+      <section class="tab" id="tab-help">
+        <div class="card help">
+          <h2>这个定制器是什么？</h2>
+          <p>网站的所有内容（文字、图片、颜色）都放在 <code>content/</code> 文件夹里，代码不需要动。这个页面就是 content/ 的图形化编辑器：你在左边改，右边立即看到效果。</p>
+          <p>定制器只在本地开发时可用，<b>不会</b>被发布到线上网站。</p>
+        </div>
+        <div class="card help">
+          <h2>推荐的定制顺序</h2>
+          <p>1️⃣ 基本信息：改名字、传头像和二维码<br>
+             2️⃣ 首页文案：改标题、签名、技能标签（中英文都填）<br>
+             3️⃣ 外观配色：挑个主题色、调圆角<br>
+             4️⃣ 项目作品：把示例项目改成你自己的，或新建<br>
+             5️⃣ 博客文章：不需要可以不管，卡片会自动隐藏空内容</p>
+        </div>
+        <div class="card help">
+          <h2>想改这里没有的内容？</h2>
+          <p>用 Claude Code 打开这个项目文件夹，直接说你想要什么，例如：<br>
+            "把时间线改成我的经历：2020 年……"<br>
+            "简历页换成我的简历"<br>
+            "把 Personal AI 卡片去掉"</p>
+          <p>项目里已内置定制技能（<code>.claude/skills/customize-site</code>），Claude 知道每个内容对应哪个文件。</p>
+        </div>
+        <div class="card help">
+          <h2>发布上线</h2>
+          <p>定制完成后运行 <code>npm run build</code>，把 <code>dist/</code> 部署到 Cloudflare Pages / Vercel / Netlify 等任意静态托管即可。详细步骤见 <code>docs/CUSTOMIZE.md</code>。</p>
+        </div>
+        <div class="card help">
+          <h2>改坏了 / 想重新开始</h2>
+          <p>顶部的 <b>↩ 撤销本次修改</b> 可以恢复到本次打开定制器之前的状态。</p>
+          <p>想把整站换成干净的示例内容（虚构人设"林小满"，适合从零开始定制）：</p>
+          <button class="btn danger" onclick="resetToStarter()">重置为示例内容</button>
+          <p class="muted-note">重置前会自动备份当前内容到 .studio-snapshots/ 文件夹，不会真的丢失。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="preview">
+      <div class="preview-bar">
+        实时预览
+        <button id="pv-desktop" class="on" onclick="setPreview('desktop')">🖥️ 电脑</button>
+        <button id="pv-mobile" onclick="setPreview('mobile')">📱 手机</button>
+        <button onclick="reloadPreview()">🔄 刷新</button>
+        <button id="pv-edit" class="on" onclick="toggleEditMode()" title="开启后，点击预览里的文字/图片直接跳到对应编辑框">✏️ 点哪改哪</button>
+        <span id="pv-edit-hint" style="color:#c13b25;font-weight:600">点预览里的内容试试 →</span>
+      </div>
+      <div class="preview-frame-wrap" id="pv-wrap"><iframe id="pv" src="/"></iframe></div>
+    </div>
+  </main>
+
+  <div id="toast"></div>
+  <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display:none">
+
+<script>
+let state = null;
+let currentLang = 'zh';
+let homeEdits = { zh: null, en: null };
+let currentProjectId = null;
+let currentBlogDate = null;
+
+const $ = (id) => document.getElementById(id);
+
+// ── 通用 ──
+function toast(message, isError) {
+  const el = $('toast');
+  el.textContent = message;
+  el.className = isError ? 'show err' : 'show';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.className = ''; }, isError ? 4200 : 2200);
+}
+
+async function api(url, body) {
+  const res = await fetch(url, body
+    ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    : undefined);
+  const data = await res.json();
+  if (!res.ok || data.ok === false) {
+    throw new Error(data.message || '保存失败，请重试');
+  }
+  if (data.state) { state = data.state; renderChecklist(); }
+  return data;
+}
+
+// ── 完成度清单 ──
+function renderChecklist() {
+  const container = $('checklist');
+  const checklist = state && state.checklist;
+  if (!checklist || checklist.hidden) { container.innerHTML = ''; return; }
+  const doneCount = checklist.items.filter((i) => i.done).length;
+  const percent = Math.round((doneCount / checklist.items.length) * 100);
+  container.innerHTML = `
+    <div class="card">
+      <div class="check-head">
+        <b>${percent === 100 ? '🎉 全部完成！' : '定制进度'}</b>
+        <div class="bar"><i style="width:${percent}%"></i></div>
+        <span style="font-size:11px;color:var(--muted)">${doneCount}/${checklist.items.length}</span>
+        <button onclick="hideChecklist()" title="不再显示">✕</button>
+      </div>
+      <div class="check-items">
+        ${checklist.items.map((item) => `
+          <button class="${item.done ? 'done' : ''}" onclick="checklistJump('${item.key}', '${item.tab}')">
+            ${item.done ? '✅' : '⬜'} ${item.label}
+          </button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function checklistJump(key, tab) {
+  const target = document.querySelector(`#nav button[data-tab="${tab}"]`) ? tab : 'help';
+  selectTab(target);
+  if (key === 'publish' && !state.checklist.items.find((i) => i.key === 'publish').done) {
+    // 发布项支持手动勾选：部署完成后点它标记完成。
+    if (confirm('已经把网站部署上线了吗？\n点"确定"标记为完成。')) {
+      api('/studio/api/checklist', { publishMarked: true }).catch(() => {});
+    }
+  }
+}
+
+async function hideChecklist() {
+  try { await api('/studio/api/checklist', { checklistHidden: true }); } catch {}
+}
+
+function pickFile() {
+  return new Promise((resolve) => {
+    const input = $('file-input');
+    input.value = '';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) { resolve(null); return; }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  });
+}
+
+async function uploadTo(target, extra) {
+  const dataUrl = await pickFile();
+  if (!dataUrl) return false;
+  toast('正在上传并压缩图片…');
+  await api('/studio/api/upload', Object.assign({ target, dataUrl }, extra || {}));
+  toast('图片已更新 ✓');
+  return true;
+}
+
+function setThumb(containerId, url, emoji) {
+  const el = $(containerId);
+  el.innerHTML = url
+    ? '<img src="' + url + (url.includes('?') ? '' : '?t=' + Date.now()) + '">'
+    : '<div class="ph">' + (emoji || '🖼️') + '</div>';
+}
+
+// ── 导航 ──
+document.querySelectorAll('#nav button').forEach((btn) => {
+  btn.onclick = () => {
+    document.querySelectorAll('#nav button').forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('section.tab').forEach((s) => s.classList.remove('active'));
+    btn.classList.add('active');
+    $('tab-' + btn.dataset.tab).classList.add('active');
+  };
+});
+
+function setPreview(mode) {
+  $('pv-wrap').className = 'preview-frame-wrap' + (mode === 'mobile' ? ' mobile' : '');
+  $('pv-desktop').className = mode === 'desktop' ? 'on' : '';
+  $('pv-mobile').className = mode === 'mobile' ? 'on' : '';
+}
+function reloadPreview() { $('pv').src = '/?t=' + Date.now(); }
+
+// ── 点哪改哪 ──
+let editMode = true;
+
+function sendEditMode() {
+  const frame = $('pv');
+  if (frame.contentWindow) frame.contentWindow.postMessage({ type: 'studio-edit-mode', on: editMode }, '*');
+}
+
+function toggleEditMode() {
+  editMode = !editMode;
+  $('pv-edit').className = editMode ? 'on' : '';
+  $('pv-edit-hint').style.display = editMode ? '' : 'none';
+  sendEditMode();
+  if (!editMode) toast('已切回正常浏览模式，可以点开弹窗查看效果');
+}
+
+const EDIT_JUMP = {
+  'home.greeting': { tab: 'home', el: 'h-greeting' },
+  'home.description': { tab: 'home', el: 'h-description' },
+  'home.name': { tab: 'home', el: 'h-name' },
+  'home.city': { tab: 'home', el: 'h-city' },
+  'home.mbti': { tab: 'home', el: 'h-mbti' },
+  'home.experience': { tab: 'home', el: 'h-experience' },
+  'home.profileStatement': { tab: 'home', el: 'h-profileStatement' },
+  'home.projectTitle': { tab: 'home', el: 'h-projectTitle' },
+  'home.timelineTitle': { tab: 'home', el: 'h-timelineTitle' },
+  'home.footerStyle': { tab: 'home', el: 'h-footerStyle' },
+  'basic.avatar': { tab: 'basic', el: 'img-avatarLight' },
+};
+
+const EDIT_HINTS = {
+  'hint:metrics': '数据指标在 content/text/site/home.zh.md 的 metrics 部分修改，或让 Claude 帮你改。',
+  'hint:timeline': '时间线条目在 content/text/site/home.zh.md 的 timeline 部分修改，或让 Claude 帮你改。',
+  'hint:quicklinks': '快捷入口文字在 content/text/site/home.zh.md 的 quickLinks 部分修改，或让 Claude 帮你改。',
+};
+
+function selectTab(name) {
+  document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('section.tab').forEach((s) => s.classList.toggle('active', s.id === 'tab-' + name));
+}
+
+function flashField(el) {
+  if (!el) return;
+  el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  el.classList.remove('flash-target');
+  void el.offsetWidth; // 重启动画
+  el.classList.add('flash-target');
+  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.focus({ preventScroll: true });
+}
+
+function handleEditJump(field, label, lang) {
+  if (field.startsWith('hint:')) {
+    toast('💡 ' + (EDIT_HINTS[field] || (label + ' 暂不支持在定制器里修改')), false);
+    return;
+  }
+  if (field.startsWith('project:')) {
+    const id = field.slice('project:'.length);
+    selectTab('projects');
+    if (state.projects.some((p) => p.id === id)) {
+      currentProjectId = id;
+      renderProjectChips();
+      renderProjectForm();
+      flashField(document.querySelector('#project-form .card'));
+    }
+    return;
+  }
+  const jump = EDIT_JUMP[field];
+  if (!jump) return;
+  if (jump.tab === 'home' && lang && lang !== currentLang) switchLang(lang);
+  selectTab(jump.tab);
+  const input = $(jump.el);
+  if (!input) return;
+  flashField(input.closest('label.field') || input.closest('.upload-box') || input);
+  if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') input.focus({ preventScroll: true });
+}
+
+window.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data) return;
+  if (data.type === 'studio-overlay-ready') sendEditMode();
+  if (data.type === 'studio-edit') handleEditJump(data.field, data.label, data.lang);
+});
+$('pv').addEventListener('load', sendEditMode);
+
+// ── 基本信息 ──
+function renderBasic() {
+  const b = state.basic;
+  ['displayName','legalName','wechatId','email','x','xiaohongshu','github'].forEach((key) => { $('b-' + key).value = b[key] || ''; });
+  setThumb('img-avatarLight', b.avatarLight, '🙂');
+  setThumb('img-avatarDark', b.avatarDark, '🌙');
+  setThumb('img-wechatQr', b.wechatQr, '🔳');
+}
+
+async function saveBasic() {
+  try {
+    const body = {};
+    ['displayName','legalName','wechatId','email','x','xiaohongshu','github'].forEach((key) => { body[key] = $('b-' + key).value; });
+    await api('/studio/api/basic', body);
+    toast('基本信息已保存 ✓');
+  } catch (error) { toast(error.message, true); }
+}
+
+async function pickImage(target) {
+  try {
+    if (await uploadTo(target)) renderBasic();
+  } catch (error) { toast(error.message, true); }
+}
+
+// ── 首页文案 ──
+const HOME_FIELDS = ['greeting','description','name','city','mbti','experience','profileStatement','explore','projectTitle','timelineTitle','footerStyle'];
+
+function collectHomeForm() {
+  const fields = {};
+  HOME_FIELDS.forEach((key) => { fields[key] = $('h-' + key).value; });
+  fields.skillList = $('h-skillList').value.split('\n').map((s) => s.trim()).filter(Boolean);
+  fields.skillTags = $('h-skillTags').value.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+  return fields;
+}
+
+function renderHome(lang) {
+  const fields = homeEdits[lang] || state.home[lang];
+  HOME_FIELDS.forEach((key) => { $('h-' + key).value = fields[key] || ''; });
+  $('h-skillList').value = (fields.skillList || []).join('\n');
+  $('h-skillTags').value = (fields.skillTags || []).join('，');
+}
+
+function switchLang(lang) {
+  homeEdits[currentLang] = collectHomeForm(); // 暂存未保存的编辑
+  currentLang = lang;
+  document.querySelectorAll('.lang-tabs button').forEach((b) => b.classList.toggle('on', b.dataset.lang === lang));
+  renderHome(lang);
+}
+
+async function saveHome() {
+  try {
+    const body = {}; body[currentLang] = collectHomeForm();
+    await api('/studio/api/home', body);
+    homeEdits[currentLang] = null;
+    toast((currentLang === 'zh' ? '中文' : '英文') + '文案已保存 ✓');
+  } catch (error) { toast(error.message, true); }
+}
+
+// ── 外观：风格包 + 实时预览 ──
+const FONT_META = {
+  modern: { fontSans: "'Manrope', 'Noto Sans SC', sans-serif", webfonts: [] },
+  serif: { fontSans: "'Source Serif 4', 'Noto Serif SC', serif", webfonts: ['https://fonts.loli.net/css2?family=Source+Serif+4:wght@400;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap'] },
+  wenkai: { fontSans: "'LXGW WenKai Screen', 'Noto Sans SC', sans-serif", webfonts: ['https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css'] },
+};
+const DENSITY_SIZE = { compact: '15px', normal: '16px', relaxed: '17px' };
+
+const STYLE_PACKS = [
+  { id: 'lava', name: '熔岩红', font: '现代无衬线', accentLight: '#C13B25', accentDark: '#EB5E47', pageLight: '#F8FAFC', pageDark: '#0B0B0C', radius: 24, aurora: 100, fontPreset: 'modern', density: 'normal' },
+  { id: 'indigo', name: '靛蓝理性', font: '现代无衬线', accentLight: '#2563EB', accentDark: '#60A5FA', pageLight: '#F7F9FC', pageDark: '#0A0E14', radius: 16, aurora: 60, fontPreset: 'modern', density: 'normal' },
+  { id: 'teal', name: '松石清新', font: '现代无衬线', accentLight: '#0D9488', accentDark: '#2DD4BF', pageLight: '#F5FBFA', pageDark: '#081311', radius: 28, aurora: 120, fontPreset: 'modern', density: 'relaxed' },
+  { id: 'magazine', name: '杂志衬线', font: '衬线字体', accentLight: '#9A3B26', accentDark: '#D98E6B', pageLight: '#FAF6EF', pageDark: '#15120E', radius: 12, aurora: 40, fontPreset: 'serif', density: 'normal' },
+  { id: 'brutal', name: '新粗野黑白', font: '现代无衬线', accentLight: '#111111', accentDark: '#F5F5F5', pageLight: '#F4F4F0', pageDark: '#0A0A0A', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact' },
+  { id: 'soft', name: '手写温柔', font: '霞鹜文楷', accentLight: '#C2557E', accentDark: '#F191AE', pageLight: '#FDF8FA', pageDark: '#181114', radius: 32, aurora: 130, fontPreset: 'wenkai', density: 'relaxed' },
+];
+
+function bindColor(colorId, hexId) {
+  $(colorId).oninput = () => { $(hexId).value = $(colorId).value.toUpperCase(); previewTheme(); };
+  $(hexId).oninput = () => {
+    if (/^#[0-9a-fA-F]{6}$/.test($(hexId).value.trim())) { $(colorId).value = $(hexId).value.trim(); previewTheme(); }
+  };
+}
+
+function setColor(colorId, hexId, value) {
+  $(colorId).value = value; $(hexId).value = value.toUpperCase();
+}
+
+function hexToRgba(hex, alpha) {
+  const value = parseInt(hex.slice(1), 16);
+  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
+}
+
+/** 把当前控件值实时注入预览 iframe（不落盘）。 */
+function previewTheme() {
+  const accentLight = $('t-accentLightHex').value.trim();
+  const accentDark = $('t-accentDarkHex').value.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(accentLight) || !/^#[0-9a-fA-F]{6}$/.test(accentDark)) return;
+  const radius = Number($('t-radius').value);
+  const aurora = Number($('t-aurora').value) / 100;
+  const font = FONT_META[$('t-font').value] || FONT_META.modern;
+  const vars = {
+    '--theme-accent-light': accentLight,
+    '--theme-accent-dark': accentDark,
+    '--theme-accent-glow': hexToRgba(accentLight, 0.35),
+    '--site-accent-light': accentLight,
+    '--site-accent-dark': accentDark,
+    '--site-accent-glow': hexToRgba(accentLight, 0.35),
+    '--theme-mode-light-text-accent': accentLight,
+    '--theme-mode-dark-text-accent': accentDark,
+    '--theme-mode-light-pill-hover-border': hexToRgba(accentLight, 0.22),
+    '--theme-mode-dark-pill-hover-border': hexToRgba(accentDark, 0.3),
+    '--theme-mode-light-surface-page': $('t-pageLightHex').value.trim(),
+    '--theme-mode-dark-surface-page': $('t-pageDarkHex').value.trim(),
+    '--theme-effects-cards-radius': radius + 'px',
+    '--theme-effects-cards-radius-small': Math.max(4, Math.round(radius * 0.75)) + 'px',
+    '--theme-effects-aurora-light-opacity': (0.19 * aurora).toFixed(3),
+    '--theme-effects-aurora-dark-opacity': (0.22 * aurora).toFixed(3),
+    '--theme-font-sans': font.fontSans,
+    '--theme-root-font-size': DENSITY_SIZE[$('t-density').value] || '16px',
+  };
+  const frame = $('pv');
+  if (frame.contentWindow) {
+    frame.contentWindow.postMessage({ type: 'studio-theme-preview', vars, webfonts: font.webfonts }, '*');
+  }
+}
+
+function applyPack(pack) {
+  setColor('t-accentLight', 't-accentLightHex', pack.accentLight);
+  setColor('t-accentDark', 't-accentDarkHex', pack.accentDark);
+  setColor('t-pageLight', 't-pageLightHex', pack.pageLight);
+  setColor('t-pageDark', 't-pageDarkHex', pack.pageDark);
+  $('t-radius').value = pack.radius; $('t-radius-out').textContent = pack.radius + 'px';
+  $('radius-demo').style.borderRadius = Math.min(18, pack.radius * 0.55) + 'px';
+  $('t-aurora').value = pack.aurora; $('t-aurora-out').textContent = pack.aurora + '%';
+  $('t-font').value = pack.fontPreset;
+  $('t-density').value = pack.density;
+  document.querySelectorAll('.pack').forEach((el) => el.classList.toggle('on', el.dataset.pack === pack.id));
+  previewTheme();
+  toast('「' + pack.name + '」预览中，喜欢就点"应用外观设置"');
+}
+
+function renderTheme() {
+  const t = state.theme;
+  setColor('t-accentLight', 't-accentLightHex', t.accentLight);
+  setColor('t-accentDark', 't-accentDarkHex', t.accentDark);
+  setColor('t-pageLight', 't-pageLightHex', t.pageLight);
+  setColor('t-pageDark', 't-pageDarkHex', t.pageDark);
+  $('t-radius').value = t.radius; $('t-radius-out').textContent = t.radius + 'px';
+  $('radius-demo').style.borderRadius = Math.min(18, t.radius * 0.55) + 'px';
+  $('t-aurora').value = t.aurora; $('t-aurora-out').textContent = t.aurora + '%';
+  const fontSelect = $('t-font');
+  fontSelect.innerHTML = (t.fontPresets || [{ id: 'modern', label: '现代无衬线（默认）' }])
+    .map((p) => '<option value="' + p.id + '">' + p.label + '</option>').join('');
+  fontSelect.value = t.fontPreset || 'modern';
+  $('t-density').value = t.density || 'normal';
+}
+
+async function saveTheme() {
+  try {
+    await api('/studio/api/theme', {
+      accentLight: $('t-accentLightHex').value.trim(),
+      accentDark: $('t-accentDarkHex').value.trim(),
+      pageLight: $('t-pageLightHex').value.trim(),
+      pageDark: $('t-pageDarkHex').value.trim(),
+      radius: Number($('t-radius').value),
+      aurora: Number($('t-aurora').value),
+      fontPreset: $('t-font').value,
+      density: $('t-density').value,
+    });
+    toast('外观已应用 ✓');
+  } catch (error) { toast(error.message, true); }
+}
+
+function initThemeControls() {
+  const packsEl = $('style-packs');
+  STYLE_PACKS.forEach((pack) => {
+    const el = document.createElement('div');
+    el.className = 'pack';
+    el.dataset.pack = pack.id;
+    el.innerHTML =
+      '<div class="strip" style="border-radius:' + Math.min(10, pack.radius * 0.4) + 'px">' +
+      '<i style="background:' + pack.pageLight + '"></i>' +
+      '<i style="background:' + pack.accentLight + '"></i>' +
+      '<i style="background:' + pack.accentDark + '"></i>' +
+      '<i style="background:' + pack.pageDark + '"></i></div>' +
+      '<div class="nm">' + pack.name + '</div><div class="ft">' + pack.font + '</div>';
+    el.onclick = () => applyPack(pack);
+    packsEl.appendChild(el);
+  });
+  bindColor('t-accentLight', 't-accentLightHex');
+  bindColor('t-accentDark', 't-accentDarkHex');
+  bindColor('t-pageLight', 't-pageLightHex');
+  bindColor('t-pageDark', 't-pageDarkHex');
+  $('t-radius').oninput = () => {
+    $('t-radius-out').textContent = $('t-radius').value + 'px';
+    $('radius-demo').style.borderRadius = Math.min(18, $('t-radius').value * 0.55) + 'px';
+    previewTheme();
+  };
+  $('t-aurora').oninput = () => { $('t-aurora-out').textContent = $('t-aurora').value + '%'; previewTheme(); };
+}
+
+// ── 项目 ──
+function esc(text) {
+  return String(text ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function renderProjectChips() {
+  const el = $('project-chips');
+  el.innerHTML = '';
+  state.projects.forEach((project) => {
+    const btn = document.createElement('button');
+    btn.textContent = (project.published ? '' : '⏸ ') + (project.zh.title || project.id);
+    btn.className = project.id === currentProjectId ? 'on' : '';
+    btn.onclick = () => { currentProjectId = project.id; renderProjectChips(); renderProjectForm(); };
+    el.appendChild(btn);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.textContent = '＋ 新建项目';
+  addBtn.onclick = createProject;
+  el.appendChild(addBtn);
+}
+
+function renderProjectForm() {
+  const project = state.projects.find((p) => p.id === currentProjectId);
+  const container = $('project-form');
+  if (!project) { container.innerHTML = '<div class="card"><p class="desc">左上方选择一个项目，或新建。</p></div>'; return; }
+  container.innerHTML = `
+    <div class="card">
+      <h2>项目信息 · ${esc(project.id)}</h2>
+      <p class="desc">中文标题会显示在卡片上；英文在切换语言后显示。</p>
+      <div class="row">
+        <label class="field"><span>中文标题</span><input type="text" id="p-zh-title" value="${esc(project.zh.title)}"></label>
+        <label class="field"><span>英文标题</span><input type="text" id="p-en-title" value="${esc(project.en.title)}"></label>
+      </div>
+      <div class="row">
+        <label class="field"><span>中文副标题</span><input type="text" id="p-zh-subtitle" value="${esc(project.zh.subtitle)}"></label>
+        <label class="field"><span>英文副标题</span><input type="text" id="p-en-subtitle" value="${esc(project.en.subtitle)}"></label>
+      </div>
+      <label class="field"><span>中文简介</span><textarea id="p-zh-description" rows="3">${esc(project.zh.description)}</textarea></label>
+      <label class="field"><span>英文简介</span><textarea id="p-en-description" rows="3">${esc(project.en.description)}</textarea></label>
+      <div class="row">
+        <label class="field"><span>中文关键词（逗号分隔）</span><input type="text" id="p-zh-keywords" value="${esc(project.zh.keywords.join('，'))}"></label>
+        <label class="field"><span>英文关键词（逗号分隔）</span><input type="text" id="p-en-keywords" value="${esc(project.en.keywords.join(', '))}"></label>
+      </div>
+      <div class="row">
+        <label class="field"><span>年份</span><input type="text" id="p-year" value="${esc(project.year)}"></label>
+        <label class="field"><span>我的角色</span><input type="text" id="p-role" value="${esc(project.role)}"></label>
+      </div>
+      <div class="row">
+        <label class="field"><span>一句话成果</span><input type="text" id="p-outcome" value="${esc(project.outcome)}"></label>
+        <label class="field"><span>版本号 · 可留空</span><input type="text" id="p-version" value="${esc(project.version)}"></label>
+      </div>
+      <label class="field"><span>项目网址 · 可留空</span><input type="text" id="p-webLink" value="${esc(project.webLink)}"></label>
+      <div class="color-row">
+        <span>项目主题色</span>
+        <input type="color" id="p-themeColor" value="${esc(project.themeColor)}"><input type="text" id="p-themeColorHex" value="${esc(project.themeColor.toUpperCase())}">
+      </div>
+      <label class="field" style="display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="p-published" style="width:auto" ${project.published ? 'checked' : ''}>
+        <span style="margin:0">在网站上展示这个项目</span>
+      </label>
+      <div class="save-row"><button class="btn" onclick="saveProject()">保存项目信息</button></div>
+    </div>
+    <div class="card">
+      <h2>封面图</h2>
+      <p class="desc">卡片列表里显示的图。深色封面可选，不传则用浅色的。</p>
+      <div class="upload-grid" style="grid-template-columns:1fr 1fr">
+        <div class="upload-box" onclick="uploadProjectImage('coverLight')">
+          <div id="img-coverLight">${project.coverLight ? '<img src="' + esc(project.coverLight) + '?t=' + Date.now() + '">' : '<div class="ph">🖼️</div>'}</div>浅色封面
+        </div>
+        <div class="upload-box" onclick="uploadProjectImage('coverDark')">
+          <div id="img-coverDark">${project.coverDark ? '<img src="' + esc(project.coverDark) + '?t=' + Date.now() + '">' : '<div class="ph">🌑</div>'}</div>深色封面
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>详情截图（${project.detailImages.length} 张）</h2>
+      <p class="desc">点开项目后的轮播大图，按编号排序。</p>
+      <div class="detail-grid">
+        ${project.detailImages.map((img) => `
+          <div class="detail-item">
+            <img src="${esc(img.url)}?t=${Date.now()}">
+            <button title="删除" onclick="removeDetail('${esc(img.file)}')">✕</button>
+          </div>`).join('')}
+      </div>
+      <button class="btn ghost small" onclick="uploadProjectImage('detail')">＋ 添加截图</button>
+    </div>
+    <div class="card help">
+      <h2>项目详情长文</h2>
+      <p>项目背景、问题、方案等长文案在 <code>content/text/projects/${esc(project.id)}/overview.zh.md</code>，可以直接编辑或让 Claude 帮你写。</p>
+    </div>`;
+  bindColor('p-themeColor', 'p-themeColorHex');
+}
+
+async function saveProject() {
+  try {
+    const split = (id, separator) => $(id).value.split(separator).map((s) => s.trim()).filter(Boolean);
+    await api('/studio/api/project/save', {
+      id: currentProjectId,
+      year: $('p-year').value, role: $('p-role').value, outcome: $('p-outcome').value,
+      themeColor: $('p-themeColorHex').value.trim(), webLink: $('p-webLink').value.trim(),
+      version: $('p-version').value.trim(), published: $('p-published').checked,
+      zh: { title: $('p-zh-title').value, subtitle: $('p-zh-subtitle').value, description: $('p-zh-description').value, keywords: split('p-zh-keywords', /[,，]/) },
+      en: { title: $('p-en-title').value, subtitle: $('p-en-subtitle').value, description: $('p-en-description').value, keywords: split('p-en-keywords', /[,，]/) },
+    });
+    renderProjectChips();
+    toast('项目已保存 ✓');
+  } catch (error) { toast(error.message, true); }
+}
+
+async function uploadProjectImage(target) {
+  try {
+    if (await uploadTo(target, { projectId: currentProjectId })) { renderProjectChips(); renderProjectForm(); }
+  } catch (error) { toast(error.message, true); }
+}
+
+async function removeDetail(file) {
+  try {
+    await api('/studio/api/project/detail-remove', { projectId: currentProjectId, file });
+    renderProjectForm();
+    toast('已删除 ✓');
+  } catch (error) { toast(error.message, true); }
+}
+
+async function createProject() {
+  const id = prompt('给新项目取一个英文 id（小写字母、数字、连字符）\n例如：my-app');
+  if (!id) return;
+  try {
+    await api('/studio/api/project/create', { id: id.trim() });
+    currentProjectId = id.trim();
+    renderProjectChips(); renderProjectForm();
+    toast('项目已创建，填写信息后勾选"展示"即可上架 ✓');
+  } catch (error) { toast(error.message, true); }
+}
+
+// ── 博客 ──
+function renderBlog() {
+  const listEl = $('post-list');
+  listEl.innerHTML = '';
+  state.blog.posts.forEach((post) => {
+    const item = document.createElement('div');
+    item.className = 'post-item' + (post.date === currentBlogDate ? ' on' : '');
+    item.innerHTML = '<span class="date">' + esc(post.date) + '</span><span class="title">' + esc(post.title || '(无标题)') + '</span>';
+    item.onclick = () => { currentBlogDate = post.date; renderBlog(); renderBlogForm(post); };
+    listEl.appendChild(item);
+  });
+  const select = $('bl-category');
+  select.innerHTML = '<option value="">（不设置分类）</option>' +
+    state.blog.categories.map((c) => '<option value="' + esc(c.id) + '">' + esc(c.title) + '</option>').join('');
+}
+
+function renderBlogForm(post) {
+  $('blog-form-title').textContent = post ? '编辑文章 · ' + post.date : '新建文章';
+  $('bl-date').value = post ? post.date : new Date().toISOString().slice(0, 10);
+  $('bl-title').value = post ? post.title : '';
+  $('bl-summary').value = post ? post.summary : '';
+  $('bl-linkWechat').value = post ? post.linkWechat : '';
+  $('bl-linkX').value = post ? post.linkX : '';
+  $('bl-category').value = post ? post.category : '';
+  setThumb('img-blogCover', post && post.cover, '🖼️');
+}
+
+function newBlogPost() {
+  currentBlogDate = null;
+  renderBlog();
+  renderBlogForm(null);
+}
+
+async function saveBlog() {
+  try {
+    await api('/studio/api/blog/save', {
+      date: $('bl-date').value,
+      title: $('bl-title').value,
+      summary: $('bl-summary').value,
+      linkWechat: $('bl-linkWechat').value.trim(),
+      linkX: $('bl-linkX').value.trim(),
+      category: $('bl-category').value,
+    });
+    currentBlogDate = $('bl-date').value;
+    renderBlog();
+    toast('文章已保存 ✓');
+  } catch (error) { toast(error.message, true); }
+}
+
+async function uploadBlogCover() {
+  const date = $('bl-date').value;
+  if (!date) { toast('请先选择日期', true); return; }
+  try {
+    if (!state.blog.posts.some((p) => p.date === date)) {
+      await saveBlog(); // 先落盘文章，再传封面
+      if (!$('bl-title').value.trim()) return;
+    }
+    if (await uploadTo('blogCover', { blogDate: date })) {
+      const post = state.blog.posts.find((p) => p.date === date);
+      setThumb('img-blogCover', post && post.cover, '🖼️');
+      renderBlog();
+    }
+  } catch (error) { toast(error.message, true); }
+}
+
+// ── 发布上线 ──
+async function deployCheck() {
+  const result = $('check-result');
+  result.style.color = 'var(--muted)';
+  result.textContent = '检查中…';
+  try {
+    await api('/studio/api/deploy/check', {});
+    result.style.color = 'var(--ok)';
+    result.textContent = '✅ 全部通过，可以打包';
+  } catch (error) {
+    result.style.color = 'var(--err)';
+    result.textContent = '❌ ' + error.message;
+  }
+}
+
+let buildTimer = null;
+async function deployBuild() {
+  try {
+    await api('/studio/api/deploy/build', {});
+    $('build-btn').disabled = true;
+    $('build-log').style.display = 'block';
+    pollBuild();
+  } catch (error) { toast(error.message, true); }
+}
+
+async function pollBuild() {
+  clearTimeout(buildTimer);
+  try {
+    const res = await fetch('/studio/api/deploy/status');
+    const data = await res.json();
+    const logEl = $('build-log');
+    logEl.textContent = data.log.join('\n');
+    logEl.scrollTop = logEl.scrollHeight;
+    if (data.status === 'running') {
+      buildTimer = setTimeout(pollBuild, 2000);
+    } else {
+      $('build-btn').disabled = false;
+      if (data.status === 'ok') toast('打包完成 ✓ 点"打开 dist 文件夹"拿产物');
+      if (data.status === 'fail') toast('打包失败，看日志排查', true);
+    }
+  } catch {
+    buildTimer = setTimeout(pollBuild, 3000);
+  }
+}
+
+async function openDist() {
+  try { await api('/studio/api/deploy/open-dist', {}); } catch (error) { toast(error.message, true); }
+}
+
+async function saveAttribution() {
+  try {
+    await api('/studio/api/attribution', { enabled: $('attr-enabled').checked });
+    toast($('attr-enabled').checked ? '页脚署名已开启 ✓' : '页脚署名已关闭');
+  } catch (error) { toast(error.message, true); }
+}
+
+// ── 撤销 / 重置 ──
+async function restoreSession() {
+  if (!confirm('把所有内容恢复到本次打开定制器之前的状态？\n（本次会话里保存过的修改都会被撤销）')) return;
+  try {
+    toast('正在恢复…');
+    await api('/studio/api/restore', {});
+    location.reload();
+  } catch (error) { toast(error.message, true); }
+}
+
+async function resetToStarter() {
+  if (!confirm('把整站内容替换为示例人设"林小满"？\n当前内容会先备份到 .studio-snapshots/，但界面上会全部换掉。')) return;
+  try {
+    toast('正在重置…');
+    await api('/studio/api/reset', {});
+    location.reload();
+  } catch (error) { toast(error.message, true); }
+}
+
+// ── 启动 ──
+async function init() {
+  initThemeControls();
+  try {
+    const res = await fetch('/studio/api/state');
+    state = await res.json();
+    renderChecklist();
+    renderBasic();
+    renderHome(currentLang);
+    renderTheme();
+    currentProjectId = state.projects.length ? state.projects[0].id : null;
+    renderProjectChips();
+    renderProjectForm();
+    renderBlog();
+    renderBlogForm(state.blog.posts[0] || null);
+    if (state.blog.posts[0]) currentBlogDate = state.blog.posts[0].date;
+    renderBlog();
+    $('attr-enabled').checked = !!(state.attribution && state.attribution.enabled);
+  } catch (error) {
+    toast('读取内容失败：' + error.message, true);
+  }
+}
+init();
+</script>
+</body>
+</html>

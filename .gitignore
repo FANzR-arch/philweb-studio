@@ -1,0 +1,37 @@
+# Logs
+logs
+*.log
+*.err
+npm-debug.log*
+
+# Dependencies & build output
+node_modules
+dist
+dist-ssr
+*.local
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+api/private_key*.pem
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.sw?
+
+# Auto-generated content manifests (regenerated on build/dev)
+data/content.generated.ts
+data/imageManifest.ts
+
+# Studio 本地快照（撤销/重置备份）
+.studio-snapshots/
+
+# Local tooling state
+.wrangler/
+.vite/
+.claude/settings.local.json

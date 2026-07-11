@@ -1,0 +1,16 @@
+{
+  "name": "我的个人主页",
+  "short_name": "个人主页",
+  "description": "基于 folio-studio 模板搭建的个人主页",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900">
+<rect width="1440" height="900" fill="#E4F5F1"/>
+<rect x="60" y="60" width="1320" height="90" rx="18" fill="#137167" opacity="0.1"/>
+<rect x="60" y="190" width="640" height="650" rx="24" fill="#137167" opacity="0.12"/>
+<rect x="740" y="190" width="640" height="305" rx="24" fill="#137167" opacity="0.09"/>
+<rect x="740" y="535" width="640" height="305" rx="24" fill="#137167" opacity="0.14"/>
+<text x="720" y="470" font-family="sans-serif" font-size="52" fill="#137167" opacity="0.6" text-anchor="middle">产品截图占位 02 · 替换成你的截图</text>
+</svg>
