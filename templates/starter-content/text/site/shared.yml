@@ -6,7 +6,7 @@ assets:
   avatarDark: "../../media/profile/avatar-dark.svg"
   wechatQr: "../../media/qrcodes/wx.svg"
   talkAvatar: "../../media/qrcodes/talklogo.svg"
-  brandMark: "../../media/logos/nocolor/mark.svg"
+  brandMark: ""
 links:
   wechatId: "your-wechat-id"
   x: "https://x.com/yourname"

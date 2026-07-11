@@ -155,6 +155,128 @@ export function patchYamlStringArray(
   return lines.join('\n');
 }
 
+/**
+ * 读取 YAML 文本中指定路径下的"对象数组"（如 timeline.items）。
+ * 支持条目为扁平 map，字段值为标量或一层字符串数组。
+ */
+export function readYamlObjectArray(
+  yamlText: string,
+  keyPath: string[],
+): Array<Record<string, string | string[]>> {
+  const lines = yamlText.split('\n');
+  const index = findScalarLineIndex(lines, keyPath);
+  if (index === -1) return [];
+
+  const keyIndent = (keyPath.length - 1) * INDENT_STEP;
+  const itemIndent = keyIndent + INDENT_STEP;
+  const items: Array<Record<string, string | string[]>> = [];
+  let current: Record<string, string | string[]> | null = null;
+  let currentArrayKey: string | null = null;
+
+  for (let i = index + 1; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (!isMeaningful(line)) continue;
+    const indent = getIndent(line);
+    if (indent <= keyIndent) break;
+    const trimmed = line.trim();
+
+    if (indent === itemIndent && trimmed.startsWith('- ')) {
+      current = {};
+      currentArrayKey = null;
+      items.push(current);
+      const rest = trimmed.slice(2);
+      const match = rest.match(/^([^:\s][^:]*):(.*)$/);
+      if (match) {
+        current[match[1].trim()] = unquoteScalar(match[2].trim());
+      }
+      continue;
+    }
+    if (!current) continue;
+
+    if (trimmed.startsWith('- ') && currentArrayKey) {
+      (current[currentArrayKey] as string[]).push(unquoteScalar(trimmed.slice(2)));
+      continue;
+    }
+
+    const match = trimmed.match(/^([^:\s][^:]*):(.*)$/);
+    if (!match) continue;
+    const key = match[1].trim();
+    const rest = match[2].trim();
+    if (rest && rest !== '[]') {
+      current[key] = unquoteScalar(rest);
+      currentArrayKey = null;
+    } else if (rest === '[]') {
+      current[key] = [];
+      currentArrayKey = null;
+    } else {
+      current[key] = [];
+      currentArrayKey = key;
+    }
+  }
+
+  return items;
+}
+
+/**
+ * 把 YAML 文本中指定路径替换为"对象数组"块。
+ * keyOrder 控制每个条目内字段的输出顺序；字符串数组字段渲染为嵌套列表。
+ */
+export function patchYamlObjectArray(
+  yamlText: string,
+  keyPath: string[],
+  items: Array<Record<string, string | string[]>>,
+  keyOrder: string[],
+): string | null {
+  const lines = yamlText.split('\n');
+  const index = findScalarLineIndex(lines, keyPath);
+  if (index === -1) return null;
+
+  const keyIndent = (keyPath.length - 1) * INDENT_STEP;
+  const indentText = ' '.repeat(keyIndent);
+  const key = keyPath[keyPath.length - 1];
+
+  let end = index + 1;
+  while (end < lines.length) {
+    const line = lines[end];
+    if (isMeaningful(line) && getIndent(line) <= keyIndent) break;
+    end += 1;
+  }
+  while (end > index + 1 && lines[end - 1].trim() === '') {
+    end -= 1;
+  }
+
+  const replacement: string[] = [];
+  if (items.length === 0) {
+    replacement.push(`${indentText}${key}: []`);
+  } else {
+    replacement.push(`${indentText}${key}:`);
+    for (const item of items) {
+      let first = true;
+      for (const fieldKey of keyOrder) {
+        const value = item[fieldKey];
+        if (value === undefined) continue;
+        const fieldIndent = first ? `${indentText}  - ` : `${indentText}    `;
+        if (Array.isArray(value)) {
+          if (value.length === 0) {
+            replacement.push(`${fieldIndent}${fieldKey}: []`);
+          } else {
+            replacement.push(`${fieldIndent}${fieldKey}:`);
+            for (const entry of value) {
+              replacement.push(`${indentText}      - ${quoteScalar(entry)}`);
+            }
+          }
+        } else {
+          replacement.push(`${fieldIndent}${fieldKey}: ${quoteScalar(value)}`);
+        }
+        first = false;
+      }
+    }
+  }
+
+  lines.splice(index, end - index, ...replacement);
+  return lines.join('\n');
+}
+
 /** 读取 YAML 文本中所有 map 嵌套下的标量，返回 `a.b.c` 形式的扁平字典（数组条目忽略）。 */
 export function readYamlScalars(yamlText: string): Record<string, string> {
   const result: Record<string, string> = {};

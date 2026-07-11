@@ -382,8 +382,13 @@ export interface SiteAttributionConfig {
   url: string;
 }
 
+export interface SiteFeaturesConfig {
+  personalAI: boolean;
+}
+
 export interface SiteConfig {
   attribution: SiteAttributionConfig;
+  features: SiteFeaturesConfig;
 }
 
 export interface ContentRegistry {

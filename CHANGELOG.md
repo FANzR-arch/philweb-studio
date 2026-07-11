@@ -6,6 +6,17 @@
 
 ---
 
+## [1.1.0] - 2026-07-12
+
+### Added
+- **时间线可视化编辑**：Studio 首页内容 tab 直接编辑成长轨迹——图标选择器（24 个精选 Material Symbols）、时期/标题/关键词/描述文本框、增删与排序。
+- **可配置个人 Logo**：首屏 Logo 改为读取 `shared.yml` 的 brandMark，可在 Studio 上传或移除，默认隐藏。
+- **个人 AI 功能开关**：`content/config/site.yml` 新增 `features.personalAI`（默认关闭），未配置 Coze 时右下角卡片整体隐藏。
+
+### Changed
+- 定制器界面翻新：内嵌 Lucide 风格 SVG 图标替换全部 emoji，保存按钮加载状态，文案与操作逻辑梳理。
+- 项目卡顺序与主题色完全数据驱动（meta.yml 的 order 与 themeColor）。
+
 ## [1.0.0] - 2026-07-11
 
 ### Added

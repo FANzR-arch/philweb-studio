@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>网站定制器 · Studio</title>
+<title>Studio · 网站定制器</title>
+<!-- Material Symbols 仅用于时间线图标的所见即所得预览（与站点同源字体） -->
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <style>
   :root {
     --ink: #0f172a; --muted: #64748b; --line: #e2e8f0; --bg: #f1f5f9;
@@ -14,45 +16,52 @@
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
     color: var(--ink); background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden;
   }
+  .icon { display: inline-flex; width: 16px; height: 16px; flex-shrink: 0; vertical-align: -2px; }
+  .icon svg { width: 100%; height: 100%; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
   header {
-    display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+    display: flex; align-items: center; gap: 14px; padding: 10px 20px;
     background: var(--card); border-bottom: 1px solid var(--line); flex-shrink: 0;
   }
-  header h1 { font-size: 16px; font-weight: 700; }
+  header h1 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  header h1 .icon { width: 18px; height: 18px; color: var(--accent); }
   header .hint { font-size: 12px; color: var(--muted); }
-  header a { margin-left: auto; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; }
+  header .spacer { margin-left: auto; }
+  header a { font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
   main { flex: 1; display: flex; min-height: 0; }
   nav {
-    width: 132px; flex-shrink: 0; background: var(--card); border-right: 1px solid var(--line);
-    padding: 12px 8px; display: flex; flex-direction: column; gap: 4px;
+    width: 140px; flex-shrink: 0; background: var(--card); border-right: 1px solid var(--line);
+    padding: 12px 8px; display: flex; flex-direction: column; gap: 3px;
   }
   nav button {
-    text-align: left; padding: 9px 12px; border: none; background: none; border-radius: 8px;
+    display: flex; align-items: center; gap: 9px; text-align: left; padding: 9px 12px;
+    border: none; background: none; border-radius: 8px;
     font-size: 13.5px; color: var(--muted); cursor: pointer; font-weight: 500;
   }
-  nav button:hover { background: var(--bg); }
+  nav button .icon { width: 15px; height: 15px; }
+  nav button:hover { background: var(--bg); color: var(--ink); }
   nav button.active { background: var(--ink); color: #fff; }
-  .panel { width: 460px; flex-shrink: 0; overflow-y: auto; padding: 20px; }
+  .panel { width: 470px; flex-shrink: 0; overflow-y: auto; padding: 18px; }
   .preview { flex: 1; display: flex; flex-direction: column; min-width: 320px; background: #e5e7eb; }
   .preview-bar {
-    display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+    display: flex; align-items: center; gap: 6px; padding: 8px 14px;
     background: var(--card); border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--muted);
   }
   .preview-bar button {
+    display: inline-flex; align-items: center; gap: 5px;
     border: 1px solid var(--line); background: var(--card); border-radius: 6px;
     padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--ink);
   }
+  .preview-bar button .icon { width: 13px; height: 13px; }
   .preview-bar button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
   .preview-frame-wrap { flex: 1; display: flex; justify-content: center; overflow: hidden; padding: 0; }
   .preview-frame-wrap.mobile { padding: 16px 0; }
   iframe { border: none; width: 100%; height: 100%; background: #fff; }
-  .preview-frame-wrap.mobile iframe {
-    width: 390px; border-radius: 18px; box-shadow: 0 8px 40px rgba(0,0,0,.25);
-  }
+  .preview-frame-wrap.mobile iframe { width: 390px; border-radius: 18px; box-shadow: 0 8px 40px rgba(0,0,0,.25); }
   section.tab { display: none; }
   section.tab.active { display: block; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-  .card h2 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .card h2 { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 7px; }
+  .card h2 .icon { width: 15px; height: 15px; color: var(--muted); }
   .card .desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.6; }
   label.field { display: block; margin-bottom: 10px; }
   label.field span { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
@@ -70,18 +79,23 @@
     background: var(--ink); color: #fff;
   }
   .btn:hover { opacity: .88; }
+  .btn:disabled { opacity: .5; cursor: wait; }
   .btn.ghost { background: var(--bg); color: var(--ink); border: 1px solid var(--line); }
   .btn.small { padding: 5px 10px; font-size: 12px; }
   .btn.danger { background: #fee2e2; color: var(--err); }
-  .save-row { display: flex; justify-content: flex-end; margin-top: 4px; }
-  .upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .save-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .upload-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .upload-box {
-    border: 1.5px dashed var(--line); border-radius: 10px; padding: 10px; text-align: center;
-    cursor: pointer; font-size: 12px; color: var(--muted); background: #fafafa;
+    border: 1.5px dashed var(--line); border-radius: 10px; padding: 8px; text-align: center;
+    cursor: pointer; font-size: 11.5px; color: var(--muted); background: #fafafa;
   }
   .upload-box:hover { border-color: var(--accent); color: var(--accent); }
-  .upload-box img { width: 100%; height: 72px; object-fit: contain; border-radius: 6px; margin-bottom: 6px; background: #fff; }
-  .upload-box .ph { width: 100%; height: 72px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: #fff; border-radius: 6px; margin-bottom: 6px; }
+  .upload-box img { width: 100%; height: 62px; object-fit: contain; border-radius: 6px; margin-bottom: 5px; background: #fff; }
+  .upload-box .ph {
+    width: 100%; height: 62px; display: flex; align-items: center; justify-content: center;
+    background: #fff; border-radius: 6px; margin-bottom: 5px; color: var(--line);
+  }
+  .upload-box .ph .icon { width: 24px; height: 24px; }
   .pack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .pack {
     border: 1.5px solid var(--line); border-radius: 10px; padding: 10px; cursor: pointer;
@@ -110,17 +124,21 @@
   .lang-tabs button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
   .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
   .chips button {
+    display: inline-flex; align-items: center; gap: 5px;
     border: 1px solid var(--line); background: var(--card); border-radius: 999px;
     padding: 5px 14px; font-size: 12.5px; cursor: pointer; color: var(--ink);
   }
   .chips button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .chips button .icon { width: 12px; height: 12px; }
   .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
   .detail-item { position: relative; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
   .detail-item img { width: 100%; height: 64px; object-fit: cover; display: block; }
   .detail-item button {
     position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%;
-    border: none; background: rgba(15,23,42,.75); color: #fff; font-size: 11px; cursor: pointer; line-height: 1;
+    border: none; background: rgba(15,23,42,.75); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
   }
+  .detail-item button .icon { width: 11px; height: 11px; }
   .post-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; max-height: 220px; overflow-y: auto; }
   .post-item {
     display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line);
@@ -130,11 +148,74 @@
   .post-item.on { border-color: var(--ink); background: var(--bg); }
   .post-item .date { color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .post-item .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* 时间线编辑器 */
+  .tl-item { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 10px; background: #fcfcfd; }
+  .tl-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .tl-icon-btn {
+    width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .tl-icon-btn:hover { border-color: var(--accent); }
+  .tl-icon-btn .material-symbols-outlined { font-size: 22px; color: var(--accent); }
+  .tl-head input { flex: 1; }
+  .tl-ops { display: flex; gap: 4px; }
+  .tl-ops button {
+    width: 26px; height: 26px; border: 1px solid var(--line); border-radius: 6px; background: #fff;
+    cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center;
+  }
+  .tl-ops button:hover { color: var(--ink); border-color: var(--ink); }
+  .tl-ops button.del:hover { color: var(--err); border-color: var(--err); }
+  .tl-ops button .icon { width: 13px; height: 13px; }
+  .icon-picker {
+    display: none; grid-template-columns: repeat(8, 1fr); gap: 4px;
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-bottom: 8px; background: #fff;
+  }
+  .icon-picker.open { display: grid; }
+  .icon-picker button {
+    border: 1px solid transparent; background: none; border-radius: 6px; padding: 5px; cursor: pointer;
+  }
+  .icon-picker button:hover { background: var(--bg); }
+  .icon-picker button.on { border-color: var(--accent); background: rgba(193,59,37,.06); }
+  .icon-picker .material-symbols-outlined { font-size: 20px; color: var(--ink); }
+  /* 开关 */
+  .switch-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+  .switch-row .sw-label { flex: 1; }
+  .switch-row .sw-label b { font-size: 13px; display: block; }
+  .switch-row .sw-label small { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+  .switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch i {
+    position: absolute; inset: 0; background: var(--line); border-radius: 999px; cursor: pointer; transition: background .2s;
+  }
+  .switch i::after {
+    content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff;
+    top: 2px; left: 2px; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  }
+  .switch input:checked + i { background: var(--ok); }
+  .switch input:checked + i::after { transform: translateX(18px); }
+  /* 完成度清单 */
+  #checklist .card { padding: 12px 16px; }
+  .check-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .check-head b { font-size: 13px; }
+  .check-head .bar { flex: 1; height: 6px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+  .check-head .bar i { display: block; height: 100%; background: var(--ok); border-radius: 99px; transition: width .4s; }
+  .check-head button { border: none; background: none; color: var(--muted); cursor: pointer; display: flex; }
+  .check-head button .icon { width: 12px; height: 12px; }
+  .check-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .check-items button {
+    display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line);
+    background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; color: var(--ink);
+  }
+  .check-items button .icon { width: 12px; height: 12px; color: var(--muted); }
+  .check-items button.done { color: var(--ok); border-color: rgba(4,120,87,.25); background: rgba(4,120,87,.06); }
+  .check-items button.done .icon { color: var(--ok); }
   #toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);
     background: var(--ink); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px;
     transition: transform .25s ease; z-index: 99; max-width: 80vw;
+    display: flex; align-items: center; gap: 8px;
   }
+  #toast .icon { width: 14px; height: 14px; }
   #toast.show { transform: translateX(-50%) translateY(0); }
   #toast.err { background: var(--err); }
   @keyframes flashField {
@@ -142,88 +223,95 @@
     100% { outline: 3px solid transparent; outline-offset: 2px; }
   }
   .flash-target { animation: flashField 1.6s ease-out 2; border-radius: 8px; }
-  #checklist .card { padding: 12px 16px; }
-  .check-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .check-head b { font-size: 13px; }
-  .check-head .bar { flex: 1; height: 6px; background: var(--bg); border-radius: 99px; overflow: hidden; }
-  .check-head .bar i { display: block; height: 100%; background: var(--ok); border-radius: 99px; transition: width .4s; }
-  .check-head button { border: none; background: none; color: var(--muted); font-size: 11px; cursor: pointer; }
-  .check-items { display: flex; flex-wrap: wrap; gap: 6px; }
-  .check-items button {
-    display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line);
-    background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; color: var(--ink);
-  }
-  .check-items button.done { color: var(--ok); border-color: rgba(4,120,87,.25); background: rgba(4,120,87,.06); }
   .help p { font-size: 13px; line-height: 1.8; color: var(--ink); margin-bottom: 8px; }
   .help code { background: var(--bg); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
   .muted-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 8px; }
+  details summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+  details ol, details p { font-size: 12.5px; line-height: 1.9; padding: 8px 0 4px 20px; color: #334155; }
+  details p { padding-left: 0; }
 </style>
 </head>
 <body>
   <header>
-    <h1>🎨 网站定制器</h1>
-    <span class="hint">改完点"保存"，右侧预览会自动刷新 · 所有修改都写入 content/ 文件夹</span>
-    <button class="btn ghost small" style="margin-left:auto" onclick="restoreSession()" title="恢复到本次打开定制器之前的内容">↩ 撤销本次修改</button>
-    <a href="/" target="_blank" style="margin-left:12px">在新窗口打开网站 ↗</a>
+    <h1><span class="icon" data-icon="sparkles"></span>Studio 网站定制器</h1>
+    <span class="hint">左侧编辑，右侧即时预览 · 所有修改都保存在 content/ 文件夹</span>
+    <span class="spacer"></span>
+    <button class="btn ghost small" onclick="restoreSession()" title="恢复到本次打开定制器之前的内容"><span class="icon" data-icon="undo"></span>撤销本次修改</button>
+    <a href="/" target="_blank" style="margin-left:10px">新窗口打开网站<span class="icon" data-icon="external"></span></a>
   </header>
   <main>
     <nav id="nav">
-      <button data-tab="basic" class="active">👤 基本信息</button>
-      <button data-tab="home">📝 首页文案</button>
-      <button data-tab="theme">🎨 外观配色</button>
-      <button data-tab="projects">📦 项目作品</button>
-      <button data-tab="blog">✍️ 博客文章</button>
-      <button data-tab="deploy">🚀 发布上线</button>
-      <button data-tab="help">❓ 帮助</button>
+      <button data-tab="basic" class="active"><span class="icon" data-icon="user"></span>基本信息</button>
+      <button data-tab="home"><span class="icon" data-icon="filetext"></span>首页内容</button>
+      <button data-tab="theme"><span class="icon" data-icon="palette"></span>外观风格</button>
+      <button data-tab="projects"><span class="icon" data-icon="grid"></span>项目作品</button>
+      <button data-tab="blog"><span class="icon" data-icon="pen"></span>博客文章</button>
+      <button data-tab="deploy"><span class="icon" data-icon="rocket"></span>发布上线</button>
+      <button data-tab="help"><span class="icon" data-icon="help"></span>帮助</button>
     </nav>
 
     <div class="panel">
       <div id="checklist"></div>
+
       <!-- 基本信息 -->
       <section class="tab active" id="tab-basic">
         <div class="card">
-          <h2>我是谁</h2>
-          <p class="desc">姓名和联系方式，显示在侧边栏、联系弹窗和页脚。</p>
+          <h2><span class="icon" data-icon="user"></span>我是谁</h2>
+          <p class="desc">姓名和联系方式，会出现在侧边栏、联系弹窗和页脚。</p>
           <div class="row">
             <label class="field"><span>显示名称（昵称）</span><input type="text" id="b-displayName" placeholder="例如：林小满 Momo"></label>
-            <label class="field"><span>正式姓名（拼音/英文）</span><input type="text" id="b-legalName" placeholder="例如：Xiaoman Lin"></label>
+            <label class="field"><span>正式姓名（拼音 / 英文）</span><input type="text" id="b-legalName" placeholder="例如：Xiaoman Lin"></label>
           </div>
           <div class="row">
-            <label class="field"><span>微信号</span><input type="text" id="b-wechatId" placeholder="微信搜索用"></label>
+            <label class="field"><span>微信号</span><input type="text" id="b-wechatId" placeholder="别人搜这个加你"></label>
             <label class="field"><span>邮箱</span><input type="text" id="b-email" placeholder="you@example.com"></label>
           </div>
-          <label class="field"><span>X（推特）主页链接 · 不用可留空</span><input type="text" id="b-x" placeholder="https://x.com/..."></label>
-          <label class="field"><span>小红书主页链接 · 不用可留空</span><input type="text" id="b-xiaohongshu" placeholder="https://xhslink.com/..."></label>
-          <label class="field"><span>GitHub 主页链接 · 不用可留空</span><input type="text" id="b-github" placeholder="https://github.com/..."></label>
-          <div class="save-row"><button class="btn" onclick="saveBasic()">保存基本信息</button></div>
+          <label class="field"><span>X（推特）主页 · 不用可留空</span><input type="text" id="b-x" placeholder="https://x.com/..."></label>
+          <label class="field"><span>小红书主页 · 不用可留空</span><input type="text" id="b-xiaohongshu" placeholder="https://www.xiaohongshu.com/..."></label>
+          <label class="field"><span>GitHub 主页 · 不用可留空</span><input type="text" id="b-github" placeholder="https://github.com/..."></label>
+          <div class="save-row"><button class="btn" onclick="saveBasic(this)"><span class="icon" data-icon="save"></span>保存基本信息</button></div>
         </div>
         <div class="card">
-          <h2>我的图片</h2>
+          <h2><span class="icon" data-icon="image"></span>我的图片</h2>
           <p class="desc">点击方块选择图片即可替换，会自动压缩到合适大小。</p>
           <div class="upload-grid">
             <div class="upload-box" onclick="pickImage('avatarLight')">
-              <div id="img-avatarLight"><div class="ph">🙂</div></div>头像（浅色模式）
+              <div id="img-avatarLight"><div class="ph"><span class="icon" data-icon="user"></span></div></div>头像（浅色）
             </div>
             <div class="upload-box" onclick="pickImage('avatarDark')">
-              <div id="img-avatarDark"><div class="ph">🌙</div></div>头像（深色模式）
+              <div id="img-avatarDark"><div class="ph"><span class="icon" data-icon="moon"></span></div></div>头像（深色）
             </div>
             <div class="upload-box" onclick="pickImage('wechatQr')">
-              <div id="img-wechatQr"><div class="ph">🔳</div></div>微信二维码
+              <div id="img-wechatQr"><div class="ph"><span class="icon" data-icon="qrcode"></span></div></div>微信二维码
+            </div>
+            <div class="upload-box" onclick="pickImage('brandMark')">
+              <div id="img-brandMark"><div class="ph"><span class="icon" data-icon="sparkles"></span></div></div>个人 Logo
             </div>
           </div>
-          <p class="muted-note">深色头像可以和浅色用同一张图；微信二维码显示在"联系我"弹窗里。</p>
+          <p class="muted-note">深色头像可以和浅色用同一张。Logo 是可选的（显示在首屏右侧，建议单色图形，深色模式会自动反色）——
+            <a href="javascript:void(0)" onclick="removeBrandMark()" style="color:var(--err)">不想要 Logo？点这里移除</a></p>
+        </div>
+        <div class="card">
+          <h2><span class="icon" data-icon="bot"></span>站点功能</h2>
+          <div class="switch-row">
+            <div class="sw-label">
+              <b>个人 AI 对话（右下角卡片）</b>
+              <small>需要你自己的 Coze 机器人和密钥才能真正对话（配置方法见 README）。没有配置就保持关闭，卡片不会显示。</small>
+            </div>
+            <label class="switch"><input type="checkbox" id="sf-personalAI" onchange="savePersonalAI()"><i></i></label>
+          </div>
         </div>
       </section>
 
-      <!-- 首页文案 -->
+      <!-- 首页内容 -->
       <section class="tab" id="tab-home">
         <div class="lang-tabs">
           <button class="on" data-lang="zh" onclick="switchLang('zh')">中文</button>
           <button data-lang="en" onclick="switchLang('en')">English</button>
         </div>
         <div class="card">
-          <h2>首屏与侧边栏</h2>
-          <p class="desc">网站支持中英双语，两种语言分别填写（先保存一种再切换也可以）。</p>
+          <h2><span class="icon" data-icon="filetext"></span>首屏与侧边栏</h2>
+          <p class="desc">网站是中英双语的，两种语言分别填写（先保存一种再切换也可以）。</p>
           <label class="field"><span>首屏大标题</span><input type="text" id="h-greeting"></label>
           <label class="field"><span>首屏一句话介绍</span><textarea id="h-description" rows="2"></textarea></label>
           <label class="field"><span>侧边栏名字</span><input type="text" id="h-name"></label>
@@ -231,13 +319,19 @@
             <label class="field"><span>城市</span><input type="text" id="h-city"></label>
             <label class="field"><span>MBTI · 可留空</span><input type="text" id="h-mbti"></label>
           </div>
-          <label class="field"><span>一句话经历（例如：设计+AI产品+增长）</span><input type="text" id="h-experience"></label>
+          <label class="field"><span>一句话经历（例如：设计 + AI 探索）</span><input type="text" id="h-experience"></label>
           <label class="field"><span>个人签名</span><input type="text" id="h-profileStatement"></label>
-          <label class="field"><span>技能/身份列表（每行一条）</span><textarea id="h-skillList" rows="3"></textarea></label>
-          <label class="field"><span>技能标签（用中文或英文逗号分隔）</span><input type="text" id="h-skillTags"></label>
+          <label class="field"><span>技能 / 身份列表（每行一条）</span><textarea id="h-skillList" rows="3"></textarea></label>
+          <label class="field"><span>技能标签（用逗号分隔）</span><input type="text" id="h-skillTags"></label>
+        </div>
+        <div class="card" id="timeline-editor">
+          <h2><span class="icon" data-icon="clock"></span>成长轨迹（时间线）</h2>
+          <p class="desc">从上到下 = 页面里从新到旧。点左侧图标可以更换；条目右上角可以排序和删除。</p>
+          <div id="tl-list"></div>
+          <button class="btn ghost small" onclick="addTimelineItem()"><span class="icon" data-icon="plus"></span>添加一段经历</button>
         </div>
         <div class="card">
-          <h2>板块标题与页脚</h2>
+          <h2><span class="icon" data-icon="pen"></span>板块标题与页脚</h2>
           <div class="row">
             <label class="field"><span>作品板块标题</span><input type="text" id="h-projectTitle"></label>
             <label class="field"><span>时间线板块标题</span><input type="text" id="h-timelineTitle"></label>
@@ -246,24 +340,23 @@
             <label class="field"><span>联系按钮文字</span><input type="text" id="h-explore"></label>
             <label class="field"><span>页脚标语</span><input type="text" id="h-footerStyle"></label>
           </div>
-          <div class="save-row"><button class="btn" onclick="saveHome()">保存当前语言的文案</button></div>
+          <div class="save-row"><button class="btn" onclick="saveHome(this)"><span class="icon" data-icon="save"></span>保存当前语言的内容</button></div>
         </div>
-        <div class="card">
-          <h2>更深入的修改</h2>
-          <p class="desc">时间线的具体条目、数据指标等更复杂的内容，直接编辑
-            <code>content/text/site/home.zh.md</code>，或让 Claude 帮你改（见"帮助"）。</p>
+        <div class="card help">
+          <h2><span class="icon" data-icon="help"></span>更深入的修改</h2>
+          <p>侧边栏底部的数据指标等更细的内容在 <code>content/text/site/home.zh.md</code> 里改，或让 Claude 帮你改（见"帮助"）。</p>
         </div>
       </section>
 
-      <!-- 外观配色 -->
+      <!-- 外观风格 -->
       <section class="tab" id="tab-theme">
         <div class="card">
-          <h2>整套风格包</h2>
-          <p class="desc">点一下立即在右侧预览（还没保存），喜欢就点底部"应用外观设置"。</p>
+          <h2><span class="icon" data-icon="palette"></span>整套风格包</h2>
+          <p class="desc">点一下立即在右侧预览（还没保存），满意就点底部"应用外观设置"。</p>
           <div class="pack-grid" id="style-packs"></div>
         </div>
         <div class="card">
-          <h2>细节微调</h2>
+          <h2><span class="icon" data-icon="sliders"></span>细节微调</h2>
           <p class="desc">所有改动都会实时出现在右侧预览里。</p>
           <div class="color-row">
             <span>主色（浅色模式）</span>
@@ -306,8 +399,8 @@
           </div>
           <p class="muted-note">深色模式的主色建议比浅色模式的更亮一点，在黑底上才看得清。</p>
           <div class="save-row">
-            <button class="btn ghost" onclick="renderTheme(); previewTheme(); toast('已恢复为当前已保存的外观')">还原预览</button>
-            <button class="btn" style="margin-left:8px" onclick="saveTheme()">应用外观设置</button>
+            <button class="btn ghost" onclick="renderTheme(); previewTheme(); toast('已恢复为当前已保存的外观')"><span class="icon" data-icon="undo"></span>还原预览</button>
+            <button class="btn" onclick="saveTheme(this)"><span class="icon" data-icon="check"></span>应用外观设置</button>
           </div>
         </div>
       </section>
@@ -321,26 +414,26 @@
       <!-- 博客 -->
       <section class="tab" id="tab-blog">
         <div class="card">
-          <h2>文章列表</h2>
-          <p class="desc">点击一篇编辑，或新建。每天最多一篇（按日期归档）。</p>
+          <h2><span class="icon" data-icon="pen"></span>文章列表</h2>
+          <p class="desc">点一篇编辑，或新建。按日期归档，一天一篇。</p>
           <div class="post-list" id="post-list"></div>
-          <button class="btn ghost" onclick="newBlogPost()">＋ 新建文章</button>
+          <button class="btn ghost" onclick="newBlogPost()"><span class="icon" data-icon="plus"></span>新建文章</button>
         </div>
         <div class="card">
-          <h2 id="blog-form-title">编辑文章</h2>
+          <h2 id="blog-form-title"><span class="icon" data-icon="filetext"></span>编辑文章</h2>
           <div class="row">
             <label class="field"><span>日期</span><input type="date" id="bl-date"></label>
             <label class="field"><span>分类</span><select id="bl-category"></select></label>
           </div>
           <label class="field"><span>标题</span><input type="text" id="bl-title"></label>
-          <label class="field"><span>摘要（在卡片上显示的简介）</span><textarea id="bl-summary" rows="3"></textarea></label>
+          <label class="field"><span>摘要（卡片上显示的简介）</span><textarea id="bl-summary" rows="3"></textarea></label>
           <label class="field"><span>微信文章链接 · 可留空</span><input type="text" id="bl-linkWechat" placeholder="https://mp.weixin.qq.com/..."></label>
           <label class="field"><span>X（推特）链接 · 可留空</span><input type="text" id="bl-linkX" placeholder="https://x.com/..."></label>
           <div class="row" style="align-items:center">
             <div class="upload-box" style="flex:none;width:140px" onclick="uploadBlogCover()">
-              <div id="img-blogCover"><div class="ph">🖼️</div></div>封面图
+              <div id="img-blogCover"><div class="ph"><span class="icon" data-icon="image"></span></div></div>封面图
             </div>
-            <div class="save-row" style="flex:1"><button class="btn" onclick="saveBlog()">保存文章</button></div>
+            <div class="save-row" style="flex:1"><button class="btn" onclick="saveBlog(this)"><span class="icon" data-icon="save"></span>保存文章</button></div>
           </div>
         </div>
       </section>
@@ -348,90 +441,85 @@
       <!-- 发布上线 -->
       <section class="tab" id="tab-deploy">
         <div class="card">
-          <h2>第 1 步 · 体检</h2>
+          <h2><span class="icon" data-icon="activity"></span>第 1 步 · 体检</h2>
           <p class="desc">检查所有内容文件是否完整合法（缺图、格式错误都会在这里报出来）。</p>
-          <button class="btn" onclick="deployCheck()">🩺 一键体检</button>
+          <button class="btn" onclick="deployCheck(this)"><span class="icon" data-icon="activity"></span>一键体检</button>
           <span id="check-result" style="font-size:12.5px;margin-left:10px"></span>
         </div>
         <div class="card">
-          <h2>第 2 步 · 打包</h2>
+          <h2><span class="icon" data-icon="package"></span>第 2 步 · 打包</h2>
           <p class="desc">生成可部署的静态网站（dist/ 文件夹），大约需要 1~2 分钟。</p>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-            <button class="btn" id="build-btn" onclick="deployBuild()">📦 开始打包</button>
-            <button class="btn ghost" onclick="openDist()">📂 打开 dist 文件夹</button>
+            <button class="btn" id="build-btn" onclick="deployBuild()"><span class="icon" data-icon="package"></span>开始打包</button>
+            <button class="btn ghost" onclick="openDist()"><span class="icon" data-icon="folder"></span>打开 dist 文件夹</button>
           </div>
           <pre id="build-log" style="display:none;background:#0f172a;color:#a5f3c4;font-size:11px;line-height:1.6;border-radius:8px;padding:10px 12px;max-height:180px;overflow-y:auto;white-space:pre-wrap"></pre>
         </div>
         <div class="card">
-          <h2>第 3 步 · 上传到托管平台（免费）</h2>
+          <h2><span class="icon" data-icon="rocket"></span>第 3 步 · 上传到托管平台（免费）</h2>
           <p class="desc">推荐拖拽上传，不需要懂 Git。三选一即可：</p>
           <details style="margin-bottom:8px">
-            <summary style="cursor:pointer;font-size:13px;font-weight:600">🟢 Netlify Drop（最简单）</summary>
-            <ol style="font-size:12.5px;line-height:1.9;padding:8px 0 4px 20px;color:#334155">
+            <summary>Netlify Drop（最简单）</summary>
+            <ol>
               <li>打开 <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a>（需注册，免费）</li>
               <li>把整个 <b>dist 文件夹</b>拖进页面虚线框里</li>
-              <li>等几十秒，得到一个 xxx.netlify.app 网址，完成 🎉</li>
+              <li>等几十秒，得到一个 xxx.netlify.app 网址，完成</li>
             </ol>
           </details>
           <details style="margin-bottom:8px">
-            <summary style="cursor:pointer;font-size:13px;font-weight:600">🟠 Cloudflare Pages（国内访问相对稳定）</summary>
-            <ol style="font-size:12.5px;line-height:1.9;padding:8px 0 4px 20px;color:#334155">
+            <summary>Cloudflare Pages（国内访问相对稳定）</summary>
+            <ol>
               <li>打开 <a href="https://dash.cloudflare.com" target="_blank">dash.cloudflare.com</a> → Workers 和 Pages → 创建 → Pages</li>
               <li>选择"直接上传"，把 dist 文件夹拖进去</li>
-              <li>得到 xxx.pages.dev 网址，完成 🎉</li>
+              <li>得到 xxx.pages.dev 网址，完成</li>
             </ol>
           </details>
           <details>
-            <summary style="cursor:pointer;font-size:13px;font-weight:600">⚫ Vercel / 绑定自己的域名（进阶）</summary>
-            <p style="font-size:12.5px;line-height:1.8;padding:8px 0 4px;color:#334155">
-              把项目推到 GitHub 后在 <a href="https://vercel.com" target="_blank">vercel.com</a> 导入仓库（构建命令 npm run build，输出目录 dist），以后改完内容推送即自动更新。绑定自有域名在各平台的"Custom domains"设置里，详见 docs/CUSTOMIZE.md。
-            </p>
+            <summary>Vercel / 绑定自己的域名（进阶）</summary>
+            <p>把项目推到 GitHub 后在 <a href="https://vercel.com" target="_blank">vercel.com</a> 导入仓库（构建命令 npm run build，输出目录 dist），以后改完内容推送即自动更新。绑定自有域名在各平台的"Custom domains"设置里，详见 docs/CUSTOMIZE.md。</p>
           </details>
-          <p class="muted-note" style="margin-top:10px">上线后回到顶部进度条，点"发布上线"标记完成 ✅</p>
+          <p class="muted-note">上线后回到顶部进度条，点"发布上线"标记完成。</p>
         </div>
         <div class="card">
-          <h2>模板署名</h2>
-          <p class="desc">在页脚显示一行"基于 RZC 开源模板搭建"的小字链接，支持模板作者。</p>
-          <label class="field" style="display:flex;align-items:center;gap:8px">
-            <input type="checkbox" id="attr-enabled" style="width:auto" onchange="saveAttribution()">
-            <span style="margin:0">显示页脚署名</span>
-          </label>
-          <p class="muted-note">署名文字和链接可在 content/config/site.yml 修改。</p>
+          <h2><span class="icon" data-icon="link"></span>模板署名</h2>
+          <div class="switch-row">
+            <div class="sw-label">
+              <b>页脚显示"基于 folio-studio 模板搭建"</b>
+              <small>一行低调的小字链接，支持模板作者。署名文字和链接可在 content/config/site.yml 修改。</small>
+            </div>
+            <label class="switch"><input type="checkbox" id="sf-attribution" onchange="saveAttributionFlag()"><i></i></label>
+          </div>
         </div>
       </section>
 
       <!-- 帮助 -->
       <section class="tab" id="tab-help">
         <div class="card help">
-          <h2>这个定制器是什么？</h2>
+          <h2><span class="icon" data-icon="help"></span>这个定制器是什么？</h2>
           <p>网站的所有内容（文字、图片、颜色）都放在 <code>content/</code> 文件夹里，代码不需要动。这个页面就是 content/ 的图形化编辑器：你在左边改，右边立即看到效果。</p>
           <p>定制器只在本地开发时可用，<b>不会</b>被发布到线上网站。</p>
         </div>
         <div class="card help">
-          <h2>推荐的定制顺序</h2>
-          <p>1️⃣ 基本信息：改名字、传头像和二维码<br>
-             2️⃣ 首页文案：改标题、签名、技能标签（中英文都填）<br>
-             3️⃣ 外观配色：挑个主题色、调圆角<br>
-             4️⃣ 项目作品：把示例项目改成你自己的，或新建<br>
-             5️⃣ 博客文章：不需要可以不管，卡片会自动隐藏空内容</p>
+          <h2><span class="icon" data-icon="check"></span>推荐的定制顺序</h2>
+          <p>1. 基本信息：改名字、传头像和二维码<br>
+             2. 首页内容：改标题、签名、时间线（中英文都填）<br>
+             3. 外观风格：挑个风格包、调圆角<br>
+             4. 项目作品：把示例项目改成你自己的<br>
+             5. 发布上线：体检 → 打包 → 拖拽上传</p>
         </div>
         <div class="card help">
-          <h2>想改这里没有的内容？</h2>
+          <h2><span class="icon" data-icon="bot"></span>想改这里没有的内容？</h2>
           <p>用 Claude Code 打开这个项目文件夹，直接说你想要什么，例如：<br>
-            "把时间线改成我的经历：2020 年……"<br>
             "简历页换成我的简历"<br>
-            "把 Personal AI 卡片去掉"</p>
+            "侧边栏底部的数据指标改成……"<br>
+            "把技能矩阵里的工具换成我常用的"</p>
           <p>项目里已内置定制技能（<code>.claude/skills/customize-site</code>），Claude 知道每个内容对应哪个文件。</p>
         </div>
         <div class="card help">
-          <h2>发布上线</h2>
-          <p>定制完成后运行 <code>npm run build</code>，把 <code>dist/</code> 部署到 Cloudflare Pages / Vercel / Netlify 等任意静态托管即可。详细步骤见 <code>docs/CUSTOMIZE.md</code>。</p>
-        </div>
-        <div class="card help">
-          <h2>改坏了 / 想重新开始</h2>
-          <p>顶部的 <b>↩ 撤销本次修改</b> 可以恢复到本次打开定制器之前的状态。</p>
+          <h2><span class="icon" data-icon="undo"></span>改坏了 / 想重新开始</h2>
+          <p>顶部的 <b>撤销本次修改</b> 可以恢复到本次打开定制器之前的状态。</p>
           <p>想把整站换成干净的示例内容（虚构人设"林小满"，适合从零开始定制）：</p>
-          <button class="btn danger" onclick="resetToStarter()">重置为示例内容</button>
+          <button class="btn danger" onclick="resetToStarter()"><span class="icon" data-icon="reset"></span>重置为示例内容</button>
           <p class="muted-note">重置前会自动备份当前内容到 .studio-snapshots/ 文件夹，不会真的丢失。</p>
         </div>
       </section>
@@ -440,10 +528,10 @@
     <div class="preview">
       <div class="preview-bar">
         实时预览
-        <button id="pv-desktop" class="on" onclick="setPreview('desktop')">🖥️ 电脑</button>
-        <button id="pv-mobile" onclick="setPreview('mobile')">📱 手机</button>
-        <button onclick="reloadPreview()">🔄 刷新</button>
-        <button id="pv-edit" class="on" onclick="toggleEditMode()" title="开启后，点击预览里的文字/图片直接跳到对应编辑框">✏️ 点哪改哪</button>
+        <button id="pv-desktop" class="on" onclick="setPreview('desktop')"><span class="icon" data-icon="monitor"></span>电脑</button>
+        <button id="pv-mobile" onclick="setPreview('mobile')"><span class="icon" data-icon="phone"></span>手机</button>
+        <button onclick="reloadPreview()"><span class="icon" data-icon="refresh"></span>刷新</button>
+        <button id="pv-edit" class="on" onclick="toggleEditMode()" title="开启后，点击预览里的文字/图片直接跳到对应编辑框"><span class="icon" data-icon="pointer"></span>点哪改哪</button>
         <span id="pv-edit-hint" style="color:#c13b25;font-weight:600">点预览里的内容试试 →</span>
       </div>
       <div class="preview-frame-wrap" id="pv-wrap"><iframe id="pv" src="/"></iframe></div>
@@ -457,15 +545,61 @@
 let state = null;
 let currentLang = 'zh';
 let homeEdits = { zh: null, en: null };
+let timelineEdits = { zh: null, en: null };
 let currentProjectId = null;
 let currentBlogDate = null;
 
 const $ = (id) => document.getElementById(id);
 
+// ── 内嵌 SVG 图标（Lucide 风格，ISC 许可的开源图标绘制） ──
+const ICONS = {
+  sparkles: '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>',
+  user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  filetext: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M15 2v5h5"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  palette: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1a1.6 1.6 0 0 1 1.7-1.7h2c3 0 5.5-2.5 5.5-5.6C22 6 17.5 2 12 2z"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+  pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  rocket: '<path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="m12 15-3-3a22 22 0 0 1 2-4A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22 22 0 0 1-4 2z"/><path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0"/><path d="M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5"/>',
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+  undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/>',
+  external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  monitor: '<rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>',
+  phone: '<rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/>',
+  refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  pointer: '<path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1"/><path d="m5.1 8-2.9-.8"/><path d="M14 4.1 12 6"/><path d="m6 12-1.9 2"/>',
+  image: '<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>',
+  plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  trash: '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>',
+  folder: '<path d="m6 14 1.5-2.9A2 2 0 0 1 9.2 10H20a2 2 0 0 1 1.9 2.5l-1.5 6a2 2 0 0 1-2 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.7.9l.8 1.2a2 2 0 0 0 1.7.9H18a2 2 0 0 1 2 2v2"/>',
+  activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  package: '<path d="m7.5 4.3 9 5.1"/><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/>',
+  up: '<path d="m18 15-6-6-6 6"/>',
+  down: '<path d="m6 9 6 6 6-6"/>',
+  bot: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
+  qrcode: '<rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>',
+  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  sliders: '<path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M2 14h4"/><path d="M10 8h4"/><path d="M18 16h4"/>',
+  reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+};
+
+const icon = (name) => `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${ICONS[name] || ICONS.help}</svg>`;
+
+function hydrateIcons(root) {
+  (root || document).querySelectorAll('[data-icon]').forEach((el) => {
+    el.innerHTML = icon(el.dataset.icon);
+    el.removeAttribute('data-icon');
+  });
+}
+
 // ── 通用 ──
 function toast(message, isError) {
   const el = $('toast');
-  el.textContent = message;
+  el.innerHTML = `<span class="icon">${icon(isError ? 'x' : 'check')}</span>${message}`;
   el.className = isError ? 'show err' : 'show';
   clearTimeout(el._timer);
   el._timer = setTimeout(() => { el.className = ''; }, isError ? 4200 : 2200);
@@ -483,43 +617,14 @@ async function api(url, body) {
   return data;
 }
 
-// ── 完成度清单 ──
-function renderChecklist() {
-  const container = $('checklist');
-  const checklist = state && state.checklist;
-  if (!checklist || checklist.hidden) { container.innerHTML = ''; return; }
-  const doneCount = checklist.items.filter((i) => i.done).length;
-  const percent = Math.round((doneCount / checklist.items.length) * 100);
-  container.innerHTML = `
-    <div class="card">
-      <div class="check-head">
-        <b>${percent === 100 ? '🎉 全部完成！' : '定制进度'}</b>
-        <div class="bar"><i style="width:${percent}%"></i></div>
-        <span style="font-size:11px;color:var(--muted)">${doneCount}/${checklist.items.length}</span>
-        <button onclick="hideChecklist()" title="不再显示">✕</button>
-      </div>
-      <div class="check-items">
-        ${checklist.items.map((item) => `
-          <button class="${item.done ? 'done' : ''}" onclick="checklistJump('${item.key}', '${item.tab}')">
-            ${item.done ? '✅' : '⬜'} ${item.label}
-          </button>`).join('')}
-      </div>
-    </div>`;
-}
-
-function checklistJump(key, tab) {
-  const target = document.querySelector(`#nav button[data-tab="${tab}"]`) ? tab : 'help';
-  selectTab(target);
-  if (key === 'publish' && !state.checklist.items.find((i) => i.key === 'publish').done) {
-    // 发布项支持手动勾选：部署完成后点它标记完成。
-    if (confirm('已经把网站部署上线了吗？\n点"确定"标记为完成。')) {
-      api('/studio/api/checklist', { publishMarked: true }).catch(() => {});
-    }
+/** 按钮进入"保存中"状态直到操作结束，防止重复点击。 */
+async function withBusy(btn, action) {
+  if (btn) btn.disabled = true;
+  try {
+    await action();
+  } finally {
+    if (btn) btn.disabled = false;
   }
-}
-
-async function hideChecklist() {
-  try { await api('/studio/api/checklist', { checklistHidden: true }); } catch {}
 }
 
 function pickFile() {
@@ -542,25 +647,29 @@ async function uploadTo(target, extra) {
   if (!dataUrl) return false;
   toast('正在上传并压缩图片…');
   await api('/studio/api/upload', Object.assign({ target, dataUrl }, extra || {}));
-  toast('图片已更新 ✓');
+  toast('图片已更新');
   return true;
 }
 
-function setThumb(containerId, url, emoji) {
+function setThumb(containerId, url, iconName) {
   const el = $(containerId);
   el.innerHTML = url
     ? '<img src="' + url + (url.includes('?') ? '' : '?t=' + Date.now()) + '">'
-    : '<div class="ph">' + (emoji || '🖼️') + '</div>';
+    : '<div class="ph"><span class="icon">' + icon(iconName || 'image') + '</span></div>';
 }
 
-// ── 导航 ──
+function esc(text) {
+  return String(text ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ── 导航与预览 ──
+function selectTab(name) {
+  document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('section.tab').forEach((s) => s.classList.toggle('active', s.id === 'tab-' + name));
+}
+
 document.querySelectorAll('#nav button').forEach((btn) => {
-  btn.onclick = () => {
-    document.querySelectorAll('#nav button').forEach((b) => b.classList.remove('active'));
-    document.querySelectorAll('section.tab').forEach((s) => s.classList.remove('active'));
-    btn.classList.add('active');
-    $('tab-' + btn.dataset.tab).classList.add('active');
-  };
+  btn.onclick = () => selectTab(btn.dataset.tab);
 });
 
 function setPreview(mode) {
@@ -598,31 +707,36 @@ const EDIT_JUMP = {
   'home.timelineTitle': { tab: 'home', el: 'h-timelineTitle' },
   'home.footerStyle': { tab: 'home', el: 'h-footerStyle' },
   'basic.avatar': { tab: 'basic', el: 'img-avatarLight' },
+  'basic.brandMark': { tab: 'basic', el: 'img-brandMark' },
+  'hint:timeline': { tab: 'home', el: 'timeline-editor' },
 };
 
 const EDIT_HINTS = {
   'hint:metrics': '数据指标在 content/text/site/home.zh.md 的 metrics 部分修改，或让 Claude 帮你改。',
-  'hint:timeline': '时间线条目在 content/text/site/home.zh.md 的 timeline 部分修改，或让 Claude 帮你改。',
   'hint:quicklinks': '快捷入口文字在 content/text/site/home.zh.md 的 quickLinks 部分修改，或让 Claude 帮你改。',
 };
-
-function selectTab(name) {
-  document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
-  document.querySelectorAll('section.tab').forEach((s) => s.classList.toggle('active', s.id === 'tab-' + name));
-}
 
 function flashField(el) {
   if (!el) return;
   el.scrollIntoView({ block: 'center', behavior: 'smooth' });
   el.classList.remove('flash-target');
-  void el.offsetWidth; // 重启动画
+  void el.offsetWidth;
   el.classList.add('flash-target');
-  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.focus({ preventScroll: true });
 }
 
 function handleEditJump(field, label, lang) {
+  const jump = EDIT_JUMP[field];
+  if (jump) {
+    if (jump.tab === 'home' && lang && lang !== currentLang) switchLang(lang);
+    selectTab(jump.tab);
+    const input = $(jump.el);
+    if (!input) return;
+    flashField(input.closest('label.field') || input.closest('.upload-box') || input);
+    if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') input.focus({ preventScroll: true });
+    return;
+  }
   if (field.startsWith('hint:')) {
-    toast('💡 ' + (EDIT_HINTS[field] || (label + ' 暂不支持在定制器里修改')), false);
+    toast(EDIT_HINTS[field] || (label + ' 暂不支持在定制器里修改'), false);
     return;
   }
   if (field.startsWith('project:')) {
@@ -634,16 +748,7 @@ function handleEditJump(field, label, lang) {
       renderProjectForm();
       flashField(document.querySelector('#project-form .card'));
     }
-    return;
   }
-  const jump = EDIT_JUMP[field];
-  if (!jump) return;
-  if (jump.tab === 'home' && lang && lang !== currentLang) switchLang(lang);
-  selectTab(jump.tab);
-  const input = $(jump.el);
-  if (!input) return;
-  flashField(input.closest('label.field') || input.closest('.upload-box') || input);
-  if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') input.focus({ preventScroll: true });
 }
 
 window.addEventListener('message', (event) => {
@@ -654,22 +759,65 @@ window.addEventListener('message', (event) => {
 });
 $('pv').addEventListener('load', sendEditMode);
 
+// ── 完成度清单 ──
+function renderChecklist() {
+  const container = $('checklist');
+  const checklist = state && state.checklist;
+  if (!checklist || checklist.hidden) { container.innerHTML = ''; return; }
+  const doneCount = checklist.items.filter((i) => i.done).length;
+  const percent = Math.round((doneCount / checklist.items.length) * 100);
+  container.innerHTML = `
+    <div class="card">
+      <div class="check-head">
+        <b>${percent === 100 ? '全部完成！' : '定制进度'}</b>
+        <div class="bar"><i style="width:${percent}%"></i></div>
+        <span style="font-size:11px;color:var(--muted)">${doneCount}/${checklist.items.length}</span>
+        <button onclick="hideChecklist()" title="不再显示"><span class="icon">${icon('x')}</span></button>
+      </div>
+      <div class="check-items">
+        ${checklist.items.map((item) => `
+          <button class="${item.done ? 'done' : ''}" onclick="checklistJump('${item.key}', '${item.tab}')">
+            <span class="icon">${icon(item.done ? 'check' : 'clock')}</span>${item.label}
+          </button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function checklistJump(key, tab) {
+  const target = document.querySelector(`#nav button[data-tab="${tab}"]`) ? tab : 'help';
+  selectTab(target);
+  if (key === 'publish' && !state.checklist.items.find((i) => i.key === 'publish').done) {
+    if (confirm('已经把网站部署上线了吗？\n点"确定"标记为完成。')) {
+      api('/studio/api/checklist', { publishMarked: true }).catch(() => {});
+    }
+  }
+}
+
+async function hideChecklist() {
+  try { await api('/studio/api/checklist', { checklistHidden: true }); } catch {}
+}
+
 // ── 基本信息 ──
 function renderBasic() {
   const b = state.basic;
   ['displayName','legalName','wechatId','email','x','xiaohongshu','github'].forEach((key) => { $('b-' + key).value = b[key] || ''; });
-  setThumb('img-avatarLight', b.avatarLight, '🙂');
-  setThumb('img-avatarDark', b.avatarDark, '🌙');
-  setThumb('img-wechatQr', b.wechatQr, '🔳');
+  setThumb('img-avatarLight', b.avatarLight, 'user');
+  setThumb('img-avatarDark', b.avatarDark, 'moon');
+  setThumb('img-wechatQr', b.wechatQr, 'qrcode');
+  setThumb('img-brandMark', b.brandMark, 'sparkles');
+  $('sf-personalAI').checked = !!(state.siteFlags && state.siteFlags.personalAI);
+  $('sf-attribution').checked = !!(state.siteFlags && state.siteFlags.attributionEnabled);
 }
 
-async function saveBasic() {
-  try {
-    const body = {};
-    ['displayName','legalName','wechatId','email','x','xiaohongshu','github'].forEach((key) => { body[key] = $('b-' + key).value; });
-    await api('/studio/api/basic', body);
-    toast('基本信息已保存 ✓');
-  } catch (error) { toast(error.message, true); }
+async function saveBasic(btn) {
+  await withBusy(btn, async () => {
+    try {
+      const body = {};
+      ['displayName','legalName','wechatId','email','x','xiaohongshu','github'].forEach((key) => { body[key] = $('b-' + key).value; });
+      await api('/studio/api/basic', body);
+      toast('基本信息已保存');
+    } catch (error) { toast(error.message, true); }
+  });
 }
 
 async function pickImage(target) {
@@ -678,7 +826,30 @@ async function pickImage(target) {
   } catch (error) { toast(error.message, true); }
 }
 
-// ── 首页文案 ──
+async function removeBrandMark() {
+  if (!confirm('移除个人 Logo？首屏右侧将不再显示 Logo。')) return;
+  try {
+    await api('/studio/api/brandmark/remove', {});
+    renderBasic();
+    toast('Logo 已移除');
+  } catch (error) { toast(error.message, true); }
+}
+
+async function savePersonalAI() {
+  try {
+    await api('/studio/api/site-config', { personalAI: $('sf-personalAI').checked });
+    toast($('sf-personalAI').checked ? '个人 AI 卡片已开启' : '个人 AI 卡片已隐藏');
+  } catch (error) { toast(error.message, true); }
+}
+
+async function saveAttributionFlag() {
+  try {
+    await api('/studio/api/site-config', { attributionEnabled: $('sf-attribution').checked });
+    toast($('sf-attribution').checked ? '页脚署名已开启' : '页脚署名已关闭');
+  } catch (error) { toast(error.message, true); }
+}
+
+// ── 首页内容 ──
 const HOME_FIELDS = ['greeting','description','name','city','mbti','experience','profileStatement','explore','projectTitle','timelineTitle','footerStyle'];
 
 function collectHomeForm() {
@@ -686,6 +857,7 @@ function collectHomeForm() {
   HOME_FIELDS.forEach((key) => { fields[key] = $('h-' + key).value; });
   fields.skillList = $('h-skillList').value.split('\n').map((s) => s.trim()).filter(Boolean);
   fields.skillTags = $('h-skillTags').value.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+  fields.timelineItems = collectTimeline();
   return fields;
 }
 
@@ -694,25 +866,122 @@ function renderHome(lang) {
   HOME_FIELDS.forEach((key) => { $('h-' + key).value = fields[key] || ''; });
   $('h-skillList').value = (fields.skillList || []).join('\n');
   $('h-skillTags').value = (fields.skillTags || []).join('，');
+  if (!timelineEdits[lang]) {
+    timelineEdits[lang] = JSON.parse(JSON.stringify(state.home[lang].timelineItems || []));
+  }
+  renderTimeline();
 }
 
 function switchLang(lang) {
-  homeEdits[currentLang] = collectHomeForm(); // 暂存未保存的编辑
+  homeEdits[currentLang] = collectHomeForm();
+  timelineEdits[currentLang] = collectTimeline();
   currentLang = lang;
   document.querySelectorAll('.lang-tabs button').forEach((b) => b.classList.toggle('on', b.dataset.lang === lang));
   renderHome(lang);
 }
 
-async function saveHome() {
-  try {
-    const body = {}; body[currentLang] = collectHomeForm();
-    await api('/studio/api/home', body);
-    homeEdits[currentLang] = null;
-    toast((currentLang === 'zh' ? '中文' : '英文') + '文案已保存 ✓');
-  } catch (error) { toast(error.message, true); }
+async function saveHome(btn) {
+  await withBusy(btn, async () => {
+    try {
+      const body = {}; body[currentLang] = collectHomeForm();
+      await api('/studio/api/home', body);
+      homeEdits[currentLang] = null;
+      timelineEdits[currentLang] = JSON.parse(JSON.stringify(state.home[currentLang].timelineItems || []));
+      renderTimeline();
+      toast((currentLang === 'zh' ? '中文' : '英文') + '内容已保存');
+    } catch (error) { toast(error.message, true); }
+  });
 }
 
-// ── 外观：风格包 + 实时预览 ──
+// ── 时间线编辑器 ──
+function timelineIcons() {
+  return (state.home && state.home.zh && state.home.zh.timelineIcons) || ['star'];
+}
+
+function collectTimeline() {
+  const items = [];
+  document.querySelectorAll('#tl-list .tl-item').forEach((el) => {
+    items.push({
+      icon: el.dataset.icon,
+      period: el.querySelector('.tl-period').value,
+      title: el.querySelector('.tl-title').value,
+      keywords: el.querySelector('.tl-keywords').value.split(/[,，]/).map((s) => s.trim()).filter(Boolean),
+      detail: el.querySelector('.tl-detail').value,
+    });
+  });
+  return items;
+}
+
+function renderTimeline() {
+  const items = timelineEdits[currentLang] || [];
+  const listEl = $('tl-list');
+  listEl.innerHTML = items.map((item, index) => `
+    <div class="tl-item" data-icon="${esc(item.icon || 'star')}" data-index="${index}">
+      <div class="tl-head">
+        <button class="tl-icon-btn" onclick="toggleIconPicker(${index})" title="更换图标">
+          <span class="material-symbols-outlined">${esc(item.icon || 'star')}</span>
+        </button>
+        <input type="text" class="tl-period" placeholder="时期，如 2024 - 至今" value="${esc(item.period)}">
+        <div class="tl-ops">
+          <button onclick="moveTimelineItem(${index}, -1)" title="上移"><span class="icon">${icon('up')}</span></button>
+          <button onclick="moveTimelineItem(${index}, 1)" title="下移"><span class="icon">${icon('down')}</span></button>
+          <button class="del" onclick="removeTimelineItem(${index})" title="删除"><span class="icon">${icon('trash')}</span></button>
+        </div>
+      </div>
+      <div class="icon-picker" id="tl-picker-${index}">
+        ${timelineIcons().map((name) => `
+          <button class="${name === item.icon ? 'on' : ''}" onclick="setTimelineIcon(${index}, '${name}')" title="${name}">
+            <span class="material-symbols-outlined">${name}</span>
+          </button>`).join('')}
+      </div>
+      <label class="field"><input type="text" class="tl-title" placeholder="这段经历的标题" value="${esc(item.title)}"></label>
+      <label class="field"><input type="text" class="tl-keywords" placeholder="关键词，用逗号分隔（可留空）" value="${esc((item.keywords || []).join('，'))}"></label>
+      <label class="field" style="margin-bottom:0"><textarea class="tl-detail" rows="2" placeholder="一两句话描述这段经历">${esc(item.detail)}</textarea></label>
+    </div>`).join('') || '<p class="muted-note" style="margin:0 0 10px">还没有条目，点下面的按钮添加第一段经历。</p>';
+}
+
+function syncTimelineFromDom() {
+  timelineEdits[currentLang] = collectTimeline();
+}
+
+function addTimelineItem() {
+  syncTimelineFromDom();
+  timelineEdits[currentLang].unshift({ icon: 'star', period: '', title: '', keywords: [], detail: '' });
+  renderTimeline();
+  const first = document.querySelector('#tl-list .tl-item .tl-period');
+  if (first) first.focus();
+}
+
+function removeTimelineItem(index) {
+  syncTimelineFromDom();
+  timelineEdits[currentLang].splice(index, 1);
+  renderTimeline();
+}
+
+function moveTimelineItem(index, delta) {
+  syncTimelineFromDom();
+  const items = timelineEdits[currentLang];
+  const target = index + delta;
+  if (target < 0 || target >= items.length) return;
+  [items[index], items[target]] = [items[target], items[index]];
+  renderTimeline();
+}
+
+function toggleIconPicker(index) {
+  syncTimelineFromDom();
+  const picker = $('tl-picker-' + index);
+  const isOpen = picker.classList.contains('open');
+  document.querySelectorAll('.icon-picker').forEach((el) => el.classList.remove('open'));
+  if (!isOpen) picker.classList.add('open');
+}
+
+function setTimelineIcon(index, name) {
+  syncTimelineFromDom();
+  timelineEdits[currentLang][index].icon = name;
+  renderTimeline();
+}
+
+// ── 外观风格 ──
 const FONT_META = {
   modern: { fontSans: "'Manrope', 'Noto Sans SC', sans-serif", webfonts: [] },
   serif: { fontSans: "'Source Serif 4', 'Noto Serif SC', serif", webfonts: ['https://fonts.loli.net/css2?family=Source+Serif+4:wght@400;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap'] },
@@ -745,7 +1014,6 @@ function hexToRgba(hex, alpha) {
   return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
 }
 
-/** 把当前控件值实时注入预览 iframe（不落盘）。 */
 function previewTheme() {
   const accentLight = $('t-accentLightHex').value.trim();
   const accentDark = $('t-accentDarkHex').value.trim();
@@ -791,7 +1059,7 @@ function applyPack(pack) {
   $('t-density').value = pack.density;
   document.querySelectorAll('.pack').forEach((el) => el.classList.toggle('on', el.dataset.pack === pack.id));
   previewTheme();
-  toast('「' + pack.name + '」预览中，喜欢就点"应用外观设置"');
+  toast('「' + pack.name + '」预览中，满意就点"应用外观设置"');
 }
 
 function renderTheme() {
@@ -810,20 +1078,22 @@ function renderTheme() {
   $('t-density').value = t.density || 'normal';
 }
 
-async function saveTheme() {
-  try {
-    await api('/studio/api/theme', {
-      accentLight: $('t-accentLightHex').value.trim(),
-      accentDark: $('t-accentDarkHex').value.trim(),
-      pageLight: $('t-pageLightHex').value.trim(),
-      pageDark: $('t-pageDarkHex').value.trim(),
-      radius: Number($('t-radius').value),
-      aurora: Number($('t-aurora').value),
-      fontPreset: $('t-font').value,
-      density: $('t-density').value,
-    });
-    toast('外观已应用 ✓');
-  } catch (error) { toast(error.message, true); }
+async function saveTheme(btn) {
+  await withBusy(btn, async () => {
+    try {
+      await api('/studio/api/theme', {
+        accentLight: $('t-accentLightHex').value.trim(),
+        accentDark: $('t-accentDarkHex').value.trim(),
+        pageLight: $('t-pageLightHex').value.trim(),
+        pageDark: $('t-pageDarkHex').value.trim(),
+        radius: Number($('t-radius').value),
+        aurora: Number($('t-aurora').value),
+        fontPreset: $('t-font').value,
+        density: $('t-density').value,
+      });
+      toast('外观已应用');
+    } catch (error) { toast(error.message, true); }
+  });
 }
 
 function initThemeControls() {
@@ -854,23 +1124,20 @@ function initThemeControls() {
   $('t-aurora').oninput = () => { $('t-aurora-out').textContent = $('t-aurora').value + '%'; previewTheme(); };
 }
 
-// ── 项目 ──
-function esc(text) {
-  return String(text ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
+// ── 项目作品 ──
 function renderProjectChips() {
   const el = $('project-chips');
   el.innerHTML = '';
   state.projects.forEach((project) => {
     const btn = document.createElement('button');
-    btn.textContent = (project.published ? '' : '⏸ ') + (project.zh.title || project.id);
+    btn.innerHTML = (project.published ? '' : '<span class="icon">' + icon('moon') + '</span>') + esc(project.zh.title || project.id);
     btn.className = project.id === currentProjectId ? 'on' : '';
+    btn.title = project.published ? '' : '未展示';
     btn.onclick = () => { currentProjectId = project.id; renderProjectChips(); renderProjectForm(); };
     el.appendChild(btn);
   });
   const addBtn = document.createElement('button');
-  addBtn.textContent = '＋ 新建项目';
+  addBtn.innerHTML = '<span class="icon">' + icon('plus') + '</span>新建项目';
   addBtn.onclick = createProject;
   el.appendChild(addBtn);
 }
@@ -878,11 +1145,11 @@ function renderProjectChips() {
 function renderProjectForm() {
   const project = state.projects.find((p) => p.id === currentProjectId);
   const container = $('project-form');
-  if (!project) { container.innerHTML = '<div class="card"><p class="desc">左上方选择一个项目，或新建。</p></div>'; return; }
+  if (!project) { container.innerHTML = '<div class="card"><p class="desc">上方选择一个项目，或新建。</p></div>'; return; }
   container.innerHTML = `
     <div class="card">
-      <h2>项目信息 · ${esc(project.id)}</h2>
-      <p class="desc">中文标题会显示在卡片上；英文在切换语言后显示。</p>
+      <h2><span class="icon">${icon('grid')}</span>项目信息 · ${esc(project.id)}</h2>
+      <p class="desc">中文标题显示在卡片上；英文在访客切换语言后显示。</p>
       <div class="row">
         <label class="field"><span>中文标题</span><input type="text" id="p-zh-title" value="${esc(project.zh.title)}"></label>
         <label class="field"><span>英文标题</span><input type="text" id="p-en-title" value="${esc(project.en.title)}"></label>
@@ -914,53 +1181,55 @@ function renderProjectForm() {
         <input type="checkbox" id="p-published" style="width:auto" ${project.published ? 'checked' : ''}>
         <span style="margin:0">在网站上展示这个项目</span>
       </label>
-      <div class="save-row"><button class="btn" onclick="saveProject()">保存项目信息</button></div>
+      <div class="save-row"><button class="btn" onclick="saveProject(this)"><span class="icon">${icon('save')}</span>保存项目信息</button></div>
     </div>
     <div class="card">
-      <h2>封面图</h2>
-      <p class="desc">卡片列表里显示的图。深色封面可选，不传则用浅色的。</p>
+      <h2><span class="icon">${icon('image')}</span>封面图</h2>
+      <p class="desc">卡片列表里显示的图。深色封面可选，不传则共用浅色的。</p>
       <div class="upload-grid" style="grid-template-columns:1fr 1fr">
         <div class="upload-box" onclick="uploadProjectImage('coverLight')">
-          <div id="img-coverLight">${project.coverLight ? '<img src="' + esc(project.coverLight) + '?t=' + Date.now() + '">' : '<div class="ph">🖼️</div>'}</div>浅色封面
+          <div id="img-coverLight">${project.coverLight ? '<img src="' + esc(project.coverLight) + '?t=' + Date.now() + '">' : '<div class="ph"><span class="icon">' + icon('image') + '</span></div>'}</div>浅色封面
         </div>
         <div class="upload-box" onclick="uploadProjectImage('coverDark')">
-          <div id="img-coverDark">${project.coverDark ? '<img src="' + esc(project.coverDark) + '?t=' + Date.now() + '">' : '<div class="ph">🌑</div>'}</div>深色封面
+          <div id="img-coverDark">${project.coverDark ? '<img src="' + esc(project.coverDark) + '?t=' + Date.now() + '">' : '<div class="ph"><span class="icon">' + icon('moon') + '</span></div>'}</div>深色封面
         </div>
       </div>
     </div>
     <div class="card">
-      <h2>详情截图（${project.detailImages.length} 张）</h2>
+      <h2><span class="icon">${icon('image')}</span>详情截图（${project.detailImages.length} 张）</h2>
       <p class="desc">点开项目后的轮播大图，按编号排序。</p>
       <div class="detail-grid">
         ${project.detailImages.map((img) => `
           <div class="detail-item">
             <img src="${esc(img.url)}?t=${Date.now()}">
-            <button title="删除" onclick="removeDetail('${esc(img.file)}')">✕</button>
+            <button title="删除" onclick="removeDetail('${esc(img.file)}')"><span class="icon">${icon('x')}</span></button>
           </div>`).join('')}
       </div>
-      <button class="btn ghost small" onclick="uploadProjectImage('detail')">＋ 添加截图</button>
+      <button class="btn ghost small" onclick="uploadProjectImage('detail')"><span class="icon">${icon('plus')}</span>添加截图</button>
     </div>
     <div class="card help">
-      <h2>项目详情长文</h2>
+      <h2><span class="icon">${icon('filetext')}</span>项目详情长文</h2>
       <p>项目背景、问题、方案等长文案在 <code>content/text/projects/${esc(project.id)}/overview.zh.md</code>，可以直接编辑或让 Claude 帮你写。</p>
     </div>`;
   bindColor('p-themeColor', 'p-themeColorHex');
 }
 
-async function saveProject() {
-  try {
-    const split = (id, separator) => $(id).value.split(separator).map((s) => s.trim()).filter(Boolean);
-    await api('/studio/api/project/save', {
-      id: currentProjectId,
-      year: $('p-year').value, role: $('p-role').value, outcome: $('p-outcome').value,
-      themeColor: $('p-themeColorHex').value.trim(), webLink: $('p-webLink').value.trim(),
-      version: $('p-version').value.trim(), published: $('p-published').checked,
-      zh: { title: $('p-zh-title').value, subtitle: $('p-zh-subtitle').value, description: $('p-zh-description').value, keywords: split('p-zh-keywords', /[,，]/) },
-      en: { title: $('p-en-title').value, subtitle: $('p-en-subtitle').value, description: $('p-en-description').value, keywords: split('p-en-keywords', /[,，]/) },
-    });
-    renderProjectChips();
-    toast('项目已保存 ✓');
-  } catch (error) { toast(error.message, true); }
+async function saveProject(btn) {
+  await withBusy(btn, async () => {
+    try {
+      const split = (id, separator) => $(id).value.split(separator).map((s) => s.trim()).filter(Boolean);
+      await api('/studio/api/project/save', {
+        id: currentProjectId,
+        year: $('p-year').value, role: $('p-role').value, outcome: $('p-outcome').value,
+        themeColor: $('p-themeColorHex').value.trim(), webLink: $('p-webLink').value.trim(),
+        version: $('p-version').value.trim(), published: $('p-published').checked,
+        zh: { title: $('p-zh-title').value, subtitle: $('p-zh-subtitle').value, description: $('p-zh-description').value, keywords: split('p-zh-keywords', /[,，]/) },
+        en: { title: $('p-en-title').value, subtitle: $('p-en-subtitle').value, description: $('p-en-description').value, keywords: split('p-en-keywords', /[,，]/) },
+      });
+      renderProjectChips();
+      toast('项目已保存');
+    } catch (error) { toast(error.message, true); }
+  });
 }
 
 async function uploadProjectImage(target) {
@@ -973,7 +1242,7 @@ async function removeDetail(file) {
   try {
     await api('/studio/api/project/detail-remove', { projectId: currentProjectId, file });
     renderProjectForm();
-    toast('已删除 ✓');
+    toast('已删除');
   } catch (error) { toast(error.message, true); }
 }
 
@@ -984,7 +1253,7 @@ async function createProject() {
     await api('/studio/api/project/create', { id: id.trim() });
     currentProjectId = id.trim();
     renderProjectChips(); renderProjectForm();
-    toast('项目已创建，填写信息后勾选"展示"即可上架 ✓');
+    toast('项目已创建，填好信息后勾选"展示"即可上架');
   } catch (error) { toast(error.message, true); }
 }
 
@@ -1005,14 +1274,14 @@ function renderBlog() {
 }
 
 function renderBlogForm(post) {
-  $('blog-form-title').textContent = post ? '编辑文章 · ' + post.date : '新建文章';
+  $('blog-form-title').innerHTML = '<span class="icon">' + icon('filetext') + '</span>' + (post ? '编辑文章 · ' + esc(post.date) : '新建文章');
   $('bl-date').value = post ? post.date : new Date().toISOString().slice(0, 10);
   $('bl-title').value = post ? post.title : '';
   $('bl-summary').value = post ? post.summary : '';
   $('bl-linkWechat').value = post ? post.linkWechat : '';
   $('bl-linkX').value = post ? post.linkX : '';
   $('bl-category').value = post ? post.category : '';
-  setThumb('img-blogCover', post && post.cover, '🖼️');
+  setThumb('img-blogCover', post && post.cover, 'image');
 }
 
 function newBlogPost() {
@@ -1021,20 +1290,22 @@ function newBlogPost() {
   renderBlogForm(null);
 }
 
-async function saveBlog() {
-  try {
-    await api('/studio/api/blog/save', {
-      date: $('bl-date').value,
-      title: $('bl-title').value,
-      summary: $('bl-summary').value,
-      linkWechat: $('bl-linkWechat').value.trim(),
-      linkX: $('bl-linkX').value.trim(),
-      category: $('bl-category').value,
-    });
-    currentBlogDate = $('bl-date').value;
-    renderBlog();
-    toast('文章已保存 ✓');
-  } catch (error) { toast(error.message, true); }
+async function saveBlog(btn) {
+  await withBusy(btn, async () => {
+    try {
+      await api('/studio/api/blog/save', {
+        date: $('bl-date').value,
+        title: $('bl-title').value,
+        summary: $('bl-summary').value,
+        linkWechat: $('bl-linkWechat').value.trim(),
+        linkX: $('bl-linkX').value.trim(),
+        category: $('bl-category').value,
+      });
+      currentBlogDate = $('bl-date').value;
+      renderBlog();
+      toast('文章已保存');
+    } catch (error) { toast(error.message, true); }
+  });
 }
 
 async function uploadBlogCover() {
@@ -1042,30 +1313,32 @@ async function uploadBlogCover() {
   if (!date) { toast('请先选择日期', true); return; }
   try {
     if (!state.blog.posts.some((p) => p.date === date)) {
-      await saveBlog(); // 先落盘文章，再传封面
+      await saveBlog(null);
       if (!$('bl-title').value.trim()) return;
     }
     if (await uploadTo('blogCover', { blogDate: date })) {
       const post = state.blog.posts.find((p) => p.date === date);
-      setThumb('img-blogCover', post && post.cover, '🖼️');
+      setThumb('img-blogCover', post && post.cover, 'image');
       renderBlog();
     }
   } catch (error) { toast(error.message, true); }
 }
 
 // ── 发布上线 ──
-async function deployCheck() {
+async function deployCheck(btn) {
   const result = $('check-result');
   result.style.color = 'var(--muted)';
   result.textContent = '检查中…';
-  try {
-    await api('/studio/api/deploy/check', {});
-    result.style.color = 'var(--ok)';
-    result.textContent = '✅ 全部通过，可以打包';
-  } catch (error) {
-    result.style.color = 'var(--err)';
-    result.textContent = '❌ ' + error.message;
-  }
+  await withBusy(btn, async () => {
+    try {
+      await api('/studio/api/deploy/check', {});
+      result.style.color = 'var(--ok)';
+      result.textContent = '全部通过，可以打包';
+    } catch (error) {
+      result.style.color = 'var(--err)';
+      result.textContent = error.message;
+    }
+  });
 }
 
 let buildTimer = null;
@@ -1090,7 +1363,7 @@ async function pollBuild() {
       buildTimer = setTimeout(pollBuild, 2000);
     } else {
       $('build-btn').disabled = false;
-      if (data.status === 'ok') toast('打包完成 ✓ 点"打开 dist 文件夹"拿产物');
+      if (data.status === 'ok') toast('打包完成，点"打开 dist 文件夹"拿产物');
       if (data.status === 'fail') toast('打包失败，看日志排查', true);
     }
   } catch {
@@ -1100,13 +1373,6 @@ async function pollBuild() {
 
 async function openDist() {
   try { await api('/studio/api/deploy/open-dist', {}); } catch (error) { toast(error.message, true); }
-}
-
-async function saveAttribution() {
-  try {
-    await api('/studio/api/attribution', { enabled: $('attr-enabled').checked });
-    toast($('attr-enabled').checked ? '页脚署名已开启 ✓' : '页脚署名已关闭');
-  } catch (error) { toast(error.message, true); }
 }
 
 // ── 撤销 / 重置 ──
@@ -1130,6 +1396,7 @@ async function resetToStarter() {
 
 // ── 启动 ──
 async function init() {
+  hydrateIcons();
   initThemeControls();
   try {
     const res = await fetch('/studio/api/state');
@@ -1145,7 +1412,6 @@ async function init() {
     renderBlogForm(state.blog.posts[0] || null);
     if (state.blog.posts[0]) currentBlogDate = state.blog.posts[0].date;
     renderBlog();
-    $('attr-enabled').checked = !!(state.attribution && state.attribution.enabled);
   } catch (error) {
     toast('读取内容失败：' + error.message, true);
   }

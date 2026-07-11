@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { track } from '../../data/analytics';
 import { togglePersonalAIChat } from '../../data/cozeChatbot';
 import { useLanguage } from '../../data/i18n';
-import { getHomeContent, getSharedContent } from '../../data/content';
+import { getHomeContent, getSharedContent, siteConfig } from '../../data/content';
 import { Card } from '../ui/Card';
 
 const UNSUPPORTED_LOCAL_PERSONAL_AI_CONTEXT_ERROR = 'UnsupportedLocalPersonalAIContextError';
@@ -115,6 +115,8 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlo
         </Card>
       </div>
 
+      {/* Personal AI 需要用户自己的 Coze 配置，可在 content/config/site.yml 的 features.personalAI 关闭整张卡片。 */}
+      {siteConfig.features.personalAI && (
       <Card
         variant="secondary"
         className={`personal-ai-card relative overflow-hidden shrink-0 !p-0 group border border-[var(--border-soft)] h-[78px] sm:h-[82px] ${
@@ -139,13 +141,19 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlo
         />
         <div className="personal-ai-content relative z-10 w-full flex-1 h-full flex flex-row items-center justify-between px-6 sm:px-8">
           <div className="flex items-center gap-4">
-            <img
-              src={shared.assets.brandMark || '/Logo/nocolor/FZR.svg'}
-              alt="Personal AI"
-              className={`w-5 h-7 transition-all duration-300 drop-shadow-md ${
-                isStartingPersonalAI ? 'opacity-90 scale-100' : 'opacity-80 group-hover:opacity-100 group-hover:scale-110'
-              }`}
-            />
+            {shared.assets.brandMark ? (
+              <img
+                src={shared.assets.brandMark}
+                alt="Personal AI"
+                className={`w-5 h-7 transition-all duration-300 drop-shadow-md dark:invert ${
+                  isStartingPersonalAI ? 'opacity-90 scale-100' : 'opacity-80 group-hover:opacity-100 group-hover:scale-110'
+                }`}
+              />
+            ) : (
+              <span className="material-symbols-outlined text-[var(--text-primary)] text-[24px] opacity-80 group-hover:opacity-100 transition-opacity">
+                smart_toy
+              </span>
+            )}
             <div className="flex flex-col justify-center">
               <span className="text-[14px] font-bold text-[var(--text-primary)] transition-colors line-clamp-2">
                 {homeContent.quickLinks.personalAI.title}
@@ -169,6 +177,7 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlo
           </div>
         </div>
       </Card>
+      )}
     </div>
   );
 };

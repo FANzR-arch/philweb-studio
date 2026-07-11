@@ -753,13 +753,16 @@ function readSkillsContent(projectRoot, filePath) {
 }
 
 function readSiteConfig(configPath) {
-  // config/site.yml 是可选文件：缺省时署名关闭，保证旧内容目录完全兼容。
+  // config/site.yml 是可选文件：缺省时署名关闭、功能全开，保证旧内容目录完全兼容。
   const defaults = {
     attribution: {
       enabled: false,
       labelZh: '本站基于开源模板搭建',
       labelEn: 'Built with an open-source template',
       url: '',
+    },
+    features: {
+      personalAI: true,
     },
   };
 
@@ -769,6 +772,7 @@ function readSiteConfig(configPath) {
 
   const data = ensureObject(readYamlFile(configPath), `${normalizeSlashes(configPath)} must be a YAML object.`);
   const attribution = isPlainObject(data.attribution) ? data.attribution : {};
+  const features = isPlainObject(data.features) ? data.features : {};
 
   return {
     attribution: {
@@ -776,6 +780,10 @@ function readSiteConfig(configPath) {
       labelZh: optionalString(attribution.labelZh) || defaults.attribution.labelZh,
       labelEn: optionalString(attribution.labelEn) || defaults.attribution.labelEn,
       url: optionalString(attribution.url) || '',
+    },
+    features: {
+      // 显式写 false 才关闭，未声明保持开启（向后兼容）。
+      personalAI: features.personalAI !== false,
     },
   };
 }

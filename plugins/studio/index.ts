@@ -17,8 +17,10 @@ import {
   mustPatchScalar,
   mustPatchStringArray,
   patchFrontmatterFile,
+  patchYamlObjectArray,
   quoteScalar,
   readTextFile,
+  readYamlObjectArray,
   readYamlScalars,
   readYamlStringArray,
   writeTextFile,
@@ -49,6 +51,7 @@ const UPLOAD_MAX_WIDTH: Record<string, number> = {
   avatarLight: 640,
   avatarDark: 640,
   wechatQr: 900,
+  brandMark: 512,
   coverLight: 1600,
   coverDark: 1600,
   detail: 1920,
@@ -244,10 +247,27 @@ links:
     ['footer', 'style'],
   ] as const;
 
+  /** Studio 时间线编辑用的精选 Material Symbols 图标（站点字体已加载，无需新库）。 */
+  const TIMELINE_ICONS = [
+    'rocket_launch', 'auto_awesome', 'palette', 'hub', 'groups', 'trending_up',
+    'work', 'school', 'code', 'brush', 'edit_note', 'lightbulb',
+    'psychology', 'favorite', 'star', 'public', 'flight_takeoff', 'menu_book',
+    'science', 'storefront', 'fitness_center', 'music_note', 'camera_alt', 'construction',
+  ];
+
   const readHomeFields = (language: 'zh' | 'en') => {
     const raw = readTextFile(sitePath(`home.${language}.md`));
     const scalars = readYamlScalars(raw);
+    const timelineItems = readYamlObjectArray(raw, ['timeline', 'items']).map((item) => ({
+      icon: typeof item.icon === 'string' ? item.icon : 'star',
+      period: typeof item.period === 'string' ? item.period : '',
+      title: typeof item.title === 'string' ? item.title : '',
+      keywords: Array.isArray(item.keywords) ? item.keywords : [],
+      detail: typeof item.detail === 'string' ? item.detail : '',
+    }));
     return {
+      timelineItems,
+      timelineIcons: TIMELINE_ICONS,
       greeting: scalars['hero.greeting'] ?? '',
       description: scalars['hero.description'] ?? '',
       name: scalars['sidebar.name'] ?? '',
@@ -296,6 +316,29 @@ links:
       }
       if (Array.isArray(fields.skillTags)) {
         next = mustPatchStringArray(next, ['sidebar', 'skillTags'], fields.skillTags, label);
+      }
+      if (Array.isArray(fields.timelineItems)) {
+        const items = fields.timelineItems.map((item: any, index: number) => {
+          const title = String(item?.title ?? '').trim();
+          const period = String(item?.period ?? '').trim();
+          const detail = String(item?.detail ?? '').trim();
+          if (!title || !period || !detail) {
+            throw new Error(`时间线第 ${index + 1} 条的"时期 / 标题 / 描述"都不能为空。`);
+          }
+          return {
+            id: `timeline-${fields.timelineItems.length - index}`,
+            icon: String(item?.icon ?? 'star').trim() || 'star',
+            period,
+            title,
+            keywords: Array.isArray(item?.keywords) ? item.keywords.map(String).filter(Boolean) : [],
+            detail,
+          };
+        });
+        const patched = patchYamlObjectArray(next, ['timeline', 'items'], items, ['id', 'icon', 'period', 'title', 'keywords', 'detail']);
+        if (patched === null) {
+          throw new Error(`在 ${label} 中找不到 timeline.items`);
+        }
+        next = patched;
       }
       return next;
     });
@@ -574,11 +617,13 @@ links:
     switch (payload.target) {
       case 'avatarLight':
       case 'avatarDark':
-      case 'wechatQr': {
+      case 'wechatQr':
+      case 'brandMark': {
         const config = {
           avatarLight: { dir: path.join(mediaRoot(), 'profile'), base: 'avatar', sharedKey: 'assets.avatarLight', prefix: '../../media/profile/' },
           avatarDark: { dir: path.join(mediaRoot(), 'profile'), base: 'avatar-dark', sharedKey: 'assets.avatarDark', prefix: '../../media/profile/' },
           wechatQr: { dir: path.join(mediaRoot(), 'qrcodes'), base: 'wx', sharedKey: 'assets.wechatQr', prefix: '../../media/qrcodes/' },
+          brandMark: { dir: path.join(mediaRoot(), 'logos'), base: 'brand', sharedKey: 'assets.brandMark', prefix: '../../media/logos/' },
         }[payload.target];
         const fileName = writeAsset(config.dir, config.base);
         updateShared((data) => {
@@ -757,25 +802,28 @@ links:
     spawn(opener, [dist], { shell: false, detached: true, stdio: 'ignore' }).on('error', () => {});
   };
 
-  const readAttribution = () => {
+  const readSiteFlags = () => {
     const configPath = path.join(contentRoot(), 'config', 'site.yml');
     const scalars = fs.existsSync(configPath) ? readYamlScalars(readTextFile(configPath)) : {};
     return {
-      enabled: scalars['attribution.enabled'] === 'true',
-      labelZh: scalars['attribution.labelZh'] ?? '本站基于 RZC 开源模板搭建',
-      labelEn: scalars['attribution.labelEn'] ?? 'Built with the RZC open-source template',
-      url: scalars['attribution.url'] ?? '',
+      attributionEnabled: scalars['attribution.enabled'] === 'true',
+      labelZh: scalars['attribution.labelZh'] ?? '本站基于 folio-studio 开源模板搭建',
+      labelEn: scalars['attribution.labelEn'] ?? 'Built with the folio-studio open-source template',
+      url: scalars['attribution.url'] ?? 'https://github.com/FANzR-arch/folio-studio',
+      personalAI: scalars['features.personalAI'] !== 'false',
     };
   };
 
-  const saveAttribution = (enabled: boolean) => {
-    const current = readAttribution();
-    const configPath = path.join(contentRoot(), 'config', 'site.yml');
-    writeTextFile(configPath, `attribution:
-  enabled: ${enabled ? 'true' : 'false'}
-  labelZh: ${quoteScalar(current.labelZh)}
-  labelEn: ${quoteScalar(current.labelEn)}
-  url: ${quoteScalar(current.url)}
+  const saveSiteFlags = (patch: { attributionEnabled?: boolean; personalAI?: boolean }) => {
+    const current = readSiteFlags();
+    const merged = { ...current, ...patch };
+    writeTextFile(path.join(contentRoot(), 'config', 'site.yml'), `attribution:
+  enabled: ${merged.attributionEnabled ? 'true' : 'false'}
+  labelZh: ${quoteScalar(merged.labelZh)}
+  labelEn: ${quoteScalar(merged.labelEn)}
+  url: ${quoteScalar(merged.url)}
+features:
+  personalAI: ${merged.personalAI ? 'true' : 'false'}
 `);
   };
 
@@ -793,6 +841,7 @@ links:
         avatarLight: toMediaUrl(shared['assets.avatarLight']),
         avatarDark: toMediaUrl(shared['assets.avatarDark']),
         wechatQr: toMediaUrl(shared['assets.wechatQr']),
+        brandMark: toMediaUrl(shared['assets.brandMark']),
       },
       home: {
         zh: readHomeFields('zh'),
@@ -805,7 +854,7 @@ links:
         posts: readBlogPosts(),
       },
       checklist: collectChecklist(),
-      attribution: readAttribution(),
+      siteFlags: readSiteFlags(),
     };
   };
 
@@ -944,8 +993,17 @@ links:
               case '/studio/api/upload':
                 await handleUpload(body);
                 break;
-              case '/studio/api/attribution':
-                saveAttribution(body.enabled === true);
+              case '/studio/api/site-config': {
+                const patch: { attributionEnabled?: boolean; personalAI?: boolean } = {};
+                if (typeof body.attributionEnabled === 'boolean') patch.attributionEnabled = body.attributionEnabled;
+                if (typeof body.personalAI === 'boolean') patch.personalAI = body.personalAI;
+                saveSiteFlags(patch);
+                break;
+              }
+              case '/studio/api/brandmark/remove':
+                updateShared((data) => {
+                  data['assets.brandMark'] = '';
+                });
                 break;
               case '/studio/api/deploy/check':
                 try {
