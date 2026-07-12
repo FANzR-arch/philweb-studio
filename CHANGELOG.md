@@ -6,6 +6,11 @@
 
 ---
 
+## [1.3.0] - 2026-07-12
+
+### Removed
+- **整体移除个人 AI 对话功能**：删除右下角 AI 卡片、Coze SDK 接入（`data/cozeChatbot.ts`）、服务端 token 路由（`api/`、`functions/`、`server/`）、相关主题样式与内容字段（`quickLinks.personalAI*`、`assets.talkAvatar`、`features.personalAI`）、Studio 开关与全部文档提及；`jose` 依赖随之移除。构建产物减小约 24KB JS + 7KB CSS。
+
 ## [1.2.0] - 2026-07-12
 
 ### Added

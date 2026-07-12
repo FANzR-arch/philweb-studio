@@ -212,7 +212,6 @@ assets:
   avatarLight: ${quoteScalar(d['assets.avatarLight'] ?? '')}
   avatarDark: ${quoteScalar(d['assets.avatarDark'] ?? '')}
   wechatQr: ${quoteScalar(d['assets.wechatQr'] ?? '')}
-  talkAvatar: ${quoteScalar(d['assets.talkAvatar'] ?? '')}
   brandMark: ${quoteScalar(d['assets.brandMark'] ?? '')}
 links:
   wechatId: ${quoteScalar(d['links.wechatId'] ?? '')}
@@ -887,11 +886,10 @@ links:
       labelZh: scalars['attribution.labelZh'] ?? '本站基于 folio-studio 开源模板搭建',
       labelEn: scalars['attribution.labelEn'] ?? 'Built with the folio-studio open-source template',
       url: scalars['attribution.url'] ?? 'https://github.com/FANzR-arch/folio-studio',
-      personalAI: scalars['features.personalAI'] !== 'false',
     };
   };
 
-  const saveSiteFlags = (patch: { attributionEnabled?: boolean; personalAI?: boolean }) => {
+  const saveSiteFlags = (patch: { attributionEnabled?: boolean }) => {
     const current = readSiteFlags();
     const merged = { ...current, ...patch };
     writeTextFile(path.join(contentRoot(), 'config', 'site.yml'), `attribution:
@@ -899,8 +897,6 @@ links:
   labelZh: ${quoteScalar(merged.labelZh)}
   labelEn: ${quoteScalar(merged.labelEn)}
   url: ${quoteScalar(merged.url)}
-features:
-  personalAI: ${merged.personalAI ? 'true' : 'false'}
 `);
   };
 
@@ -1098,9 +1094,8 @@ features:
                 break;
               }
               case '/studio/api/site-config': {
-                const patch: { attributionEnabled?: boolean; personalAI?: boolean } = {};
+                const patch: { attributionEnabled?: boolean } = {};
                 if (typeof body.attributionEnabled === 'boolean') patch.attributionEnabled = body.attributionEnabled;
-                if (typeof body.personalAI === 'boolean') patch.personalAI = body.personalAI;
                 saveSiteFlags(patch);
                 break;
               }

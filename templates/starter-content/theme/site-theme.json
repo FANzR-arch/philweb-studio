@@ -414,39 +414,6 @@
           "mediaBg": "rgb(26 26 26)",
           "mediaBorder": "rgba(255, 255, 255, 0.04)"
         }
-      },
-      "personalAI": {
-        "light": {
-          "cardBg": "linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 255, 0.92))",
-          "cardBorder": "rgba(99, 102, 241, 0.1)",
-          "restingGlowA": "rgba(139, 92, 246, 0.02)",
-          "restingGlowB": "rgba(59, 130, 246, 0.015)",
-          "hoverGlowA": "rgba(56, 189, 248, 0.32)",
-          "hoverGlowB": "rgba(99, 102, 241, 0.22)",
-          "hoverGlowC": "rgba(139, 92, 246, 0.18)",
-          "hoverBorder": "rgba(56, 189, 248, 0.45)",
-          "radialBg": "radial-gradient(circle at 20% 25%, rgba(56, 189, 248, 0.45), transparent 55%), radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.42), transparent 50%), radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.38), transparent 52%), radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6), transparent 40%)",
-          "flowGradient": "conic-gradient(from 0deg, rgba(56, 189, 248, 0.6), rgba(59, 130, 246, 0.55), rgba(139, 92, 246, 0.5), rgba(34, 211, 238, 0.55), rgba(56, 189, 248, 0.6))",
-          "textHover": "#6366F1",
-          "textShadow": "0 0 12px rgba(99, 102, 241, 0.3)",
-          "logoHoverFilter": "drop-shadow(0 0 10px rgba(56, 189, 248, 0.4)) drop-shadow(0 0 20px rgba(139, 92, 246, 0.2))"
-        },
-        "dark": {
-          "cardBg": "linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.94))",
-          "cardBorder": "rgba(139, 92, 246, 0.24)",
-          "restingGlowA": "rgba(124, 58, 237, 0.1)",
-          "restingGlowB": "rgba(37, 99, 235, 0.07)",
-          "hoverGlowA": "rgba(56, 189, 248, 0.3)",
-          "hoverGlowB": "rgba(99, 102, 241, 0.24)",
-          "hoverGlowC": "rgba(14, 165, 233, 0.16)",
-          "hoverBorder": "rgba(56, 189, 248, 0.42)",
-          "radialBg": "radial-gradient(circle at 20% 25%, rgba(56, 189, 248, 0.35), transparent 55%), radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.32), transparent 50%), radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.28), transparent 52%), radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15), transparent 40%)",
-          "flowGradient": "conic-gradient(from 0deg, rgba(56, 189, 248, 0.5), rgba(99, 102, 241, 0.46), rgba(14, 165, 233, 0.4), rgba(139, 92, 246, 0.42), rgba(56, 189, 248, 0.5))",
-          "textHover": "#A5B4FC",
-          "textShadow": "0 0 15px rgba(139, 92, 246, 0.45)",
-          "logoBaseFilter": "invert(0.9) brightness(1.2)",
-          "logoHoverFilter": "invert(1) brightness(1.5) drop-shadow(0 0 12px rgba(56, 189, 248, 0.5)) drop-shadow(0 0 22px rgba(139, 92, 246, 0.3))"
-        }
       }
     },
     "cardTints": {

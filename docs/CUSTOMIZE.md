@@ -63,8 +63,6 @@ npm run studio
 
 想用 Git 自动部署（改完推送即更新）：把项目推到 GitHub，在 Vercel / Cloudflare Pages / Netlify 导入仓库，构建命令 `npm run build`，输出目录 `dist`。
 
-> "Personal AI" 对话功能需要你自己的 Coze 机器人和密钥（见 README 的 Coze 章节）。不配置也没关系——线上会自动禁用，不影响其他部分。
->
 > 页脚默认有一行"基于 folio-studio 开源模板搭建"的小字（支持模板作者 🙏）。想关掉：发布页最下方有开关。
 
 ---

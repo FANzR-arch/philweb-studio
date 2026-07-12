@@ -54,9 +54,6 @@ timeline:
 quickLinks:
   contact: "交个朋友"
   blog: "文章"
-  personalAITitle: "个人 AI"
-  personalAISubtitle: "与我的 AI 分身对话"
-  personalAILoadingSubtitle: "正在启动 AI，请稍后..."
 interviewerPath:
   title: "找到我"
   subtitle: "看作品、读文章、直接联系，选你习惯的方式。"

@@ -22,7 +22,6 @@ import { ProjectList } from './components/dashboard/ProjectList';
 import { QuickLinks } from './components/dashboard/QuickLinks';
 import { Toaster } from 'sonner';
 import { themeCssVars, ensureThemeWebfonts } from './data/theme';
-import { initCozeChatbot } from './data/cozeChatbot';
 
 const App: React.FC = () => {
   const [activeModal, setActiveModal] = useState<ModalType>(ModalType.NONE);
@@ -61,7 +60,7 @@ const App: React.FC = () => {
     }
   };
 
-  // 首屏挂载时一次性完成主题变量注入、访问埋点和 Coze 机器人初始化，
+  // 首屏挂载时一次性完成主题变量注入与访问埋点，
   // 让全局启动逻辑集中在同一个入口，后续排查副作用也更直接。
   useEffect(() => {
     // 1. 注入站点级 CSS 变量，让 data/theme.ts 成为全站配色与组件 token 的唯一来源。
@@ -95,8 +94,6 @@ const App: React.FC = () => {
       }
     }
 
-    // 3. 预注册 Coze 能力，但继续保持懒加载，真正打开时才拉起 SDK。
-    initCozeChatbot();
   }, []);
 
   useEffect(() => {

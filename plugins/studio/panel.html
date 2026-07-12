@@ -291,16 +291,6 @@
           <p class="muted-note">深色头像可以和浅色用同一张。Logo 是可选的（显示在首屏右侧，建议单色图形，深色模式会自动反色）——
             <a href="javascript:void(0)" onclick="removeBrandMark()" style="color:var(--err)">不想要 Logo？点这里移除</a></p>
         </div>
-        <div class="card">
-          <h2><span class="icon" data-icon="bot"></span>站点功能</h2>
-          <div class="switch-row">
-            <div class="sw-label">
-              <b>个人 AI 对话（右下角卡片）</b>
-              <small>需要你自己的 Coze 机器人和密钥才能真正对话（配置方法见 README）。没有配置就保持关闭，卡片不会显示。</small>
-            </div>
-            <label class="switch"><input type="checkbox" id="sf-personalAI" onchange="savePersonalAI()"><i></i></label>
-          </div>
-        </div>
       </section>
 
       <!-- 首页内容 -->
@@ -832,7 +822,6 @@ function renderBasic() {
   setThumb('img-avatarDark', b.avatarDark, 'moon');
   setThumb('img-wechatQr', b.wechatQr, 'qrcode');
   setThumb('img-brandMark', b.brandMark, 'sparkles');
-  $('sf-personalAI').checked = !!(state.siteFlags && state.siteFlags.personalAI);
   $('sf-attribution').checked = !!(state.siteFlags && state.siteFlags.attributionEnabled);
 }
 
@@ -859,13 +848,6 @@ async function removeBrandMark() {
     await api('/studio/api/brandmark/remove', {});
     renderBasic();
     toast('Logo 已移除');
-  } catch (error) { toast(error.message, true); }
-}
-
-async function savePersonalAI() {
-  try {
-    await api('/studio/api/site-config', { personalAI: $('sf-personalAI').checked });
-    toast($('sf-personalAI').checked ? '个人 AI 卡片已开启' : '个人 AI 卡片已隐藏');
   } catch (error) { toast(error.message, true); }
 }
 

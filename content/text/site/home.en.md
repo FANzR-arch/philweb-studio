@@ -54,9 +54,6 @@ timeline:
 quickLinks:
   contact: "Let's connect"
   blog: "Articles"
-  personalAITitle: "Personal AI"
-  personalAISubtitle: "Chat with my AI twin"
-  personalAILoadingSubtitle: "Starting AI, one moment..."
 interviewerPath:
   title: "Find Me"
   subtitle: "Browse work, read articles, or reach out directly."

@@ -20,7 +20,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "jose": "^6.2.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^10.1.0",

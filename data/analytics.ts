@@ -19,7 +19,6 @@ export type TrackEventName =
   | 'project_cta_click'
   | 'contact_click'
   | 'interview_pack_step_click'
-  | 'personal_ai_click'
   | 'wechat_copy'
   | 'wechat_qr_view'
   | 'social_outbound_click'

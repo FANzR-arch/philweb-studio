@@ -16,7 +16,6 @@ export const siteContent = contentRegistry.site;
 
 export const siteConfig: SiteConfig = contentRegistry.siteConfig ?? {
   attribution: { enabled: false, labelZh: '', labelEn: '', url: '' },
-  features: { personalAI: true },
 };
 export const allProjects: Project[] = contentRegistry.projects;
 export const publishedProjects: Project[] = allProjects.filter((project) => project.published !== false);

@@ -72,7 +72,6 @@ description: 把这个个人网站模板定制成用户自己的网站。当用�
 
 ### 不想要某个板块
 - 博客：删掉（或清空）`content/text/blog/` 下的日期目录即可，前端自动隐藏空板块。
-- Personal AI（Coze 对话）：需要用户自己的 Coze 配置才能用（见 README"Coze Personal AI Setup"）；未配置时线上会自动不可用。用户想彻底移除卡片属于代码改动，改 `components/` 前先跟用户确认。
 
 ## 验证流程
 
@@ -83,4 +82,4 @@ description: 把这个个人网站模板定制成用户自己的网站。当用�
 
 ## 发布
 
-`npm run build` 产出 `dist/`，可部署到 Cloudflare Pages / Vercel / Netlify。Personal AI 相关环境变量仅在用户需要 Coze 机器人时配置。
+`npm run build` 产出 `dist/`，可部署到 Cloudflare Pages / Vercel / Netlify（拖拽上传或关联仓库均可）。

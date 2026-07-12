@@ -5,7 +5,6 @@ assets:
   avatarLight: "../../media/profile/avatar.svg"
   avatarDark: "../../media/profile/avatar-dark.svg"
   wechatQr: "../../media/qrcodes/wx.svg"
-  talkAvatar: "../../media/qrcodes/talklogo.svg"
   brandMark: ""
 links:
   wechatId: "your-wechat-id"

@@ -1,12 +1,14 @@
-import React from 'react';
-import { toast } from 'sonner';
-import { track } from '../../data/analytics';
-import { togglePersonalAIChat } from '../../data/cozeChatbot';
-import { useLanguage } from '../../data/i18n';
-import { getHomeContent, getSharedContent, siteConfig } from '../../data/content';
-import { Card } from '../ui/Card';
+/**
+ * [INPUT]   : 国际化文案与通用 Card 组件
+ * [OUTPUT]  : 首页右下角的快捷入口（联系我 / 博客）
+ * [POS]     : Dashboard 组件层，承接"看完作品后想联系或继续阅读"的动作
+ * [DECISION]: 只保留两个高频入口，保持决策区域干净直接
+ */
 
-const UNSUPPORTED_LOCAL_PERSONAL_AI_CONTEXT_ERROR = 'UnsupportedLocalPersonalAIContextError';
+import React from 'react';
+import { useLanguage } from '../../data/i18n';
+import { getHomeContent } from '../../data/content';
+import { Card } from '../ui/Card';
 
 interface QuickLinksProps {
   onOpenContact: () => void;
@@ -16,60 +18,6 @@ interface QuickLinksProps {
 export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlog }) => {
   const { lang } = useLanguage();
   const homeContent = getHomeContent(lang);
-  const shared = getSharedContent();
-  const [isStartingPersonalAI, setIsStartingPersonalAI] = React.useState(false);
-
-  const handlePersonalAIClick = async () => {
-    if (isStartingPersonalAI) {
-      return;
-    }
-
-    const loadingToastId = toast.loading(
-      homeContent.quickLinks.personalAI.loadingSubtitle,
-      {
-        description:
-          lang === 'zh'
-            ? '聊天窗口准备完成后会自动打开。'
-            : 'The chat window will open automatically once it is ready.',
-      },
-    );
-
-    setIsStartingPersonalAI(true);
-    track('personal_ai_click', {
-      source: 'quick_links',
-      lang,
-      entry_section: 'cta_area',
-    });
-
-    try {
-      await togglePersonalAIChat(lang);
-      toast.dismiss(loadingToastId);
-    } catch (error) {
-      toast.dismiss(loadingToastId);
-      console.error('[coze] failed to open personal AI chat', error);
-
-      if (error instanceof Error && error.name === UNSUPPORTED_LOCAL_PERSONAL_AI_CONTEXT_ERROR) {
-        toast.error(
-          lang === 'zh'
-            ? '当前本地地址不支持 Personal AI，请改用 localhost 打开。'
-            : 'This local address does not support Personal AI. Use localhost instead.',
-          {
-            description:
-              lang === 'zh'
-                ? '局域网 HTTP 地址会被浏览器视为非安全上下文，语音、设备能力和 token 路由都会异常。'
-                : 'Browsers treat LAN HTTP URLs as insecure contexts, which breaks voice, device access, and the token route.',
-          },
-        );
-        return;
-      }
-
-      toast.error(lang === 'zh' ? '个人 AI 暂不可用' : 'Personal AI is unavailable', {
-        description: lang === 'zh' ? '请稍后重试。' : 'Please try again later.',
-      });
-    } finally {
-      setIsStartingPersonalAI(false);
-    }
-  };
 
   return (
     <div className="flex flex-col gap-3 animate-fade-in-up delay-4 shrink-0">
@@ -114,70 +62,6 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlo
           </div>
         </Card>
       </div>
-
-      {/* Personal AI 需要用户自己的 Coze 配置，可在 content/config/site.yml 的 features.personalAI 关闭整张卡片。 */}
-      {siteConfig.features.personalAI && (
-      <Card
-        variant="secondary"
-        className={`personal-ai-card relative overflow-hidden shrink-0 !p-0 group border border-[var(--border-soft)] h-[78px] sm:h-[82px] ${
-          isStartingPersonalAI ? 'pointer-events-none cursor-progress opacity-[0.92]' : 'cursor-pointer'
-        }`}
-        onClick={handlePersonalAIClick}
-        aria-disabled={isStartingPersonalAI}
-        aria-busy={isStartingPersonalAI}
-        tabIndex={isStartingPersonalAI ? -1 : 0}
-      >
-        <div
-          aria-hidden
-          className={`personal-ai-radial pointer-events-none absolute inset-0 transition-opacity duration-500 ${
-            isStartingPersonalAI ? 'opacity-85' : 'opacity-60 group-hover:opacity-100'
-          }`}
-        />
-        <div
-          aria-hidden
-          className={`personal-ai-flow pointer-events-none absolute -inset-[40%] transition-transform duration-1000 ${
-            isStartingPersonalAI ? 'scale-100' : 'group-hover:scale-105'
-          }`}
-        />
-        <div className="personal-ai-content relative z-10 w-full flex-1 h-full flex flex-row items-center justify-between px-6 sm:px-8">
-          <div className="flex items-center gap-4">
-            {shared.assets.brandMark ? (
-              <img
-                src={shared.assets.brandMark}
-                alt="Personal AI"
-                className={`w-5 h-7 transition-all duration-300 drop-shadow-md dark:invert ${
-                  isStartingPersonalAI ? 'opacity-90 scale-100' : 'opacity-80 group-hover:opacity-100 group-hover:scale-110'
-                }`}
-              />
-            ) : (
-              <span className="material-symbols-outlined text-[var(--text-primary)] text-[24px] opacity-80 group-hover:opacity-100 transition-opacity">
-                smart_toy
-              </span>
-            )}
-            <div className="flex flex-col justify-center">
-              <span className="text-[14px] font-bold text-[var(--text-primary)] transition-colors line-clamp-2">
-                {homeContent.quickLinks.personalAI.title}
-              </span>
-              <p className="text-[11px] font-medium text-[var(--text-muted)] leading-none mt-1.5 opacity-90 transition-colors line-clamp-2">
-                {isStartingPersonalAI
-                  ? homeContent.quickLinks.personalAI.loadingSubtitle
-                  : homeContent.quickLinks.personalAI.subtitle}
-              </p>
-            </div>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-[var(--interactive-soft-hover)] flex items-center justify-center transition-colors shrink-0">
-            {isStartingPersonalAI ? (
-              <span
-                aria-hidden
-                className="inline-block w-4 h-4 rounded-full border-2 border-[var(--text-primary)] border-t-transparent animate-spin"
-              />
-            ) : (
-              <span className="material-symbols-outlined text-[var(--text-primary)] text-[16px]">arrow_forward</span>
-            )}
-          </div>
-        </div>
-      </Card>
-      )}
     </div>
   );
 };

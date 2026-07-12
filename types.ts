@@ -209,11 +209,6 @@ export interface SiteHomeContent {
   quickLinks: {
     contact: string;
     blog: string;
-    personalAI: {
-      title: string;
-      subtitle: string;
-      loadingSubtitle: string;
-    };
   };
   interviewerPath: {
     title: string;
@@ -353,7 +348,6 @@ export interface SiteSharedContent {
     avatarLight?: string;
     avatarDark?: string;
     wechatQr?: string;
-    talkAvatar?: string;
     brandMark?: string;
   };
 }
@@ -382,13 +376,8 @@ export interface SiteAttributionConfig {
   url: string;
 }
 
-export interface SiteFeaturesConfig {
-  personalAI: boolean;
-}
-
 export interface SiteConfig {
   attribution: SiteAttributionConfig;
-  features: SiteFeaturesConfig;
 }
 
 export interface ContentRegistry {
