@@ -23,7 +23,7 @@ export const IntroSection: React.FC = () => {
 
   return (
     <div className="flex flex-row gap-4 md:gap-5 shrink-0 animate-fade-in-up delay-2 h-[120px] md:h-[140px]">
-      <Card variant="liquid" className="liquid-float-b flex-1 relative h-full !p-0">
+      <Card variant="liquid" className="card-slot-intro liquid-float-b flex-1 relative h-full !p-0">
         <div className="flex-1 flex items-center justify-between gap-5 text-left w-full px-6 md:px-10">
           <div className="min-w-0">
             <h2

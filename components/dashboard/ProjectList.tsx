@@ -25,7 +25,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onOpenProject }) => {
     const primaryProjects = publishedProjects.filter((project) => project.isPrimary !== false);
 
     return (
-        <Card variant="liquid" className="liquid-float-d flex-1 h-full min-h-0 flex flex-col !pt-8 !pb-8 !px-5 sm:!px-6 animate-fade-in-up delay-1">
+        <Card variant="liquid" className="card-slot-projects liquid-float-d flex-1 h-full min-h-0 flex flex-col !pt-8 !pb-8 !px-5 sm:!px-6 animate-fade-in-up delay-1">
             <div className="mb-6 shrink-0">
                 <h3 data-edit="home.projectTitle" data-edit-label="作品板块标题" className="text-xl sm:text-2xl font-bold mb-2 text-[var(--text-primary)] tracking-tight">{homeContent.projectSection.title}</h3>
                 {homeContent.projectSection.subtitle && (

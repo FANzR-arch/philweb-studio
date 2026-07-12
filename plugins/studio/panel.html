@@ -356,6 +356,12 @@
           <div class="pack-grid" id="style-packs"></div>
         </div>
         <div class="card">
+          <h2><span class="icon" data-icon="save"></span>我的方案</h2>
+          <p class="desc">把下方微调好的整套设置存成自己的方案，随时一键切回。</p>
+          <div class="pack-grid" id="custom-packs" style="margin-bottom:10px"></div>
+          <button class="btn ghost small" onclick="saveCurrentAsPack()"><span class="icon" data-icon="plus"></span>把当前设置保存为方案</button>
+        </div>
+        <div class="card">
           <h2><span class="icon" data-icon="sliders"></span>细节微调</h2>
           <p class="desc">所有改动都会实时出现在右侧预览里。</p>
           <div class="color-row">
@@ -397,11 +403,32 @@
               </select>
             </label>
           </div>
+          <div class="row">
+            <label class="field"><span>阴影风格</span>
+              <select id="t-shadow" onchange="previewTheme()">
+                <option value="soft">柔和投影（默认）</option>
+                <option value="hard">硬边色块（粗野主义）</option>
+                <option value="none">无阴影</option>
+              </select>
+            </label>
+            <div class="field" style="display:flex;align-items:flex-end;padding-bottom:2px">
+              <div class="switch-row" style="padding:0;width:100%">
+                <div class="sw-label"><b style="font-weight:600;font-size:12.5px;color:var(--muted)">卡片浮动动画</b></div>
+                <label class="switch"><input type="checkbox" id="t-float" onchange="previewTheme()"><i></i></label>
+              </div>
+            </div>
+          </div>
           <p class="muted-note">深色模式的主色建议比浅色模式的更亮一点，在黑底上才看得清。</p>
           <div class="save-row">
             <button class="btn ghost" onclick="renderTheme(); previewTheme(); toast('已恢复为当前已保存的外观')"><span class="icon" data-icon="undo"></span>还原预览</button>
             <button class="btn" onclick="saveTheme(this)"><span class="icon" data-icon="check"></span>应用外观设置</button>
           </div>
+        </div>
+        <div class="card">
+          <h2><span class="icon" data-icon="grid"></span>单卡片配色</h2>
+          <p class="desc">给首页的五张卡片分别叠一层色调（半透明，不影响文字可读性）。留空 = 跟随主题。</p>
+          <div id="card-tints"></div>
+          <div class="save-row"><button class="btn" onclick="saveTheme(this)"><span class="icon" data-icon="check"></span>应用外观设置</button></div>
         </div>
       </section>
 
@@ -989,13 +1016,47 @@ const FONT_META = {
 };
 const DENSITY_SIZE = { compact: '15px', normal: '16px', relaxed: '17px' };
 
+/** 阴影预设（与服务端一致，供实时预览注入） */
+const SHADOW_META = {
+  soft: {
+    cardLight: '0 4px 12px -2px rgba(15, 23, 42, 0.04), 0 12px 24px -12px rgba(15, 23, 42, 0.18)',
+    cardDark: '0 2px 10px rgba(0, 0, 0, 0.26), 0 16px 36px -22px rgba(0, 0, 0, 0.62)',
+    cardHoverLight: '0 6px 16px -2px rgba(15, 23, 42, 0.06), 0 16px 32px -12px rgba(15, 23, 42, 0.25)',
+    cardHoverDark: '0 4px 14px rgba(0, 0, 0, 0.36), 0 20px 44px -22px rgba(0, 0, 0, 0.72)',
+    liquidLight: '0 22px 54px -34px rgba(15, 23, 42, 0.34), 0 8px 22px -24px rgba(15, 23, 42, 0.14), 0 1px 0 rgba(255, 255, 255, 0.58)',
+    liquidLightHover: '0 24px 58px -36px rgba(15, 23, 42, 0.36), 0 9px 24px -24px rgba(15, 23, 42, 0.15), 0 1px 0 rgba(255, 255, 255, 0.62)',
+    liquidDark: '0 26px 62px -34px rgba(0, 0, 0, 0.86), 0 10px 28px -26px rgba(0, 0, 0, 0.58), 0 1px 0 rgba(255, 255, 255, 0.05)',
+    liquidDarkHover: '0 28px 66px -36px rgba(0, 0, 0, 0.88), 0 11px 30px -26px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.06)',
+  },
+  hard: {
+    cardLight: '8px 8px 0 0 rgba(15, 23, 42, 0.9)', cardDark: '8px 8px 0 0 rgba(255, 255, 255, 0.22)',
+    cardHoverLight: '11px 11px 0 0 rgba(15, 23, 42, 0.9)', cardHoverDark: '11px 11px 0 0 rgba(255, 255, 255, 0.28)',
+    liquidLight: '8px 8px 0 0 rgba(15, 23, 42, 0.9)', liquidLightHover: '11px 11px 0 0 rgba(15, 23, 42, 0.9)',
+    liquidDark: '8px 8px 0 0 rgba(255, 255, 255, 0.22)', liquidDarkHover: '11px 11px 0 0 rgba(255, 255, 255, 0.28)',
+  },
+  none: {
+    cardLight: 'none', cardDark: 'none', cardHoverLight: 'none', cardHoverDark: 'none',
+    liquidLight: 'none', liquidLightHover: 'none', liquidDark: 'none', liquidDarkHover: 'none',
+  },
+};
+
+const TINT_SLOTS = [
+  { key: 'sidebar', label: '个人资料卡' },
+  { key: 'intro', label: '首屏问候卡' },
+  { key: 'timeline', label: '时间线卡' },
+  { key: 'projects', label: '作品列表卡' },
+  { key: 'quicklinks', label: '快捷入口卡' },
+];
+
 const STYLE_PACKS = [
-  { id: 'lava', name: '熔岩红', font: '现代无衬线', accentLight: '#C13B25', accentDark: '#EB5E47', pageLight: '#F8FAFC', pageDark: '#0B0B0C', radius: 24, aurora: 100, fontPreset: 'modern', density: 'normal' },
-  { id: 'indigo', name: '靛蓝理性', font: '现代无衬线', accentLight: '#2563EB', accentDark: '#60A5FA', pageLight: '#F7F9FC', pageDark: '#0A0E14', radius: 16, aurora: 60, fontPreset: 'modern', density: 'normal' },
-  { id: 'teal', name: '松石清新', font: '现代无衬线', accentLight: '#0D9488', accentDark: '#2DD4BF', pageLight: '#F5FBFA', pageDark: '#081311', radius: 28, aurora: 120, fontPreset: 'modern', density: 'relaxed' },
-  { id: 'magazine', name: '杂志衬线', font: '衬线字体', accentLight: '#9A3B26', accentDark: '#D98E6B', pageLight: '#FAF6EF', pageDark: '#15120E', radius: 12, aurora: 40, fontPreset: 'serif', density: 'normal' },
-  { id: 'brutal', name: '新粗野黑白', font: '现代无衬线', accentLight: '#111111', accentDark: '#F5F5F5', pageLight: '#F4F4F0', pageDark: '#0A0A0A', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact' },
-  { id: 'soft', name: '手写温柔', font: '霞鹜文楷', accentLight: '#C2557E', accentDark: '#F191AE', pageLight: '#FDF8FA', pageDark: '#181114', radius: 32, aurora: 130, fontPreset: 'wenkai', density: 'relaxed' },
+  { id: 'lava', name: '熔岩红', font: '现代无衬线', accentLight: '#C13B25', accentDark: '#EB5E47', pageLight: '#F8FAFC', pageDark: '#0B0B0C', radius: 24, aurora: 100, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true },
+  { id: 'indigo', name: '靛蓝理性', font: '现代无衬线', accentLight: '#2563EB', accentDark: '#60A5FA', pageLight: '#F7F9FC', pageDark: '#0A0E14', radius: 16, aurora: 60, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true },
+  { id: 'teal', name: '松石清新', font: '现代无衬线', accentLight: '#0D9488', accentDark: '#2DD4BF', pageLight: '#F5FBFA', pageDark: '#081311', radius: 28, aurora: 120, fontPreset: 'modern', density: 'relaxed', shadowStyle: 'soft', float: true },
+  { id: 'magazine', name: '杂志衬线', font: '衬线字体', accentLight: '#9A3B26', accentDark: '#D98E6B', pageLight: '#FAF6EF', pageDark: '#15120E', radius: 12, aurora: 40, fontPreset: 'serif', density: 'normal', shadowStyle: 'soft', float: false },
+  { id: 'brutal', name: '新粗野主义', font: '硬边阴影', accentLight: '#111111', accentDark: '#F5F5F5', pageLight: '#F4F4F0', pageDark: '#0A0A0A', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact', shadowStyle: 'hard', float: false },
+  { id: 'bauhaus', name: '包豪斯', font: '几何原色', accentLight: '#BE1E2D', accentDark: '#F5C518', pageLight: '#F3EDE2', pageDark: '#161513', radius: 4, aurora: 0, fontPreset: 'modern', density: 'normal', shadowStyle: 'hard', float: false },
+  { id: 'swiss', name: '瑞士国际主义', font: '网格与留白', accentLight: '#E30613', accentDark: '#FF4B3E', pageLight: '#FFFFFF', pageDark: '#111111', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact', shadowStyle: 'none', float: false },
+  { id: 'soft', name: '手写温柔', font: '霞鹜文楷', accentLight: '#C2557E', accentDark: '#F191AE', pageLight: '#FDF8FA', pageDark: '#181114', radius: 32, aurora: 130, fontPreset: 'wenkai', density: 'relaxed', shadowStyle: 'soft', float: true },
 ];
 
 function bindColor(colorId, hexId) {
@@ -1021,7 +1082,23 @@ function previewTheme() {
   const radius = Number($('t-radius').value);
   const aurora = Number($('t-aurora').value) / 100;
   const font = FONT_META[$('t-font').value] || FONT_META.modern;
+  const shadows = SHADOW_META[$('t-shadow').value] || SHADOW_META.soft;
+  const tints = collectCardTints();
+  const tintVars = {};
+  TINT_SLOTS.forEach(({ key }) => {
+    tintVars['--theme-effects-card-tints-' + key] = tints[key] ? hexToRgba(tints[key], 0.4) : 'transparent';
+  });
   const vars = {
+    ...tintVars,
+    '--theme-effects-cards-float-state': $('t-float').checked ? 'running' : 'paused',
+    '--theme-effects-cards-shadow-light': shadows.cardLight,
+    '--theme-effects-cards-shadow-dark': shadows.cardDark,
+    '--theme-effects-cards-shadow-hover-light': shadows.cardHoverLight,
+    '--theme-effects-cards-shadow-hover-dark': shadows.cardHoverDark,
+    '--theme-effects-liquid-light-shadow': shadows.liquidLight,
+    '--theme-effects-liquid-light-shadow-hover': shadows.liquidLightHover,
+    '--theme-effects-liquid-dark-shadow': shadows.liquidDark,
+    '--theme-effects-liquid-dark-shadow-hover': shadows.liquidDarkHover,
     '--theme-accent-light': accentLight,
     '--theme-accent-dark': accentDark,
     '--theme-accent-glow': hexToRgba(accentLight, 0.35),
@@ -1057,9 +1134,119 @@ function applyPack(pack) {
   $('t-aurora').value = pack.aurora; $('t-aurora-out').textContent = pack.aurora + '%';
   $('t-font').value = pack.fontPreset;
   $('t-density').value = pack.density;
+  $('t-shadow').value = SHADOW_META[pack.shadowStyle] ? pack.shadowStyle : 'soft';
+  $('t-float').checked = pack.float !== false;
   document.querySelectorAll('.pack').forEach((el) => el.classList.toggle('on', el.dataset.pack === pack.id));
   previewTheme();
   toast('「' + pack.name + '」预览中，满意就点"应用外观设置"');
+}
+
+// ── 单卡片配色 ──
+function renderCardTints(tints) {
+  $('card-tints').innerHTML = TINT_SLOTS.map(({ key, label }) => {
+    const value = (tints && tints[key]) || '';
+    return `
+    <div class="color-row">
+      <span>${label}</span>
+      <input type="color" id="tint-${key}" value="${value || '#94A3B8'}" ${value ? '' : 'data-empty="1"'}>
+      <input type="text" id="tint-${key}-hex" value="${value}" placeholder="跟随主题">
+      <button class="btn ghost small" onclick="clearTint('${key}')" title="清除，跟随主题"><span class="icon">${icon('x')}</span></button>
+    </div>`;
+  }).join('');
+  TINT_SLOTS.forEach(({ key }) => {
+    $('tint-' + key).oninput = () => {
+      $('tint-' + key).removeAttribute('data-empty');
+      $('tint-' + key + '-hex').value = $('tint-' + key).value.toUpperCase();
+      previewTheme();
+    };
+    $('tint-' + key + '-hex').oninput = () => {
+      const value = $('tint-' + key + '-hex').value.trim();
+      if (/^#[0-9a-fA-F]{6}$/.test(value)) {
+        $('tint-' + key).value = value;
+        $('tint-' + key).removeAttribute('data-empty');
+        previewTheme();
+      } else if (value === '') {
+        $('tint-' + key).setAttribute('data-empty', '1');
+        previewTheme();
+      }
+    };
+  });
+}
+
+function collectCardTints() {
+  const tints = {};
+  TINT_SLOTS.forEach(({ key }) => {
+    const el = $('tint-' + key);
+    if (!el) { tints[key] = ''; return; }
+    const hexValue = $('tint-' + key + '-hex').value.trim();
+    tints[key] = /^#[0-9a-fA-F]{6}$/.test(hexValue) ? hexValue : '';
+  });
+  return tints;
+}
+
+function clearTint(key) {
+  $('tint-' + key + '-hex').value = '';
+  $('tint-' + key).setAttribute('data-empty', '1');
+  previewTheme();
+}
+
+// ── 自定义方案 ──
+function renderCustomPacks() {
+  const packs = (state.theme && state.theme.customPacks) || [];
+  const el = $('custom-packs');
+  if (!packs.length) {
+    el.innerHTML = '<p class="muted-note" style="margin:0;grid-column:1/-1">还没有保存过方案。</p>';
+    return;
+  }
+  el.innerHTML = '';
+  packs.forEach((pack) => {
+    const div = document.createElement('div');
+    div.className = 'pack';
+    div.dataset.pack = pack.id;
+    div.style.position = 'relative';
+    div.innerHTML =
+      '<div class="strip" style="border-radius:' + Math.min(10, (pack.radius || 0) * 0.4) + 'px">' +
+      '<i style="background:' + esc(pack.pageLight) + '"></i>' +
+      '<i style="background:' + esc(pack.accentLight) + '"></i>' +
+      '<i style="background:' + esc(pack.accentDark) + '"></i>' +
+      '<i style="background:' + esc(pack.pageDark) + '"></i></div>' +
+      '<div class="nm">' + esc(pack.name) + '</div><div class="ft">自定义方案</div>' +
+      '<button title="删除方案" style="position:absolute;top:4px;right:4px;width:18px;height:18px;border:none;border-radius:50%;background:rgba(15,23,42,.6);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" ' +
+      'onclick="event.stopPropagation(); deleteCustomPack(\'' + esc(pack.id) + '\')"><span class="icon" style="width:9px;height:9px">' + icon('x') + '</span></button>';
+    div.onclick = () => applyPack(pack);
+    el.appendChild(div);
+  });
+}
+
+async function saveCurrentAsPack() {
+  const name = prompt('给这套方案取个名字（20 字以内）：');
+  if (!name || !name.trim()) return;
+  try {
+    await api('/studio/api/theme/pack/save', {
+      name: name.trim(),
+      accentLight: $('t-accentLightHex').value.trim(),
+      accentDark: $('t-accentDarkHex').value.trim(),
+      pageLight: $('t-pageLightHex').value.trim(),
+      pageDark: $('t-pageDarkHex').value.trim(),
+      radius: Number($('t-radius').value),
+      aurora: Number($('t-aurora').value),
+      fontPreset: $('t-font').value,
+      density: $('t-density').value,
+      float: $('t-float').checked,
+      shadowStyle: $('t-shadow').value,
+    });
+    renderCustomPacks();
+    toast('方案「' + name.trim() + '」已保存');
+  } catch (error) { toast(error.message, true); }
+}
+
+async function deleteCustomPack(id) {
+  if (!confirm('删除这个自定义方案？')) return;
+  try {
+    await api('/studio/api/theme/pack/delete', { id });
+    renderCustomPacks();
+    toast('方案已删除');
+  } catch (error) { toast(error.message, true); }
 }
 
 function renderTheme() {
@@ -1076,6 +1263,10 @@ function renderTheme() {
     .map((p) => '<option value="' + p.id + '">' + p.label + '</option>').join('');
   fontSelect.value = t.fontPreset || 'modern';
   $('t-density').value = t.density || 'normal';
+  $('t-shadow').value = t.shadowStyle || 'soft';
+  $('t-float').checked = t.float !== false;
+  renderCardTints(t.cardTints || {});
+  renderCustomPacks();
 }
 
 async function saveTheme(btn) {
@@ -1090,6 +1281,9 @@ async function saveTheme(btn) {
         aurora: Number($('t-aurora').value),
         fontPreset: $('t-font').value,
         density: $('t-density').value,
+        float: $('t-float').checked,
+        shadowStyle: $('t-shadow').value,
+        cardTints: collectCardTints(),
       });
       toast('外观已应用');
     } catch (error) { toast(error.message, true); }

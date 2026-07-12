@@ -24,7 +24,7 @@ export const TimelineSection: React.FC = () => {
   return (
     <Card
       variant="liquid"
-      className="liquid-float-c flex-1 h-full min-h-0 flex flex-col pt-5 pb-4 !pl-4 sm:!pl-6 pr-4 sm:pr-5 animate-fade-in-up delay-1"
+      className="card-slot-timeline liquid-float-c flex-1 h-full min-h-0 flex flex-col pt-5 pb-4 !pl-4 sm:!pl-6 pr-4 sm:pr-5 animate-fade-in-up delay-1"
     >
       {/* 标题区先交代模块主题，再用一句短说明帮助用户理解这一列的阅读重点。 */}
       <div className="mb-3 text-left shrink-0 pl-1">

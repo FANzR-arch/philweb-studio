@@ -22,7 +22,7 @@ export const Sidebar: React.FC = () => {
   const metrics = homeContent.metrics;
 
   return (
-    <Card variant="liquid" className="liquid-float-a !p-7 md:!p-9 relative flex flex-col h-full overflow-hidden">
+    <Card variant="liquid" className="card-slot-sidebar liquid-float-a !p-7 md:!p-9 relative flex flex-col h-full overflow-hidden">
       {/* 头像区负责建立第一印象，并通过大图比例撑起左列的视觉重心。 */}
       <div
         data-edit="basic.avatar"

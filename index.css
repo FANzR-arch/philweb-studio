@@ -559,6 +559,7 @@
     isolation: isolate;
     translate: 0 0;
     animation: liquidCardFloat var(--liquid-float-duration, 11s) cubic-bezier(0.4, 0, 0.2, 1) var(--liquid-float-delay, 0s) infinite alternate;
+    animation-play-state: var(--card-float-state, running);
     transition:
       transform 640ms cubic-bezier(0.19, 1, 0.22, 1),
       border-color 640ms cubic-bezier(0.19, 1, 0.22, 1),
@@ -572,6 +573,7 @@
     animation:
       fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) var(--liquid-enter-delay, 0s) forwards,
       liquidCardFloat var(--liquid-float-duration, 11s) cubic-bezier(0.4, 0, 0.2, 1) var(--liquid-float-delay, 0s) infinite alternate;
+    animation-play-state: running, var(--card-float-state, running);
   }
 
   .liquid-card.animate-fade-in-up.delay-1 {
@@ -1168,4 +1170,17 @@
     opacity: 1;
     transform: scale(1) translateY(0);
   }
+}
+
+@layer base {
+  /* Studio 外观扩展：浮动开关与单卡片色调（由 site-theme.json 的 effects 控制） */
+  :root {
+    --card-float-state: var(--theme-effects-cards-float-state, running);
+  }
+
+  .card-slot-sidebar { --card-tint: var(--theme-effects-card-tints-sidebar, transparent); }
+  .card-slot-intro { --card-tint: var(--theme-effects-card-tints-intro, transparent); }
+  .card-slot-timeline { --card-tint: var(--theme-effects-card-tints-timeline, transparent); }
+  .card-slot-projects { --card-tint: var(--theme-effects-card-tints-projects, transparent); }
+  .card-slot-quicklinks { --card-tint: var(--theme-effects-card-tints-quicklinks, transparent); }
 }

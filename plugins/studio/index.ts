@@ -348,6 +348,59 @@ links:
   const AURORA_BASE_LIGHT = 0.19;
   const AURORA_BASE_DARK = 0.22;
 
+  /** 阴影风格预设：soft 恢复默认扩散投影；hard 是新粗野主义的硬边色块；none 完全去阴影。 */
+  const SHADOW_PRESETS: Record<string, {
+    cardLight: string; cardDark: string; cardHoverLight: string; cardHoverDark: string;
+    liquidLight: string; liquidLightHover: string; liquidDark: string; liquidDarkHover: string;
+  }> = {
+    soft: {
+      cardLight: '0 4px 12px -2px rgba(15, 23, 42, 0.04), 0 12px 24px -12px rgba(15, 23, 42, 0.18)',
+      cardDark: '0 2px 10px rgba(0, 0, 0, 0.26), 0 16px 36px -22px rgba(0, 0, 0, 0.62)',
+      cardHoverLight: '0 6px 16px -2px rgba(15, 23, 42, 0.06), 0 16px 32px -12px rgba(15, 23, 42, 0.25)',
+      cardHoverDark: '0 4px 14px rgba(0, 0, 0, 0.36), 0 20px 44px -22px rgba(0, 0, 0, 0.72)',
+      liquidLight: '0 22px 54px -34px rgba(15, 23, 42, 0.34), 0 8px 22px -24px rgba(15, 23, 42, 0.14), 0 1px 0 rgba(255, 255, 255, 0.58)',
+      liquidLightHover: '0 24px 58px -36px rgba(15, 23, 42, 0.36), 0 9px 24px -24px rgba(15, 23, 42, 0.15), 0 1px 0 rgba(255, 255, 255, 0.62)',
+      liquidDark: '0 26px 62px -34px rgba(0, 0, 0, 0.86), 0 10px 28px -26px rgba(0, 0, 0, 0.58), 0 1px 0 rgba(255, 255, 255, 0.05)',
+      liquidDarkHover: '0 28px 66px -36px rgba(0, 0, 0, 0.88), 0 11px 30px -26px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.06)',
+    },
+    hard: {
+      cardLight: '8px 8px 0 0 rgba(15, 23, 42, 0.9)',
+      cardDark: '8px 8px 0 0 rgba(255, 255, 255, 0.22)',
+      cardHoverLight: '11px 11px 0 0 rgba(15, 23, 42, 0.9)',
+      cardHoverDark: '11px 11px 0 0 rgba(255, 255, 255, 0.28)',
+      liquidLight: '8px 8px 0 0 rgba(15, 23, 42, 0.9)',
+      liquidLightHover: '11px 11px 0 0 rgba(15, 23, 42, 0.9)',
+      liquidDark: '8px 8px 0 0 rgba(255, 255, 255, 0.22)',
+      liquidDarkHover: '11px 11px 0 0 rgba(255, 255, 255, 0.28)',
+    },
+    none: {
+      cardLight: 'none', cardDark: 'none', cardHoverLight: 'none', cardHoverDark: 'none',
+      liquidLight: 'none', liquidLightHover: 'none', liquidDark: 'none', liquidDarkHover: 'none',
+    },
+  };
+
+  const CARD_TINT_SLOTS = ['sidebar', 'intro', 'timeline', 'projects', 'quicklinks'] as const;
+  const TINT_ALPHA = 0.4;
+
+  /** 卡片色调以固定透明度叠加，避免小白选深色后文字不可读；读取时还原为纯色。 */
+  const tintToHex = (value: unknown): string => {
+    const match = /rgba\((\d+),\s*(\d+),\s*(\d+)/.exec(String(value ?? ''));
+    if (!match) return '';
+    const toHex = (n: string) => Number(n).toString(16).padStart(2, '0');
+    return `#${toHex(match[1])}${toHex(match[2])}${toHex(match[3])}`.toUpperCase();
+  };
+
+  const customPacksPath = () => path.join(contentRoot(), 'theme', 'custom-packs.json');
+
+  const readCustomPacks = (): any[] => {
+    try {
+      const packs = JSON.parse(readTextFile(customPacksPath()));
+      return Array.isArray(packs) ? packs : [];
+    } catch {
+      return [];
+    }
+  };
+
   /** 精选字体预设：中文字体全部使用开源字体，通过国内可达的镜像/CDN 加载。 */
   const FONT_PRESETS: Record<string, { label: string; fontSans: string; webfonts: string[] }> = {
     modern: {
@@ -388,6 +441,10 @@ links:
       fontPreset: theme.typography?.fontPreset ?? 'modern',
       density: Object.entries(DENSITY_ROOT_SIZE).find(([, size]) => size === rootSize)?.[0] ?? 'normal',
       fontPresets: Object.entries(FONT_PRESETS).map(([id, preset]) => ({ id, label: preset.label })),
+      float: theme.effects?.cards?.floatState !== 'paused',
+      shadowStyle: SHADOW_PRESETS[theme.effects?.cards?.shadowStyle] ? theme.effects.cards.shadowStyle : 'soft',
+      cardTints: Object.fromEntries(CARD_TINT_SLOTS.map((slot) => [slot, tintToHex(theme.effects?.cardTints?.[slot])])),
+      customPacks: readCustomPacks(),
     };
   };
 
@@ -424,6 +481,26 @@ links:
       webfonts: FONT_PRESETS[fontPreset].webfonts,
       rootFontSize,
     };
+
+    // 浮动开关与阴影风格
+    theme.effects.cards.floatState = input.float === false ? 'paused' : 'running';
+    const shadowStyle = SHADOW_PRESETS[input.shadowStyle] ? input.shadowStyle : 'soft';
+    const shadows = SHADOW_PRESETS[shadowStyle];
+    theme.effects.cards.shadowStyle = shadowStyle;
+    theme.effects.cards.shadow = { light: shadows.cardLight, dark: shadows.cardDark };
+    theme.effects.cards.shadowHover = { light: shadows.cardHoverLight, dark: shadows.cardHoverDark };
+    theme.effects.liquid.light.shadow = shadows.liquidLight;
+    theme.effects.liquid.light.shadowHover = shadows.liquidLightHover;
+    theme.effects.liquid.dark.shadow = shadows.liquidDark;
+    theme.effects.liquid.dark.shadowHover = shadows.liquidDarkHover;
+
+    // 单卡片色调：以固定 0.4 透明度叠加，空值为 transparent
+    if (input.cardTints && typeof input.cardTints === 'object') {
+      theme.effects.cardTints = Object.fromEntries(CARD_TINT_SLOTS.map((slot) => {
+        const hex = String(input.cardTints[slot] ?? '').trim();
+        return [slot, hexToRgb(hex) ? rgba(hex, TINT_ALPHA) : 'transparent'];
+      }));
+    }
 
     writeTextFile(themePath(), `${JSON.stringify(theme, null, 2)}`);
   };
@@ -993,6 +1070,33 @@ features:
               case '/studio/api/upload':
                 await handleUpload(body);
                 break;
+              case '/studio/api/theme/pack/save': {
+                const name = String(body.name ?? '').trim();
+                if (!name) throw new Error('方案名称不能为空。');
+                if (name.length > 20) throw new Error('方案名称请控制在 20 字以内。');
+                const packs = readCustomPacks().filter((pack) => pack.name !== name);
+                packs.push({
+                  id: `custom-${Date.now().toString(36)}`,
+                  name,
+                  accentLight: String(body.accentLight ?? '#C13B25'),
+                  accentDark: String(body.accentDark ?? '#EB5E47'),
+                  pageLight: String(body.pageLight ?? '#F8FAFC'),
+                  pageDark: String(body.pageDark ?? '#0B0B0C'),
+                  radius: Number(body.radius ?? 24),
+                  aurora: Number(body.aurora ?? 100),
+                  fontPreset: String(body.fontPreset ?? 'modern'),
+                  density: String(body.density ?? 'normal'),
+                  float: body.float !== false,
+                  shadowStyle: String(body.shadowStyle ?? 'soft'),
+                });
+                writeTextFile(customPacksPath(), JSON.stringify(packs, null, 2));
+                break;
+              }
+              case '/studio/api/theme/pack/delete': {
+                const packs = readCustomPacks().filter((pack) => pack.id !== body.id);
+                writeTextFile(customPacksPath(), JSON.stringify(packs, null, 2));
+                break;
+              }
               case '/studio/api/site-config': {
                 const patch: { attributionEnabled?: boolean; personalAI?: boolean } = {};
                 if (typeof body.attributionEnabled === 'boolean') patch.attributionEnabled = body.attributionEnabled;

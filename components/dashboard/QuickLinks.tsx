@@ -77,7 +77,7 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlo
         <Card
           variant="secondary"
           onClick={onOpenContact}
-          className="!p-0 group"
+          className="card-slot-quicklinks !p-0 group"
         >
           <div className="flex flex-row items-center justify-start gap-4 w-full h-full pl-6 sm:pl-8">
             <svg
@@ -102,7 +102,7 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlo
         <Card
           variant="secondary"
           onClick={onOpenBlog}
-          className="!p-0 group"
+          className="card-slot-quicklinks !p-0 group"
         >
           <div className="flex flex-row items-center justify-start gap-4 w-full h-full pl-6 sm:pl-8">
             <span className="material-symbols-outlined text-[var(--icon-muted)] group-hover:text-[var(--site-accent)] transition-colors flex-shrink-0 text-[26px]">

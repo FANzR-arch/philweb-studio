@@ -2,7 +2,7 @@
   "modes": {
     "light": {
       "surface": {
-        "page": "#F8FAFC",
+        "page": "#F3EDE2",
         "card": "rgba(255, 255, 255, 0.92)",
         "cardSecondary": "rgba(248, 250, 252, 0.84)",
         "panel": "#FFFFFF",
@@ -16,7 +16,7 @@
         "muted": "#64748B",
         "subtle": "#94A3B8",
         "inverse": "#FFFFFF",
-        "accent": "#C13B25"
+        "accent": "#BE1E2D"
       },
       "border": {
         "soft": "rgba(15, 23, 42, 0.06)",
@@ -59,12 +59,12 @@
         "border": "rgba(15, 23, 42, 0.06)",
         "text": "#475569",
         "hoverSurface": "#FFFFFF",
-        "hoverBorder": "rgba(193, 59, 37, 0.22)"
+        "hoverBorder": "rgba(190, 30, 45, 0.22)"
       }
     },
     "dark": {
       "surface": {
-        "page": "#0B0B0C",
+        "page": "#161513",
         "card": "rgba(18, 18, 20, 0.85)",
         "cardSecondary": "rgba(30, 30, 32, 0.5)",
         "panel": "#1A1A1A",
@@ -78,7 +78,7 @@
         "muted": "#94A3B8",
         "subtle": "#737373",
         "inverse": "#0B0B0C",
-        "accent": "#EB5E47"
+        "accent": "#F5C518"
       },
       "border": {
         "soft": "rgba(255, 255, 255, 0.06)",
@@ -121,7 +121,7 @@
         "border": "rgba(255, 255, 255, 0.08)",
         "text": "#CBD5E1",
         "hoverSurface": "rgba(255, 255, 255, 0.08)",
-        "hoverBorder": "rgba(235, 94, 71, 0.3)"
+        "hoverBorder": "rgba(245, 197, 24, 0.3)"
       }
     }
   },
@@ -290,14 +290,14 @@
     "palette-lab": "#2A9D8F"
   },
   "accent": {
-    "light": "#C13B25",
-    "dark": "#EB5E47",
-    "glow": "rgba(193, 59, 37, 0.35)"
+    "light": "#BE1E2D",
+    "dark": "#F5C518",
+    "glow": "rgba(190, 30, 45, 0.35)"
   },
   "effects": {
     "aurora": {
       "light": {
-        "opacity": 0.19,
+        "opacity": 0,
         "blur": "56px",
         "saturation": 1.18,
         "bloom": 1.05,
@@ -309,7 +309,7 @@
         }
       },
       "dark": {
-        "opacity": 0.22,
+        "opacity": 0,
         "blur": "60px",
         "saturation": 1.24,
         "bloom": 1.05,
@@ -334,21 +334,23 @@
       }
     },
     "cards": {
-      "radius": "24px",
-      "radiusSmall": "18px",
+      "radius": "4px",
+      "radiusSmall": "4px",
       "blur": "12px",
       "shadow": {
-        "light": "0 4px 12px -2px rgba(15, 23, 42, 0.04), 0 12px 24px -12px rgba(15, 23, 42, 0.18)",
-        "dark": "0 2px 10px rgba(0, 0, 0, 0.26), 0 16px 36px -22px rgba(0, 0, 0, 0.62)"
+        "light": "8px 8px 0 0 rgba(15, 23, 42, 0.9)",
+        "dark": "8px 8px 0 0 rgba(255, 255, 255, 0.22)"
       },
       "shadowHover": {
-        "light": "0 6px 16px -2px rgba(15, 23, 42, 0.06), 0 16px 32px -12px rgba(15, 23, 42, 0.25)",
-        "dark": "0 4px 14px rgba(0, 0, 0, 0.36), 0 20px 44px -22px rgba(0, 0, 0, 0.72)"
+        "light": "11px 11px 0 0 rgba(15, 23, 42, 0.9)",
+        "dark": "11px 11px 0 0 rgba(255, 255, 255, 0.28)"
       },
       "highlight": {
         "light": "linear-gradient(180deg, rgba(255, 255, 255, 0.74) 0%, rgba(255, 255, 255, 0.28) 28%, rgba(255, 255, 255, 0) 62%)",
         "dark": "linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 30%, rgba(255, 255, 255, 0) 65%)"
-      }
+      },
+      "floatState": "paused",
+      "shadowStyle": "hard"
     },
     "liquid": {
       "light": {
@@ -360,8 +362,8 @@
         "sheen": "linear-gradient(178deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.2) 22%, rgba(255, 255, 255, 0.04) 48%, rgba(255, 255, 255, 0) 74%)",
         "sheenHover": "linear-gradient(178deg, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.22) 24%, rgba(255, 255, 255, 0.04) 52%, rgba(255, 255, 255, 0) 78%)",
         "caustic": "radial-gradient(circle at 18% -8%, rgba(255, 255, 255, 0.34), transparent 30%), radial-gradient(circle at 92% 12%, rgba(255, 255, 255, 0.12), transparent 28%), linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%, rgba(255, 255, 255, 0.03) 100%)",
-        "shadow": "0 22px 54px -34px rgba(15, 23, 42, 0.34), 0 8px 22px -24px rgba(15, 23, 42, 0.14), 0 1px 0 rgba(255, 255, 255, 0.58)",
-        "shadowHover": "0 24px 58px -36px rgba(15, 23, 42, 0.36), 0 9px 24px -24px rgba(15, 23, 42, 0.15), 0 1px 0 rgba(255, 255, 255, 0.62)",
+        "shadow": "8px 8px 0 0 rgba(15, 23, 42, 0.9)",
+        "shadowHover": "11px 11px 0 0 rgba(15, 23, 42, 0.9)",
         "glow": "rgba(255, 255, 255, 0.12)",
         "blur": "20px"
       },
@@ -374,8 +376,8 @@
         "sheen": "linear-gradient(178deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.045) 28%, rgba(255, 255, 255, 0) 74%)",
         "sheenHover": "linear-gradient(178deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.055) 30%, rgba(255, 255, 255, 0) 78%)",
         "caustic": "radial-gradient(circle at 18% -8%, rgba(255, 255, 255, 0.1), transparent 30%), radial-gradient(circle at 92% 12%, rgba(255, 255, 255, 0.04), transparent 28%), linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%, rgba(255, 255, 255, 0.022) 100%)",
-        "shadow": "0 26px 62px -34px rgba(0, 0, 0, 0.86), 0 10px 28px -26px rgba(0, 0, 0, 0.58), 0 1px 0 rgba(255, 255, 255, 0.05)",
-        "shadowHover": "0 28px 66px -36px rgba(0, 0, 0, 0.88), 0 11px 30px -26px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.06)",
+        "shadow": "8px 8px 0 0 rgba(255, 255, 255, 0.22)",
+        "shadowHover": "11px 11px 0 0 rgba(255, 255, 255, 0.28)",
         "glow": "rgba(255, 255, 255, 0.06)",
         "blur": "22px"
       }
@@ -446,6 +448,13 @@
           "logoHoverFilter": "invert(1) brightness(1.5) drop-shadow(0 0 12px rgba(56, 189, 248, 0.5)) drop-shadow(0 0 22px rgba(139, 92, 246, 0.3))"
         }
       }
+    },
+    "cardTints": {
+      "sidebar": "rgba(25, 110, 230, 0.4)",
+      "intro": "rgba(206, 34, 34, 0.4)",
+      "timeline": "transparent",
+      "projects": "transparent",
+      "quicklinks": "transparent"
     }
   },
   "semantic": {
@@ -513,5 +522,11 @@
         "fg": "#2563EB"
       }
     }
+  },
+  "typography": {
+    "fontPreset": "modern",
+    "fontSans": "'Manrope', 'Noto Sans SC', sans-serif",
+    "webfonts": [],
+    "rootFontSize": "16px"
   }
 }

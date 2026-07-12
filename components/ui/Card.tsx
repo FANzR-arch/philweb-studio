@@ -27,7 +27,7 @@ export const Card: React.FC<CardProps> = ({
   const baseClasses = [
     'flex flex-col relative overflow-hidden rounded-[var(--card-radius)]',
     'border [border-color:var(--card-border)]',
-    '[background:var(--card-bg)] [box-shadow:var(--card-shadow)]',
+    '[background:linear-gradient(var(--card-tint,transparent),var(--card-tint,transparent)),var(--card-bg)] [box-shadow:var(--card-shadow)]',
     'backdrop-blur-md transition-all duration-300 ease-out isolate',
   ].join(' ');
   const hoverClasses =
@@ -38,7 +38,7 @@ export const Card: React.FC<CardProps> = ({
   const variantClasses = {
     hero: 'p-6 md:p-8',
     primary: 'p-5 md:p-5',
-    secondary: 'p-4 rounded-[var(--card-radius-sm)] [background:var(--card-bg-secondary)]',
+    secondary: 'p-4 rounded-[var(--card-radius-sm)] [background:linear-gradient(var(--card-tint,transparent),var(--card-tint,transparent)),var(--card-bg-secondary)]',
     liquid: 'p-5 md:p-5 liquid-card',
     none: 'p-0 bg-transparent border-none shadow-none rounded-none overflow-visible'
   };
