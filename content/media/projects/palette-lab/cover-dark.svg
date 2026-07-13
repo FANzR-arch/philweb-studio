@@ -1,6 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0F2422"/><stop offset="1" stop-color="#1B3B37"/></linearGradient></defs>
-<rect width="1200" height="750" fill="url(#g)"/><circle cx="210" cy="240" r="86" fill="#2A9D8F"/><circle cx="400" cy="240" r="86" fill="#E9C46A"/><circle cx="590" cy="240" r="86" fill="#E76F51"/>
-<text x="90" y="620" font-family="sans-serif" font-size="72" font-weight="bold" fill="#C8EFE9">配色实验室 Palette Lab</text>
-<text x="92" y="680" font-family="sans-serif" font-size="30" fill="#C8EFE9" opacity="0.75">关键词进，配色方案出</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750"><rect width="1200" height="750" fill="#24242A"/><rect x="446" y="269" width="308" height="212" rx="16" fill="none" stroke="#43454D" stroke-width="9"/><circle cx="508" cy="333" r="20" fill="#43454D"/><path d="M460 463 L542 377 L596 429 L670 361 L740 463 Z" fill="#43454D"/></svg>

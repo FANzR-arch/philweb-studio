@@ -8,11 +8,10 @@
 
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
 import type { IncomingMessage, ServerResponse } from 'http';
 import type { Plugin, ViteDevServer } from 'vite';
 // @ts-ignore content-system 是 JS 模块，无类型声明
-import { scaffoldProject, ensureContentIsValid } from '../../content-system/core.js';
+import { scaffoldProject } from '../../content-system/core.js';
 import {
   mustPatchScalar,
   mustPatchStringArray,
@@ -441,8 +440,10 @@ links:
       density: Object.entries(DENSITY_ROOT_SIZE).find(([, size]) => size === rootSize)?.[0] ?? 'normal',
       fontPresets: Object.entries(FONT_PRESETS).map(([id, preset]) => ({ id, label: preset.label })),
       float: theme.effects?.cards?.floatState !== 'paused',
+      glass: theme.effects?.cards?.glassState !== 'off',
       shadowStyle: SHADOW_PRESETS[theme.effects?.cards?.shadowStyle] ? theme.effects.cards.shadowStyle : 'soft',
       cardTints: Object.fromEntries(CARD_TINT_SLOTS.map((slot) => [slot, tintToHex(theme.effects?.cardTints?.[slot])])),
+      tintOpacity: typeof theme.effects?.cardTintOpacity === 'number' ? theme.effects.cardTintOpacity : TINT_ALPHA,
       customPacks: readCustomPacks(),
     };
   };
@@ -481,8 +482,9 @@ links:
       rootFontSize,
     };
 
-    // 浮动开关与阴影风格
+    // 浮动开关、液态玻璃开关与阴影风格
     theme.effects.cards.floatState = input.float === false ? 'paused' : 'running';
+    theme.effects.cards.glassState = input.glass === false ? 'off' : 'on';
     const shadowStyle = SHADOW_PRESETS[input.shadowStyle] ? input.shadowStyle : 'soft';
     const shadows = SHADOW_PRESETS[shadowStyle];
     theme.effects.cards.shadowStyle = shadowStyle;
@@ -493,11 +495,13 @@ links:
     theme.effects.liquid.dark.shadow = shadows.liquidDark;
     theme.effects.liquid.dark.shadowHover = shadows.liquidDarkHover;
 
-    // 单卡片色调：以固定 0.4 透明度叠加，空值为 transparent
+    // 单卡片色调：透明度可调（默认 0.4），空值为 transparent
+    const tintAlpha = Math.min(0.9, Math.max(0.1, Number(input.tintOpacity ?? TINT_ALPHA)));
+    theme.effects.cardTintOpacity = tintAlpha;
     if (input.cardTints && typeof input.cardTints === 'object') {
       theme.effects.cardTints = Object.fromEntries(CARD_TINT_SLOTS.map((slot) => {
         const hex = String(input.cardTints[slot] ?? '').trim();
-        return [slot, hexToRgb(hex) ? rgba(hex, TINT_ALPHA) : 'transparent'];
+        return [slot, hexToRgb(hex) ? rgba(hex, tintAlpha) : 'transparent'];
       }));
     }
 
@@ -837,45 +841,8 @@ links:
         { key: 'hero', label: '写好首屏介绍', done: homeZh['hero.greeting'] !== starterHomeZh['hero.greeting'] || homeZh['hero.description'] !== starterHomeZh['hero.description'], tab: 'home' },
         { key: 'theme', label: '挑一个喜欢的风格', done: themeChanged, tab: 'theme' },
         { key: 'project', label: '放上自己的项目', done: projectChanged, tab: 'projects' },
-        { key: 'publish', label: '发布上线', done: uiState.publishMarked === true, tab: 'deploy' },
       ],
     };
-  };
-
-  // ── 发布：体检 / 打包 / 署名。 ──
-  let buildStatus: 'idle' | 'running' | 'ok' | 'fail' = 'idle';
-  let buildLog: string[] = [];
-
-  const startBuild = () => {
-    if (buildStatus === 'running') {
-      throw new Error('打包正在进行中，请稍候。');
-    }
-    buildStatus = 'running';
-    buildLog = ['开始打包（npm run build）…'];
-    const child = spawn('npm', ['run', 'build'], { cwd: projectRoot, shell: true });
-    const append = (chunk: Buffer) => {
-      buildLog.push(...chunk.toString('utf8').split(/\r?\n/).filter(Boolean));
-      if (buildLog.length > 400) buildLog = buildLog.slice(-400);
-    };
-    child.stdout.on('data', append);
-    child.stderr.on('data', append);
-    child.on('close', (code) => {
-      buildStatus = code === 0 ? 'ok' : 'fail';
-      buildLog.push(code === 0 ? '✅ 打包完成，产物在 dist/ 文件夹。' : `❌ 打包失败（退出码 ${code}），看上方日志排查。`);
-    });
-    child.on('error', (error) => {
-      buildStatus = 'fail';
-      buildLog.push(`❌ 无法启动打包：${error.message}`);
-    });
-  };
-
-  const openDistFolder = () => {
-    const dist = path.join(projectRoot, 'dist');
-    if (!fs.existsSync(dist)) {
-      throw new Error('还没有 dist/ 文件夹，请先点"打包"。');
-    }
-    const opener = process.platform === 'win32' ? 'explorer' : process.platform === 'darwin' ? 'open' : 'xdg-open';
-    spawn(opener, [dist], { shell: false, detached: true, stdio: 'ignore' }).on('error', () => {});
   };
 
   const readSiteFlags = () => {
@@ -1012,10 +979,6 @@ links:
             sendJson(res, 200, collectState());
             return;
           }
-          if (req.method === 'GET' && url === '/studio/api/deploy/status') {
-            sendJson(res, 200, { status: buildStatus, log: buildLog.slice(-30) });
-            return;
-          }
           if (req.method === 'POST') {
             const body = await readJsonBody(req);
             switch (url) {
@@ -1083,7 +1046,9 @@ links:
                   fontPreset: String(body.fontPreset ?? 'modern'),
                   density: String(body.density ?? 'normal'),
                   float: body.float !== false,
+                  glass: body.glass !== false,
                   shadowStyle: String(body.shadowStyle ?? 'soft'),
+                  tints: body.tints && typeof body.tints === 'object' ? body.tints : {},
                 });
                 writeTextFile(customPacksPath(), JSON.stringify(packs, null, 2));
                 break;
@@ -1103,19 +1068,6 @@ links:
                 updateShared((data) => {
                   data['assets.brandMark'] = '';
                 });
-                break;
-              case '/studio/api/deploy/check':
-                try {
-                  ensureContentIsValid(projectRoot);
-                } catch (error) {
-                  throw new Error(`内容体检未通过：${error instanceof Error ? error.message : error}`);
-                }
-                break;
-              case '/studio/api/deploy/build':
-                startBuild();
-                break;
-              case '/studio/api/deploy/open-dist':
-                openDistFolder();
                 break;
               case '/studio/api/restore':
                 replaceContentWith(sessionSnapshotDir(), 'pre-restore');

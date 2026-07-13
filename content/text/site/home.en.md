@@ -34,7 +34,7 @@ timeline:
       keywords:
         - "Zero to one"
         - "AI-assisted dev"
-      detail: "Built two small tools out of recurring needs in my own work with AI-assisted development, experiencing the full loop from idea to launch."
+      detail: "Built a few small tools out of recurring needs in my own work with AI-assisted development, experiencing the full loop from idea to launch."
     - id: "timeline-2"
       icon: "auto_awesome"
       period: "2023 - 2025"
@@ -67,7 +67,7 @@ metrics:
     value: "12+"
     icon: "palette"
   - label: "Products"
-    value: "2"
+    value: "3"
     icon: "apps"
   - label: "Articles"
     value: "20+"

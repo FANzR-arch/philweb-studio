@@ -12,6 +12,7 @@ updatedAt: "2026-06-01"
 featuredProjectIds:
   - "flowcard"
   - "palette-lab"
+  - "typepair"
 basics:
   - label: "所在城市"
     value: "杭州"
@@ -35,7 +36,7 @@ experiences:
     role: "独立小产品作者"
     period: "2025 - 至今"
     bullets:
-      - "用 AI 辅助开发完成 2 个小工具的从想法到上线。"
+      - "用 AI 辅助开发完成几个小工具的从想法到上线。"
       - "在社交平台持续分享 AI 设计工作流与复盘。"
   - company: "某互联网公司"
     role: "UI 设计师"
@@ -46,6 +47,7 @@ experiences:
 projectRoleValues:
   flowcard: "独立设计与开发"
   palette-lab: "独立设计与开发"
+  typepair: "独立设计与开发"
 projectBullets:
   flowcard:
     - "把散落的灵感截图和文字自动整理成可检索的卡片。"
@@ -53,6 +55,9 @@ projectBullets:
   palette-lab:
     - "输入品牌关键词即可生成成套配色方案。"
     - "被身边设计师朋友用于日常提案配色。"
+  typepair:
+    - "输入正文字体，自动推荐协调的标题字体搭配。"
+    - "支持用自己的真实文案实时预览排版效果。"
 ---
 
 简历内容入口。替换成你自己的经历后，网站的"关于我"弹窗会同步更新。

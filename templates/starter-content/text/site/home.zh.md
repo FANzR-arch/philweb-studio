@@ -34,7 +34,7 @@ timeline:
       keywords:
         - "从 0 到 1"
         - "AI 辅助开发"
-      detail: "用 AI 辅助开发的方式，把自己工作里反复出现的小需求做成了两个小工具，完整体验了需求、设计、上线的全过程。"
+      detail: "用 AI 辅助开发的方式，把自己工作里反复出现的小需求做成了几个小工具，完整体验了需求、设计、上线的全过程。"
     - id: "timeline-2"
       icon: "auto_awesome"
       period: "2023 - 2025"
@@ -67,7 +67,7 @@ metrics:
     value: "12+"
     icon: "palette"
   - label: "独立产品"
-    value: "2款"
+    value: "3款"
     icon: "apps"
   - label: "文章"
     value: "20+"

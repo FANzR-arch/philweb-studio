@@ -505,7 +505,7 @@
 
   .liquid-card,
   .liquid-modal-shell {
-    background: var(--liquid-surface) !important;
+    background: linear-gradient(var(--card-tint, transparent), var(--card-tint, transparent)), var(--liquid-surface) !important;
     border-color: var(--liquid-border) !important;
     box-shadow:
       var(--liquid-shadow),
@@ -680,6 +680,29 @@
 
   .liquid-card:hover .card-highlight-layer {
     background: var(--liquid-sheen-hover) !important;
+  }
+
+  /* 关闭液态玻璃：液态卡片回落成普通实心卡（保留单卡片色调）。 */
+  :root.no-glass .liquid-card {
+    background: linear-gradient(var(--card-tint, transparent), var(--card-tint, transparent)), var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    box-shadow: var(--card-shadow) !important;
+    outline: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  :root.no-glass .liquid-card::before,
+  :root.no-glass .liquid-card::after {
+    display: none !important;
+  }
+  :root.no-glass .liquid-card .card-highlight-layer {
+    background: var(--card-highlight) !important;
+    opacity: 0.8;
+  }
+  :root.no-glass .liquid-card:hover {
+    border-color: var(--card-border-hover) !important;
+    box-shadow: var(--card-shadow-hover) !important;
+    transform: translate3d(0, -1.5px, 0) !important;
   }
 
   .liquid-modal-shell {

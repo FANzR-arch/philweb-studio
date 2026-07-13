@@ -1,0 +1,17 @@
+id: typepair
+order: 30
+published: true
+isPrimary: true
+year: "2026"
+role: "独立设计与开发"
+outcome: "字体搭配小工具"
+icon: "text_fields"
+themeColor: "#7C6BC4"
+webLink: ""
+version: "v1.0"
+coverLight: "../../../media/projects/typepair/cover-light.svg"
+coverDark: "../../../media/projects/typepair/cover-dark.svg"
+status:
+  zh: "已上线"
+  en: "Live"
+  tone: "live"

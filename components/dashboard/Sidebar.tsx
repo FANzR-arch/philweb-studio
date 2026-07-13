@@ -106,7 +106,7 @@ export const Sidebar: React.FC = () => {
         <div data-edit="home.profileStatement" data-edit-label="个人签名与技能列表" className="space-y-3.5 mb-6">
           {introLines.map((line, index) => (
             <div key={`${introIcons[index]}-${line}`} className="flex items-center gap-3.5">
-              <span className="theme-pill size-10 rounded-xl border flex items-center justify-center shrink-0">
+              <span className="theme-pill size-10 rounded-[var(--card-radius-sm)] border flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-[18px] text-[var(--site-accent)]">
                   {introIcons[index]}
                 </span>
@@ -132,7 +132,7 @@ export const Sidebar: React.FC = () => {
             return (
               <div
                 key={metric.label}
-                className="theme-pill rounded-xl border px-2 py-2.5 min-h-[68px] flex flex-col items-center justify-center text-center gap-1"
+                className="theme-pill rounded-[var(--card-radius-sm)] border px-2 py-2.5 min-h-[68px] flex flex-col items-center justify-center text-center gap-1"
               >
                 {hasValue ? (
                   <>

@@ -12,6 +12,7 @@ updatedAt: "2026-06-01"
 featuredProjectIds:
   - "flowcard"
   - "palette-lab"
+  - "typepair"
 basics:
   - label: "City"
     value: "Hangzhou"
@@ -35,7 +36,7 @@ experiences:
     role: "Indie Maker"
     period: "2025 - Now"
     bullets:
-      - "Shipped 2 small tools from idea to launch with AI-assisted development."
+      - "Shipped a few small tools from idea to launch with AI-assisted development."
       - "Shares AI design workflows and retrospectives on social platforms."
   - company: "An Internet Company"
     role: "UI Designer"
@@ -46,6 +47,7 @@ experiences:
 projectRoleValues:
   flowcard: "Solo design & development"
   palette-lab: "Solo design & development"
+  typepair: "Solo design & development"
 projectBullets:
   flowcard:
     - "Automatically organizes scattered screenshots and notes into searchable cards."
@@ -53,6 +55,9 @@ projectBullets:
   palette-lab:
     - "Generates complete color schemes from brand keywords."
     - "Used by designer friends for everyday proposal palettes."
+  typepair:
+    - "Enter a body font and get coordinated heading font pairings."
+    - "Preview typography live with your own real copy."
 ---
 
 English resume content. Replace with your own experience.

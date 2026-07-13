@@ -47,7 +47,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onOpenProject }) => {
                             onClick={() => onOpenProject(project)}
                             aria-label={lang === 'zh' ? `查看项目：${display.title}` : `Open project: ${display.title}`}
                             style={{ '--project-color': project.themeColor || '#94A3B8' } as React.CSSProperties}
-                            className="group project-list-item w-full flex-1 flex flex-row items-stretch text-left cursor-pointer transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] rounded-xl overflow-hidden border hover:-translate-y-1 min-h-[88px] sm:min-h-[106px] p-0"
+                            className="group project-list-item w-full flex-1 flex flex-row items-stretch text-left cursor-pointer transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] rounded-[var(--card-radius-sm)] overflow-hidden border hover:-translate-y-1 min-h-[88px] sm:min-h-[106px] p-0"
                         >
                             {/* 顶部细光带只在悬浮时出现，用很轻的方式提示当前卡片已有交互焦点。 */}
                             <div className="absolute inset-x-0 -top-px h-[2px] bg-gradient-to-r from-transparent via-[var(--project-color)] to-transparent opacity-0 group-hover:opacity-25 transition-opacity duration-500 z-20" />

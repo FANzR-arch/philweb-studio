@@ -73,6 +73,8 @@ const App: React.FC = () => {
     };
 
     setVars(themeCssVars);
+    // 液态玻璃总开关：主题标记为 off 时，液态卡片回落成普通实心卡。
+    root.classList.toggle('no-glass', String(themeCssVars['--theme-effects-cards-glass-state'] ?? 'on').trim() === 'off');
     ensureThemeWebfonts();
 
     // 2. 首次进入时记录页面访问，并根据 URL 参数恢复项目深链状态。

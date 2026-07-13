@@ -21,6 +21,13 @@ description: 把这个个人网站模板定制成用户自己的网站。当用�
 
 相关命令：`npm run content:reset -- --yes` 把 content/ 整体重置为示例人设（重置前自动备份到 `.studio-snapshots/`）。
 
+**职业起始人设**：用户说出自己的职业（如"我是开发者"/"我是产品经理"）时，优先用职业模板给他一个贴合的起点，再在其上改具体信息，成本最低：
+
+- `npm run content:reset -- --list` 列出全部可选职业人设。
+- `npm run content:reset -- --template developer --yes`（独立开发者）、`--template product-manager --yes`（产品经理）等，会把首页文案/时间线/简历/技能矩阵整套换成对应职业起点，并复用同一套头像与 logo。
+- 模板是"覆盖式"：底稿是设计师示例，职业人设只覆盖差异化文本文件，存放在 `templates/personas/<id>/`（含 `persona.json` 说明与推荐风格包）。新增职业人设 = 在此加一个目录，只放要改的文本文件即可。
+- 每套人设有推荐风格包，换完提醒用户在 Studio 外观风格里一键选上。
+
 ## 文件地图（需求 → 文件）
 
 | 用户想改 | 文件 |

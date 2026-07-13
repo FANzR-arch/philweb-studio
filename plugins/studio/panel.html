@@ -227,6 +227,13 @@
   .help code { background: var(--bg); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
   .muted-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 8px; }
   details summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+  .adv-panel { margin-bottom: 14px; }
+  .adv-panel > summary { list-style: none; display: flex; align-items: center; gap: 7px; padding: 12px 16px; background: var(--card); border: 1px dashed var(--line); border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .adv-panel > summary::-webkit-details-marker { display: none; }
+  .adv-panel > summary::marker { content: ''; }
+  .adv-panel > summary .icon { width: 15px; height: 15px; }
+  .adv-panel:not([open]) > summary:hover { border-color: var(--ink); color: var(--ink); }
+  .adv-panel[open] > summary { border-style: solid; margin-bottom: 8px; }
   details ol, details p { font-size: 12.5px; line-height: 1.9; padding: 8px 0 4px 20px; color: #334155; }
   details p { padding-left: 0; }
 </style>
@@ -246,7 +253,6 @@
       <button data-tab="theme"><span class="icon" data-icon="palette"></span>外观风格</button>
       <button data-tab="projects"><span class="icon" data-icon="grid"></span>项目作品</button>
       <button data-tab="blog"><span class="icon" data-icon="pen"></span>博客文章</button>
-      <button data-tab="deploy"><span class="icon" data-icon="rocket"></span>发布上线</button>
       <button data-tab="help"><span class="icon" data-icon="help"></span>帮助</button>
     </nav>
 
@@ -342,8 +348,12 @@
       <section class="tab" id="tab-theme">
         <div class="card">
           <h2><span class="icon" data-icon="palette"></span>整套风格包</h2>
-          <p class="desc">点一下立即在右侧预览（还没保存），满意就点底部"应用外观设置"。</p>
+          <p class="desc">挑一个喜欢的，右侧立即预览。多数人到这一步就够了——选好直接点下面的"应用外观设置"，不用再逐项调。</p>
           <div class="pack-grid" id="style-packs"></div>
+          <div class="save-row" style="margin-top:12px">
+            <button class="btn ghost" onclick="renderTheme(); previewTheme(); toast('已恢复为当前已保存的外观')"><span class="icon" data-icon="undo"></span>还原预览</button>
+            <button class="btn" onclick="saveTheme(this)"><span class="icon" data-icon="check"></span>应用外观设置</button>
+          </div>
         </div>
         <div class="card">
           <h2><span class="icon" data-icon="save"></span>我的方案</h2>
@@ -351,7 +361,9 @@
           <div class="pack-grid" id="custom-packs" style="margin-bottom:10px"></div>
           <button class="btn ghost small" onclick="saveCurrentAsPack()"><span class="icon" data-icon="plus"></span>把当前设置保存为方案</button>
         </div>
-        <div class="card">
+        <details class="adv-panel">
+          <summary><span class="icon" data-icon="sliders"></span>高级微调（可选）· 想在风格包基础上再调细节才展开</summary>
+        <div class="card" style="margin-top:12px">
           <h2><span class="icon" data-icon="sliders"></span>细节微调</h2>
           <p class="desc">所有改动都会实时出现在右侧预览里。</p>
           <div class="color-row">
@@ -408,6 +420,13 @@
               </div>
             </div>
           </div>
+          <div class="switch-row" style="margin-top:2px">
+            <div class="sw-label">
+              <b style="font-weight:600;font-size:12.5px">液态玻璃质感</b>
+              <small>关闭后首页卡片变成干净的实心卡（更适合粗野 / 瑞士 / 极简等硬朗风格）。</small>
+            </div>
+            <label class="switch"><input type="checkbox" id="t-glass" onchange="previewTheme()"><i></i></label>
+          </div>
           <p class="muted-note">深色模式的主色建议比浅色模式的更亮一点，在黑底上才看得清。</p>
           <div class="save-row">
             <button class="btn ghost" onclick="renderTheme(); previewTheme(); toast('已恢复为当前已保存的外观')"><span class="icon" data-icon="undo"></span>还原预览</button>
@@ -416,10 +435,16 @@
         </div>
         <div class="card">
           <h2><span class="icon" data-icon="grid"></span>单卡片配色</h2>
-          <p class="desc">给首页的五张卡片分别叠一层色调（半透明，不影响文字可读性）。留空 = 跟随主题。</p>
+          <p class="desc">给首页的五张卡片分别叠一层色调。留空 = 跟随主题。浓度越高越接近所选纯色，越低越通透、文字越清晰。</p>
+          <div class="slider-row">
+            <span class="lbl">色调浓度</span>
+            <input type="range" id="t-tint-opacity" min="20" max="90" step="5">
+            <output id="t-tint-opacity-out">40%</output>
+          </div>
           <div id="card-tints"></div>
           <div class="save-row"><button class="btn" onclick="saveTheme(this)"><span class="icon" data-icon="check"></span>应用外观设置</button></div>
         </div>
+        </details>
       </section>
 
       <!-- 项目作品 -->
@@ -455,60 +480,6 @@
         </div>
       </section>
 
-      <!-- 发布上线 -->
-      <section class="tab" id="tab-deploy">
-        <div class="card">
-          <h2><span class="icon" data-icon="activity"></span>第 1 步 · 体检</h2>
-          <p class="desc">检查所有内容文件是否完整合法（缺图、格式错误都会在这里报出来）。</p>
-          <button class="btn" onclick="deployCheck(this)"><span class="icon" data-icon="activity"></span>一键体检</button>
-          <span id="check-result" style="font-size:12.5px;margin-left:10px"></span>
-        </div>
-        <div class="card">
-          <h2><span class="icon" data-icon="package"></span>第 2 步 · 打包</h2>
-          <p class="desc">生成可部署的静态网站（dist/ 文件夹），大约需要 1~2 分钟。</p>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-            <button class="btn" id="build-btn" onclick="deployBuild()"><span class="icon" data-icon="package"></span>开始打包</button>
-            <button class="btn ghost" onclick="openDist()"><span class="icon" data-icon="folder"></span>打开 dist 文件夹</button>
-          </div>
-          <pre id="build-log" style="display:none;background:#0f172a;color:#a5f3c4;font-size:11px;line-height:1.6;border-radius:8px;padding:10px 12px;max-height:180px;overflow-y:auto;white-space:pre-wrap"></pre>
-        </div>
-        <div class="card">
-          <h2><span class="icon" data-icon="rocket"></span>第 3 步 · 上传到托管平台（免费）</h2>
-          <p class="desc">推荐拖拽上传，不需要懂 Git。三选一即可：</p>
-          <details style="margin-bottom:8px">
-            <summary>Netlify Drop（最简单）</summary>
-            <ol>
-              <li>打开 <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a>（需注册，免费）</li>
-              <li>把整个 <b>dist 文件夹</b>拖进页面虚线框里</li>
-              <li>等几十秒，得到一个 xxx.netlify.app 网址，完成</li>
-            </ol>
-          </details>
-          <details style="margin-bottom:8px">
-            <summary>Cloudflare Pages（国内访问相对稳定）</summary>
-            <ol>
-              <li>打开 <a href="https://dash.cloudflare.com" target="_blank">dash.cloudflare.com</a> → Workers 和 Pages → 创建 → Pages</li>
-              <li>选择"直接上传"，把 dist 文件夹拖进去</li>
-              <li>得到 xxx.pages.dev 网址，完成</li>
-            </ol>
-          </details>
-          <details>
-            <summary>Vercel / 绑定自己的域名（进阶）</summary>
-            <p>把项目推到 GitHub 后在 <a href="https://vercel.com" target="_blank">vercel.com</a> 导入仓库（构建命令 npm run build，输出目录 dist），以后改完内容推送即自动更新。绑定自有域名在各平台的"Custom domains"设置里，详见 docs/CUSTOMIZE.md。</p>
-          </details>
-          <p class="muted-note">上线后回到顶部进度条，点"发布上线"标记完成。</p>
-        </div>
-        <div class="card">
-          <h2><span class="icon" data-icon="link"></span>模板署名</h2>
-          <div class="switch-row">
-            <div class="sw-label">
-              <b>页脚显示"基于 folio-studio 模板搭建"</b>
-              <small>一行低调的小字链接，支持模板作者。署名文字和链接可在 content/config/site.yml 修改。</small>
-            </div>
-            <label class="switch"><input type="checkbox" id="sf-attribution" onchange="saveAttributionFlag()"><i></i></label>
-          </div>
-        </div>
-      </section>
-
       <!-- 帮助 -->
       <section class="tab" id="tab-help">
         <div class="card help">
@@ -522,7 +493,7 @@
              2. 首页内容：改标题、签名、时间线（中英文都填）<br>
              3. 外观风格：挑个风格包、调圆角<br>
              4. 项目作品：把示例项目改成你自己的<br>
-             5. 发布上线：体检 → 打包 → 拖拽上传</p>
+             5. 发布：终端跑 npm run build，把 dist 文件夹拖到托管平台</p>
         </div>
         <div class="card help">
           <h2><span class="icon" data-icon="bot"></span>想改这里没有的内容？</h2>
@@ -538,6 +509,20 @@
           <p>想把整站换成干净的示例内容（虚构人设"林小满"，适合从零开始定制）：</p>
           <button class="btn danger" onclick="resetToStarter()"><span class="icon" data-icon="reset"></span>重置为示例内容</button>
           <p class="muted-note">重置前会自动备份当前内容到 .studio-snapshots/ 文件夹，不会真的丢失。</p>
+        </div>
+        <div class="card help">
+          <h2><span class="icon" data-icon="rocket"></span>怎么发布上线</h2>
+          <p>内容改好后，在项目文件夹的终端里运行 <code>npm run build</code>，会生成一个 <code>dist/</code> 文件夹。把它拖到 <a href="https://app.netlify.com/drop" target="_blank">Netlify Drop</a> 或 Cloudflare Pages 的直传页面，几十秒就能拿到网址。详细图文见 <code>docs/CUSTOMIZE.md</code>。</p>
+        </div>
+        <div class="card help">
+          <h2><span class="icon" data-icon="link"></span>模板署名</h2>
+          <div class="switch-row">
+            <div class="sw-label">
+              <b>页脚显示"基于 folio-studio 模板搭建"</b>
+              <small>一行低调的小字链接，支持模板作者。署名文字和链接可在 content/config/site.yml 修改。</small>
+            </div>
+            <label class="switch"><input type="checkbox" id="sf-attribution" onchange="saveAttributionFlag()"><i></i></label>
+          </div>
         </div>
       </section>
     </div>
@@ -803,11 +788,6 @@ function renderChecklist() {
 function checklistJump(key, tab) {
   const target = document.querySelector(`#nav button[data-tab="${tab}"]`) ? tab : 'help';
   selectTab(target);
-  if (key === 'publish' && !state.checklist.items.find((i) => i.key === 'publish').done) {
-    if (confirm('已经把网站部署上线了吗？\n点"确定"标记为完成。')) {
-      api('/studio/api/checklist', { publishMarked: true }).catch(() => {});
-    }
-  }
 }
 
 async function hideChecklist() {
@@ -1031,14 +1011,22 @@ const TINT_SLOTS = [
 ];
 
 const STYLE_PACKS = [
-  { id: 'lava', name: '熔岩红', font: '现代无衬线', accentLight: '#C13B25', accentDark: '#EB5E47', pageLight: '#F8FAFC', pageDark: '#0B0B0C', radius: 24, aurora: 100, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true },
-  { id: 'indigo', name: '靛蓝理性', font: '现代无衬线', accentLight: '#2563EB', accentDark: '#60A5FA', pageLight: '#F7F9FC', pageDark: '#0A0E14', radius: 16, aurora: 60, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true },
-  { id: 'teal', name: '松石清新', font: '现代无衬线', accentLight: '#0D9488', accentDark: '#2DD4BF', pageLight: '#F5FBFA', pageDark: '#081311', radius: 28, aurora: 120, fontPreset: 'modern', density: 'relaxed', shadowStyle: 'soft', float: true },
-  { id: 'magazine', name: '杂志衬线', font: '衬线字体', accentLight: '#9A3B26', accentDark: '#D98E6B', pageLight: '#FAF6EF', pageDark: '#15120E', radius: 12, aurora: 40, fontPreset: 'serif', density: 'normal', shadowStyle: 'soft', float: false },
-  { id: 'brutal', name: '新粗野主义', font: '硬边阴影', accentLight: '#111111', accentDark: '#F5F5F5', pageLight: '#F4F4F0', pageDark: '#0A0A0A', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact', shadowStyle: 'hard', float: false },
-  { id: 'bauhaus', name: '包豪斯', font: '几何原色', accentLight: '#BE1E2D', accentDark: '#F5C518', pageLight: '#F3EDE2', pageDark: '#161513', radius: 4, aurora: 0, fontPreset: 'modern', density: 'normal', shadowStyle: 'hard', float: false },
-  { id: 'swiss', name: '瑞士国际主义', font: '网格与留白', accentLight: '#E30613', accentDark: '#FF4B3E', pageLight: '#FFFFFF', pageDark: '#111111', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact', shadowStyle: 'none', float: false },
-  { id: 'soft', name: '手写温柔', font: '霞鹜文楷', accentLight: '#C2557E', accentDark: '#F191AE', pageLight: '#FDF8FA', pageDark: '#181114', radius: 32, aurora: 130, fontPreset: 'wenkai', density: 'relaxed', shadowStyle: 'soft', float: true },
+  { id: 'lava', name: '熔岩红', font: '现代无衬线', accentLight: '#C13B25', accentDark: '#EB5E47', pageLight: '#F8FAFC', pageDark: '#0B0B0C', radius: 24, aurora: 100, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true, tints: { sidebar: '#E8734F', intro: '#C13B25', timeline: '', projects: '#F0A868', quicklinks: '' } },
+  { id: 'indigo', name: '靛蓝理性', font: '现代无衬线', accentLight: '#2563EB', accentDark: '#60A5FA', pageLight: '#F7F9FC', pageDark: '#0A0E14', radius: 16, aurora: 60, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true, tints: { sidebar: '#2563EB', intro: '#6366F1', timeline: '', projects: '', quicklinks: '#38BDF8' } },
+  { id: 'teal', name: '松石清新', font: '现代无衬线', accentLight: '#0D9488', accentDark: '#2DD4BF', pageLight: '#F5FBFA', pageDark: '#081311', radius: 28, aurora: 120, fontPreset: 'modern', density: 'relaxed', shadowStyle: 'soft', float: true, tints: { sidebar: '#0D9488', intro: '#14B8A6', timeline: '#2DD4BF', projects: '', quicklinks: '' } },
+  { id: 'magazine', name: '杂志衬线', font: '衬线字体', accentLight: '#9A3B26', accentDark: '#D98E6B', pageLight: '#FAF6EF', pageDark: '#15120E', radius: 12, aurora: 40, fontPreset: 'serif', density: 'normal', shadowStyle: 'soft', float: false, tints: { sidebar: '#A9603F', intro: '', timeline: '', projects: '#C9A27A', quicklinks: '' } },
+  { id: 'brutal', name: '新粗野主义', font: '硬边阴影', accentLight: '#111111', accentDark: '#F5F5F5', pageLight: '#F4F4F0', pageDark: '#0A0A0A', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact', shadowStyle: 'hard', float: false, glass: false, tints: { sidebar: '#2563EB', intro: '#E4572E', timeline: '#F5C518', projects: '', quicklinks: '' } },
+  { id: 'bauhaus', name: '包豪斯', font: '几何原色', accentLight: '#BE1E2D', accentDark: '#F5C518', pageLight: '#F3EDE2', pageDark: '#161513', radius: 4, aurora: 0, fontPreset: 'modern', density: 'normal', shadowStyle: 'hard', float: false, glass: false, tints: { sidebar: '#196EE6', intro: '#CE2222', timeline: '#F5C518', projects: '', quicklinks: '' } },
+  { id: 'swiss', name: '瑞士国际主义', font: '网格与留白', accentLight: '#E30613', accentDark: '#FF4B3E', pageLight: '#FFFFFF', pageDark: '#111111', radius: 0, aurora: 0, fontPreset: 'modern', density: 'compact', shadowStyle: 'none', float: false, glass: false, tints: { sidebar: '', intro: '#E30613', timeline: '', projects: '', quicklinks: '' } },
+  { id: 'soft', name: '手写温柔', font: '霞鹜文楷', accentLight: '#C2557E', accentDark: '#F191AE', pageLight: '#FDF8FA', pageDark: '#181114', radius: 32, aurora: 130, fontPreset: 'wenkai', density: 'relaxed', shadowStyle: 'soft', float: true, tints: { sidebar: '#F191AE', intro: '#C2557E', timeline: '', projects: '#E9A6C4', quicklinks: '' } },
+  { id: 'forest', name: '森野绿', font: '现代无衬线', accentLight: '#2F7D4F', accentDark: '#6BD09B', pageLight: '#F4F7F2', pageDark: '#0C130E', radius: 20, aurora: 80, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true, tints: { sidebar: '#2F7D4F', intro: '#6BD09B', timeline: '', projects: '#A7C957', quicklinks: '' } },
+  { id: 'violet', name: '紫棠优雅', font: '现代无衬线', accentLight: '#6D42C7', accentDark: '#B79BF5', pageLight: '#F7F5FC', pageDark: '#100C18', radius: 22, aurora: 90, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true, tints: { sidebar: '#6D42C7', intro: '#B79BF5', timeline: '', projects: '#8B6DD6', quicklinks: '' } },
+  { id: 'amber', name: '暖阳琥珀', font: '现代无衬线', accentLight: '#C77A16', accentDark: '#F5B84B', pageLight: '#FBF6EE', pageDark: '#14100A', radius: 24, aurora: 90, fontPreset: 'modern', density: 'relaxed', shadowStyle: 'soft', float: true, tints: { sidebar: '#C77A16', intro: '#F5B84B', timeline: '', projects: '#E9A23B', quicklinks: '' } },
+  { id: 'ocean', name: '深海靛蓝', font: '现代无衬线', accentLight: '#1C5D8C', accentDark: '#58B0E6', pageLight: '#F2F6FA', pageDark: '#08111A', radius: 16, aurora: 70, fontPreset: 'modern', density: 'normal', shadowStyle: 'soft', float: true, tints: { sidebar: '#1C5D8C', intro: '#58B0E6', timeline: '', projects: '#2E86C1', quicklinks: '' } },
+  { id: 'mocha', name: '大地摩卡', font: '衬线字体', accentLight: '#8A5A3C', accentDark: '#D4A480', pageLight: '#F7F1EA', pageDark: '#14100C', radius: 12, aurora: 40, fontPreset: 'serif', density: 'normal', shadowStyle: 'soft', float: false, tints: { sidebar: '#8A5A3C', intro: '#D4A480', timeline: '', projects: '#B08968', quicklinks: '' } },
+  { id: 'graphite', name: '石墨极简', font: '现代无衬线', accentLight: '#475569', accentDark: '#94A3B8', pageLight: '#FAFAFA', pageDark: '#0C0C0D', radius: 8, aurora: 0, fontPreset: 'modern', density: 'compact', shadowStyle: 'none', float: false, glass: false, tints: { sidebar: '#64748B', intro: '', timeline: '', projects: '#94A3B8', quicklinks: '' } },
+  { id: 'sky', name: '晴空青蓝', font: '现代无衬线', accentLight: '#0EA5B5', accentDark: '#4FD8E8', pageLight: '#F3FAFB', pageDark: '#071316', radius: 28, aurora: 120, fontPreset: 'modern', density: 'relaxed', shadowStyle: 'soft', float: true, tints: { sidebar: '#0EA5B5', intro: '#4FD8E8', timeline: '', projects: '#38BDF8', quicklinks: '' } },
+  { id: 'sakura', name: '樱绯书卷', font: '衬线字体', accentLight: '#C6456B', accentDark: '#F58BA8', pageLight: '#FCF4F6', pageDark: '#171113', radius: 14, aurora: 50, fontPreset: 'serif', density: 'normal', shadowStyle: 'soft', float: false, tints: { sidebar: '#C6456B', intro: '#F58BA8', timeline: '', projects: '#E48AA8', quicklinks: '' } },
 ];
 
 function bindColor(colorId, hexId) {
@@ -1066,13 +1054,15 @@ function previewTheme() {
   const font = FONT_META[$('t-font').value] || FONT_META.modern;
   const shadows = SHADOW_META[$('t-shadow').value] || SHADOW_META.soft;
   const tints = collectCardTints();
+  const tintAlpha = (Number($('t-tint-opacity').value) || 40) / 100;
   const tintVars = {};
   TINT_SLOTS.forEach(({ key }) => {
-    tintVars['--theme-effects-card-tints-' + key] = tints[key] ? hexToRgba(tints[key], 0.4) : 'transparent';
+    tintVars['--theme-effects-card-tints-' + key] = tints[key] ? hexToRgba(tints[key], tintAlpha) : 'transparent';
   });
   const vars = {
     ...tintVars,
     '--theme-effects-cards-float-state': $('t-float').checked ? 'running' : 'paused',
+    '--theme-effects-cards-glass-state': $('t-glass').checked ? 'on' : 'off',
     '--theme-effects-cards-shadow-light': shadows.cardLight,
     '--theme-effects-cards-shadow-dark': shadows.cardDark,
     '--theme-effects-cards-shadow-hover-light': shadows.cardHoverLight,
@@ -1118,12 +1108,30 @@ function applyPack(pack) {
   $('t-density').value = pack.density;
   $('t-shadow').value = SHADOW_META[pack.shadowStyle] ? pack.shadowStyle : 'soft';
   $('t-float').checked = pack.float !== false;
+  $('t-glass').checked = pack.glass !== false;
+  if (pack.tints) applyTintInputs(pack.tints);
   document.querySelectorAll('.pack').forEach((el) => el.classList.toggle('on', el.dataset.pack === pack.id));
   previewTheme();
   toast('「' + pack.name + '」预览中，满意就点"应用外观设置"');
 }
 
 // ── 单卡片配色 ──
+/** 把一套卡片色调写入"单卡片配色"输入框（供风格包套用时同步刷新五张卡）。 */
+function applyTintInputs(tints) {
+  TINT_SLOTS.forEach(({ key }) => {
+    const colEl = $('tint-' + key);
+    const hexEl = $('tint-' + key + '-hex');
+    if (!colEl || !hexEl) return;
+    const hex = (tints && tints[key]) || '';
+    hexEl.value = hex;
+    if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+      colEl.value = hex;
+      colEl.removeAttribute('data-empty');
+    } else {
+      colEl.setAttribute('data-empty', '1');
+    }
+  });
+}
 function renderCardTints(tints) {
   $('card-tints').innerHTML = TINT_SLOTS.map(({ key, label }) => {
     const value = (tints && tints[key]) || '';
@@ -1216,6 +1224,8 @@ async function saveCurrentAsPack() {
       density: $('t-density').value,
       float: $('t-float').checked,
       shadowStyle: $('t-shadow').value,
+      glass: $('t-glass').checked,
+      tints: collectCardTints(),
     });
     renderCustomPacks();
     toast('方案「' + name.trim() + '」已保存');
@@ -1247,6 +1257,10 @@ function renderTheme() {
   $('t-density').value = t.density || 'normal';
   $('t-shadow').value = t.shadowStyle || 'soft';
   $('t-float').checked = t.float !== false;
+  $('t-glass').checked = t.glass !== false;
+  const tintPct = Math.round((t.tintOpacity != null ? t.tintOpacity : 0.4) * 100);
+  $('t-tint-opacity').value = tintPct;
+  $('t-tint-opacity-out').textContent = tintPct + '%';
   renderCardTints(t.cardTints || {});
   renderCustomPacks();
 }
@@ -1265,7 +1279,9 @@ async function saveTheme(btn) {
         density: $('t-density').value,
         float: $('t-float').checked,
         shadowStyle: $('t-shadow').value,
+        glass: $('t-glass').checked,
         cardTints: collectCardTints(),
+        tintOpacity: (Number($('t-tint-opacity').value) || 40) / 100,
       });
       toast('外观已应用');
     } catch (error) { toast(error.message, true); }
@@ -1298,6 +1314,7 @@ function initThemeControls() {
     previewTheme();
   };
   $('t-aurora').oninput = () => { $('t-aurora-out').textContent = $('t-aurora').value + '%'; previewTheme(); };
+  $('t-tint-opacity').oninput = () => { $('t-tint-opacity-out').textContent = $('t-tint-opacity').value + '%'; previewTheme(); };
 }
 
 // ── 项目作品 ──
@@ -1498,57 +1515,6 @@ async function uploadBlogCover() {
       renderBlog();
     }
   } catch (error) { toast(error.message, true); }
-}
-
-// ── 发布上线 ──
-async function deployCheck(btn) {
-  const result = $('check-result');
-  result.style.color = 'var(--muted)';
-  result.textContent = '检查中…';
-  await withBusy(btn, async () => {
-    try {
-      await api('/studio/api/deploy/check', {});
-      result.style.color = 'var(--ok)';
-      result.textContent = '全部通过，可以打包';
-    } catch (error) {
-      result.style.color = 'var(--err)';
-      result.textContent = error.message;
-    }
-  });
-}
-
-let buildTimer = null;
-async function deployBuild() {
-  try {
-    await api('/studio/api/deploy/build', {});
-    $('build-btn').disabled = true;
-    $('build-log').style.display = 'block';
-    pollBuild();
-  } catch (error) { toast(error.message, true); }
-}
-
-async function pollBuild() {
-  clearTimeout(buildTimer);
-  try {
-    const res = await fetch('/studio/api/deploy/status');
-    const data = await res.json();
-    const logEl = $('build-log');
-    logEl.textContent = data.log.join('\n');
-    logEl.scrollTop = logEl.scrollHeight;
-    if (data.status === 'running') {
-      buildTimer = setTimeout(pollBuild, 2000);
-    } else {
-      $('build-btn').disabled = false;
-      if (data.status === 'ok') toast('打包完成，点"打开 dist 文件夹"拿产物');
-      if (data.status === 'fail') toast('打包失败，看日志排查', true);
-    }
-  } catch {
-    buildTimer = setTimeout(pollBuild, 3000);
-  }
-}
-
-async function openDist() {
-  try { await api('/studio/api/deploy/open-dist', {}); } catch (error) { toast(error.message, true); }
 }
 
 // ── 撤销 / 重置 ──

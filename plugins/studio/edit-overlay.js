@@ -39,6 +39,9 @@
         Object.keys(data.vars).forEach(function (key) {
           document.documentElement.style.setProperty(key, String(data.vars[key]));
         });
+        if ('--theme-effects-cards-glass-state' in data.vars) {
+          document.documentElement.classList.toggle('no-glass', String(data.vars['--theme-effects-cards-glass-state']).trim() === 'off');
+        }
         (data.webfonts || []).forEach(function (href) {
           if (document.querySelector('link[data-theme-webfont="' + href + '"]')) return;
           var link = document.createElement('link');

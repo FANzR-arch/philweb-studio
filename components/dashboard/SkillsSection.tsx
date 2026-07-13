@@ -34,7 +34,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ onOpenSkills }) =>
                         {category.tools.map(tool => (
                             <div
                                 key={tool.id}
-                                className="w-12 h-12 bg-[var(--surface-inset)] rounded-xl border border-[var(--border-soft)] flex items-center justify-center group transition-all hover:bg-[var(--interactive-hover-surface)]"
+                                className="w-12 h-12 bg-[var(--surface-inset)] rounded-[var(--card-radius-sm)] border border-[var(--border-soft)] flex items-center justify-center group transition-all hover:bg-[var(--interactive-hover-surface)]"
                                 title={tool.name}
                             >
                                 {/* 默认先展示黑白 Logo，保证静止状态下的视觉节制与信息整洁。 */}
