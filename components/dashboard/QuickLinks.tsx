@@ -1,8 +1,8 @@
 /**
  * [INPUT]   : 国际化文案与通用 Card 组件
- * [OUTPUT]  : 首页右下角的快捷入口（联系我 / 博客）
- * [POS]     : Dashboard 组件层，承接"看完作品后想联系或继续阅读"的动作
- * [DECISION]: 只保留两个高频入口，保持决策区域干净直接
+ * [OUTPUT]  : 首页右下角的快捷入口（联系我 / 经历与思考）
+ * [POS]     : Dashboard 组件层，承接"看完文章和作品后继续行动"的动作
+ * [DECISION]: 文章直接显示在主卡，快捷入口改为联系方式与经历弹窗
  */
 
 import React from 'react';
@@ -12,10 +12,10 @@ import { Card } from '../ui/Card';
 
 interface QuickLinksProps {
   onOpenContact: () => void;
-  onOpenBlog: () => void;
+  onOpenTimeline: () => void;
 }
 
-export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlog }) => {
+export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenTimeline }) => {
   const { lang } = useLanguage();
   const homeContent = getHomeContent(lang);
 
@@ -49,15 +49,15 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenBlo
 
         <Card
           variant="secondary"
-          onClick={onOpenBlog}
+          onClick={onOpenTimeline}
           className="card-slot-quicklinks !p-0 group"
         >
           <div className="flex flex-row items-center justify-start gap-4 w-full h-full pl-6 sm:pl-8">
             <span className="material-symbols-outlined text-[var(--icon-muted)] group-hover:text-[var(--site-accent)] transition-colors flex-shrink-0 text-[26px]">
-              article
+              timeline
             </span>
             <span className="text-[14px] font-bold text-[var(--text-secondary)] group-hover:text-[var(--site-accent)] transition-colors tracking-tight line-clamp-2">
-              {homeContent.quickLinks.blog}
+              {homeContent.timeline.title}
             </span>
           </div>
         </Card>

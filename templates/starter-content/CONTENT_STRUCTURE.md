@@ -152,6 +152,7 @@ content/media/projects/my-project/
 ```bash
 npm run content:sync
 npm run build
+npm run export
 ```
 
 `content:sync` 会把 `content/` 里的内容生成到 `data/content.generated.ts`。这个生成文件不要手动改。
@@ -166,6 +167,6 @@ npm run build
 4. 修改 `content/text/site/home.*.md`
 5. 按项目替换 `content/text/projects/<id>/` 和 `content/media/projects/<id>/`
 6. 调整 `content/theme/site-theme.json`
-7. 运行 `npm run build`
+7. 运行 `npm run export`，得到独立部署 ZIP
 
 不要把所有图片平铺到一个文件夹。按 `site / projects / blog` 分组，后续替换和排错会更稳定。

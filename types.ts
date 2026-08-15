@@ -10,7 +10,7 @@ export enum ModalType {
   PROJECTS = 'PROJECTS',
   PROFILE = 'PROFILE',
   CONTACT = 'CONTACT',
-  BLOG = 'BLOG',
+  TIMELINE = 'TIMELINE',
   SKILLS = 'SKILLS',
 }
 

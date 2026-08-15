@@ -543,7 +543,7 @@ function readResumeContent(filePath) {
       const entry = ensureObject(item, `${normalizeSlashes(filePath)} basics item #${itemIndex + 1} must be an object.`);
       return {
         label: assertString(entry.label, `${normalizeSlashes(filePath)} basics item #${itemIndex + 1} is missing label.`),
-        value: assertString(entry.value, `${normalizeSlashes(filePath)} basics item #${itemIndex + 1} is missing value.`),
+        value: assertStringAllowEmpty(entry.value, `${normalizeSlashes(filePath)} basics item #${itemIndex + 1} value must be a string.`),
       };
     }),
     strengths: ensureArray(data.strengths ?? [], `${normalizeSlashes(filePath)} strengths must be an array.`).map(String),
@@ -577,7 +577,7 @@ function readContactContent(filePath) {
       return {
         id: assertString(entry.id, `${normalizeSlashes(filePath)} channel #${itemIndex + 1} is missing id.`),
         label: assertString(entry.label, `${normalizeSlashes(filePath)} channel #${itemIndex + 1} is missing label.`),
-        value: assertString(entry.value, `${normalizeSlashes(filePath)} channel #${itemIndex + 1} is missing value.`),
+        value: assertStringAllowEmpty(entry.value, `${normalizeSlashes(filePath)} channel #${itemIndex + 1} value must be a string.`),
         linkKey: assertString(entry.linkKey, `${normalizeSlashes(filePath)} channel #${itemIndex + 1} is missing linkKey.`),
       };
     }),
@@ -817,11 +817,11 @@ export function buildContentRegistry(projectRoot) {
           legalName: assertString(shared.person?.legalName, `${normalizeSlashes(sharedPath)} person.legalName is required.`),
         },
         links: {
-          wechatId: assertString(sharedLinks.wechatId, `${normalizeSlashes(sharedPath)} links.wechatId is required.`),
-          x: assertString(sharedLinks.x, `${normalizeSlashes(sharedPath)} links.x is required.`),
-          xiaohongshu: assertString(sharedLinks.xiaohongshu, `${normalizeSlashes(sharedPath)} links.xiaohongshu is required.`),
-          github: assertString(sharedLinks.github, `${normalizeSlashes(sharedPath)} links.github is required.`),
-          email: assertString(sharedLinks.email, `${normalizeSlashes(sharedPath)} links.email is required.`),
+          wechatId: assertStringAllowEmpty(sharedLinks.wechatId, `${normalizeSlashes(sharedPath)} links.wechatId must be a string.`),
+          x: assertStringAllowEmpty(sharedLinks.x, `${normalizeSlashes(sharedPath)} links.x must be a string.`),
+          xiaohongshu: assertStringAllowEmpty(sharedLinks.xiaohongshu, `${normalizeSlashes(sharedPath)} links.xiaohongshu must be a string.`),
+          github: assertStringAllowEmpty(sharedLinks.github, `${normalizeSlashes(sharedPath)} links.github must be a string.`),
+          email: assertStringAllowEmpty(sharedLinks.email, `${normalizeSlashes(sharedPath)} links.email must be a string.`),
         },
         assets: {
           avatarLight: createAssetRef(projectRoot, sharedPath, sharedAssets.avatarLight),

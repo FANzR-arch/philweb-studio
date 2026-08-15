@@ -1,6 +1,6 @@
 ---
 heading: "About Me"
-name: "Momo Lin"
+name: "Alex Morgan"
 summary: "Turning ideas into visible work with design and AI tools"
 statement: "I like to sketch vague ideas first, validate them quickly with AI tools, and turn the promising ones into finished work."
 basicsTitle: "Basics"
@@ -17,9 +17,9 @@ basics:
   - label: "City"
     value: "Hangzhou"
   - label: "Email"
-    value: "hello@example.com"
+    value: ""
   - label: "X / Twitter"
-    value: "https://x.com/yourname"
+    value: ""
 strengths:
   - "Brand & marketing visual design"
   - "AI imaging & prompt design"

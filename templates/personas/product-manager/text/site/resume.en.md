@@ -1,6 +1,6 @@
 ---
 heading: "About Me"
-name: "Ning Jiang"
+name: "Alex Morgan"
 summary: "Using data and AI to break complex needs into products that ship"
 statement: "I clarify problems from real scenarios and data, validate solutions faster with AI, and drive cross-team delivery to actually make it happen."
 basicsTitle: "Basics"
@@ -16,9 +16,9 @@ basics:
   - label: "City"
     value: "Shanghai"
   - label: "Email"
-    value: "hello@example.com"
+    value: ""
   - label: "WeChat"
-    value: "your-wechat-id"
+    value: ""
 strengths:
   - "Requirement analysis & product planning"
   - "User research & data analysis"

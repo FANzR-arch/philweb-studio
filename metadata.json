@@ -1,5 +1,5 @@
 {
-  "name": "folio-studio",
-  "description": "A Swiss-style personal portfolio template with a built-in visual customizer (Studio). Zero-code friendly.",
+  "name": "PhilWeb Studio",
+  "description": "An open-source local visual editor for building deployable personal websites.",
   "requestFramePermissions": []
 }

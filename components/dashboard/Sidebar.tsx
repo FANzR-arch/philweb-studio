@@ -125,7 +125,7 @@ export const Sidebar: React.FC = () => {
         </div>
 
         {/* 数据卡改成单行横排，并缩小尺寸以适配左栏宽度。 */}
-        <div data-edit="hint:metrics" data-edit-label="数据指标" className="grid grid-cols-4 gap-1.5 pt-4 border-t border-[var(--border-soft)] mt-auto">
+        <div data-edit="home.metrics" data-edit-label="数据指标" className="grid grid-cols-4 gap-1.5 pt-4 border-t border-[var(--border-soft)] mt-auto">
           {metrics.map((metric) => {
             const hasValue = metric.value.trim().length > 0;
 

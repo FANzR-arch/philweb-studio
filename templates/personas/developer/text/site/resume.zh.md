@@ -1,6 +1,6 @@
 ---
 heading: "关于我"
-name: "陈屿 Yu"
+name: "Alex Morgan"
 summary: "用 AI 辅助开发，把想法快速做成能上线的产品"
 statement: "我习惯先把想法拆成最小可用版本，用 AI 加速开发，边上线边迭代，让产品在真实使用里长出来。"
 basicsTitle: "基本信息"
@@ -16,9 +16,9 @@ basics:
   - label: "所在城市"
     value: "深圳"
   - label: "邮箱"
-    value: "hello@example.com"
+    value: ""
   - label: "GitHub"
-    value: "https://github.com/yourname"
+    value: ""
 strengths:
   - "TypeScript / React 全栈开发"
   - "Serverless 与云上部署"

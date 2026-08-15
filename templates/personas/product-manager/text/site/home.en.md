@@ -3,9 +3,9 @@ hero:
   greeting: "Insight · Judgment · Delivery"
   description: "A product manager who uses data and AI to judge, and breaks complex problems into deliverable plans."
 sidebar:
-  name: "Ning Jiang"
-  targetRoleValue: "Ning Jiang"
-  targetCityValue: "Shanghai"
+  name: "Alex Morgan"
+  targetRoleValue: "Independent practitioner"
+  targetCityValue: "Remote"
   age: ""
   mbti: "ENTJ"
   experience: "Product design + Growth"
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "My method"
   casesLabel: "See products"
 footer:
-  copyright: "Ning Jiang"
+  copyright: "Alex Morgan"
   style: "PRODUCT · DATA-DRIVEN · GROWTH"
 metrics:
   - label: "Products"

@@ -3,9 +3,9 @@ hero:
   greeting: "设计 · 探索 · 记录"
   description: "一名喜欢用 AI 工具放大创造力的视觉设计师。"
 sidebar:
-  name: "林小满 Momo"
-  targetRoleValue: "林小满 Momo"
-  targetCityValue: "杭州"
+  name: "Alex Morgan"
+  targetRoleValue: "独立实践者"
+  targetCityValue: "远程"
   age: ""
   mbti: "INFP"
   experience: "设计 + AI 探索"
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "我的方法"
   casesLabel: "看作品"
 footer:
-  copyright: "林小满 Momo"
+  copyright: "Alex Morgan"
   style: "DESIGN · AI WORKFLOW · SIDE PROJECTS"
 metrics:
   - label: "作品"

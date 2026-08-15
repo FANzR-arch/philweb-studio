@@ -1053,6 +1053,7 @@
 
   .card-slot-sidebar { --card-tint: var(--theme-effects-card-tints-sidebar, transparent); }
   .card-slot-intro { --card-tint: var(--theme-effects-card-tints-intro, transparent); }
+  .card-slot-blog { --card-tint: var(--theme-effects-card-tints-timeline, transparent); }
   .card-slot-timeline { --card-tint: var(--theme-effects-card-tints-timeline, transparent); }
   .card-slot-projects { --card-tint: var(--theme-effects-card-tints-projects, transparent); }
   .card-slot-quicklinks { --card-tint: var(--theme-effects-card-tints-quicklinks, transparent); }

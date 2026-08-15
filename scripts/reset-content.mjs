@@ -68,7 +68,7 @@ const personas = listPersonas();
 
 if (argv.includes('--list')) {
   console.log('[reset] 可选职业起始人设：');
-  console.log('[reset]   （默认）示例人设 · 视觉设计师「林小满」');
+  console.log('[reset]   （默认）中性示例内容 · Alex Morgan');
   personas.forEach((p) => {
     const label = p.label || p.id;
     const hint = p.recommendedPack ? `（推荐风格包：${p.recommendedPack}）` : '';
@@ -120,6 +120,6 @@ if (personaDir) {
     console.log(`[reset] 建议在 Studio 外观风格里选「${meta.recommendedPack}」风格包搭配。`);
   }
 } else {
-  console.log('[reset] content/ 已重置为示例人设内容。');
+console.log('[reset] content/ 已重置为中性示例内容。');
 }
 console.log('[reset] 运行 npm run studio 开始定制你自己的网站。');

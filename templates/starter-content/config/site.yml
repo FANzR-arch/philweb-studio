@@ -1,5 +1,5 @@
 attribution:
-  enabled: true
-  labelZh: "本站基于 folio-studio 开源模板搭建"
-  labelEn: "Built with the folio-studio open-source template"
-  url: "https://github.com/FANzR-arch/folio-studio"
+  enabled: false
+  labelZh: ""
+  labelEn: ""
+  url: ""

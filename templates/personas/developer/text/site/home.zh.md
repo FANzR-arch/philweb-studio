@@ -3,9 +3,9 @@ hero:
   greeting: "构建 · 上线 · 迭代"
   description: "一名喜欢用 AI 把想法快速做成能上线产品的独立开发者。"
 sidebar:
-  name: "陈屿 Yu"
-  targetRoleValue: "陈屿 Yu"
-  targetCityValue: "深圳"
+  name: "Alex Morgan"
+  targetRoleValue: "Independent practitioner"
+  targetCityValue: "Remote"
   age: ""
   mbti: "INTP"
   experience: "全栈 + AI 辅助开发"
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "我怎么做"
   casesLabel: "看项目"
 footer:
-  copyright: "陈屿 Yu"
+  copyright: "Alex Morgan"
   style: "FULL-STACK · AI-ASSISTED · SHIP FAST"
 metrics:
   - label: "上线项目"

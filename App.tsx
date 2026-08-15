@@ -12,12 +12,12 @@ import { Sidebar } from './components/dashboard/Sidebar';
 import { allProjects, getHomeContent, siteConfig } from './data/content';
 import { ProjectsModalContent } from './components/modals/ProjectsModalContent';
 import { ContactModalContent } from './components/modals/ContactModalContent';
-import { BlogModalContent } from './components/modals/BlogModalContent';
+import { TimelineModalContent } from './components/modals/TimelineModalContent';
 import { SkillsModalContent } from './components/modals/SkillsModalContent';
 import { useLanguage } from './data/i18n';
 import { track } from './data/analytics';
 import { IntroSection } from './components/dashboard/IntroSection';
-import { TimelineSection } from './components/dashboard/TimelineSection';
+import { BlogSection } from './components/dashboard/BlogSection';
 import { ProjectList } from './components/dashboard/ProjectList';
 import { QuickLinks } from './components/dashboard/QuickLinks';
 import { Toaster } from 'sonner';
@@ -301,26 +301,26 @@ const App: React.FC = () => {
             <Sidebar />
           </div>
 
-          {/* 右侧主区域集中承载问候、成长时间轴和项目证据，形成从介绍到证明的阅读顺序。 */}
+          {/* 右侧主区域集中承载问候、文章与项目证据，形成从阅读到证明的顺序。 */}
           <div className="lg:col-span-8 flex flex-col gap-4 md:gap-5 min-h-0 h-full">
             {/* 顶部区域只保留问候与切换能力，避免首屏信息密度过高。 */}
             <div className="w-full">
               <IntroSection />
             </div>
 
-            {/* 下半区拆成“成长叙事 + 项目证据/行动入口”，让阅读路径从经历自然过渡到成果。 */}
+            {/* 下半区拆成“文章阅读 + 项目证据/行动入口”，让主内容先从文章开始。 */}
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-9 gap-4 md:gap-5 items-stretch min-h-0">
-              {/* 时间轴列负责建立能力演进与项目背景。 */}
+              {/* 文章列直接展示全部文章，分类筛选和卡片滚动在区域内部完成。 */}
               <div className="lg:col-span-5 flex flex-col min-h-0 h-full">
-                <TimelineSection />
+                <BlogSection />
               </div>
 
-              {/* 项目列承接案例入口与联系动作，把“看作品”和“继续交流”放在同一决策区域。 */}
+              {/* 项目列承接案例入口和快捷动作。 */}
               <div className="lg:col-span-4 flex flex-col gap-4 md:gap-3 h-full animate-fade-in-up delay-4">
                 <ProjectList onOpenProject={(project) => openProjectDetail(project, 'project_list')} />
                 <QuickLinks
                   onOpenContact={() => openModal(ModalType.CONTACT, 'quick_links')}
-                  onOpenBlog={() => openModal(ModalType.BLOG, 'quick_links')}
+                  onOpenTimeline={() => openModal(ModalType.TIMELINE, 'quick_links')}
                 />
               </div>
             </div>
@@ -367,13 +367,13 @@ const App: React.FC = () => {
       </Modal>
 
       <Modal
-        isOpen={activeModal === ModalType.BLOG}
+        isOpen={activeModal === ModalType.TIMELINE}
         onClose={closeModal}
-        title={lang === 'zh' ? '我的文章 / Blog' : 'My Articles / Blog'}
-        maxWidth="max-w-5xl"
+        title={homeContent.timeline.title}
+        maxWidth="max-w-3xl"
         contentClassName="scrollbar-hide"
       >
-        <BlogModalContent />
+        <TimelineModalContent />
       </Modal>
 
       <Modal isOpen={activeModal === ModalType.SKILLS} onClose={closeModal} title="Skills" maxWidth="max-w-2xl">

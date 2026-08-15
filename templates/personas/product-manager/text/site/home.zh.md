@@ -3,9 +3,9 @@ hero:
   greeting: "洞察 · 判断 · 落地"
   description: "一名习惯用数据和 AI 辅助判断、把复杂问题拆成可交付方案的产品经理。"
 sidebar:
-  name: "江宁 Ning"
-  targetRoleValue: "江宁 Ning"
-  targetCityValue: "上海"
+  name: "Alex Morgan"
+  targetRoleValue: "Independent practitioner"
+  targetCityValue: "Remote"
   age: ""
   mbti: "ENTJ"
   experience: "产品设计 + 增长"
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "我的方法"
   casesLabel: "看产品"
 footer:
-  copyright: "江宁 Ning"
+  copyright: "Alex Morgan"
   style: "PRODUCT · DATA-DRIVEN · GROWTH"
 metrics:
   - label: "负责产品"

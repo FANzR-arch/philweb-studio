@@ -1,11 +1,12 @@
 {
-  "name": "folio-studio",
+  "name": "philweb-studio",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.6.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "studio": "vite --open /studio/",
+    "export": "node scripts/export-site.mjs",
     "content:check": "node scripts/check-content.mjs",
     "content:sync": "node scripts/sync-content-registry.mjs",
     "content:new": "node scripts/new-content-project.mjs",

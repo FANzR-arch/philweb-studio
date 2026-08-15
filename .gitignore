@@ -30,6 +30,7 @@ data/imageManifest.ts
 
 # Studio 本地快照（撤销/重置备份）
 .studio-snapshots/
+exports/
 
 # Local tooling state
 .wrangler/

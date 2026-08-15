@@ -1,7 +1,7 @@
 {
   "name": "我的个人主页",
   "short_name": "个人主页",
-  "description": "基于 folio-studio 模板搭建的个人主页",
+  "description": "一个用于展示作品、经历和想法的个人主页",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

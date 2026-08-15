@@ -1,70 +1,73 @@
-# folio-studio
+# PhilWeb Studio
 
-> 自带可视化定制器的个人网站模板 —— 不写代码，把它变成你自己的站。
+> 一个本地开源的网站定制器：修改内容，检查质量，导出可直接部署的网站 ZIP。
 
-一个瑞士设计风格的个人作品集模板（React 19 + Vite + Tailwind），内置 **Studio 可视化定制器**：改文字、传图片、换配色圆角字体，全程点点改改，右侧实时预览，最后跟着引导拖拽上线。
+PhilWeb Studio 是一个 React 19 + Vite + Tailwind 的静态网站工具。它把编辑器和网站运行时放在同一个开源项目中，但导出时只交付最终静态文件，不会把 Studio、模板源码或 Node 配置带给最终用户。
 
-## ✨ 三分钟上手
+## 三分钟开始
 
 ```bash
 npm install
 npm run studio
 ```
 
-浏览器会自动打开定制器（http://localhost:3000/studio ）：
+打开 `http://localhost:3000/studio` 后：
 
-- **点哪改哪** — 在右侧预览里点击任何文字或图片，左边自动跳到对应编辑框
-- **定制进度条** — 换头像 → 改名字 → 写介绍 → 挑风格 → 放项目 → 发布，一步步打勾
-- **整套风格包** — 16 套配色×字体×圆角组合，点一下实时预览、选好即用；细节微调收进折叠区
-- **职业起始人设** — 除设计师示例外，内置独立开发者 / 产品经理等职业模板，一条命令换整套起点（`npm run content:reset -- --list`）
-- **发布很简单** — 终端跑 `npm run build`，把生成的 dist 文件夹拖进 Netlify / Cloudflare 就上线（帮助页有图文说明）
-- **改坏了能撤销** — 每次打开自动备份，一键回滚；也可以整站重置回示例内容
+- 在左侧修改个人信息、首页、外观、项目和博客。
+- 在右侧预览实际网站，也可以使用“点哪改哪”。
+- 修改完成后点击“检查并导出网站”。
+- 浏览器会下载一个独立 ZIP，解压后即可上传到 Netlify、Cloudflare Pages、Vercel 等静态托管平台。
 
-小白完整教程见 **[docs/CUSTOMIZE.md](docs/CUSTOMIZE.md)**。
+以后需要修改时，回到 PhilWeb Studio 修改并重新导出，不要直接编辑已经导出的 ZIP。
 
-## 🤖 配合 Claude Code 更强
+## 导出内容
 
-用 [Claude Code](https://claude.com/claude-code) 打开本文件夹，用大白话说需求：
+导出 ZIP 只包含网站部署所需的 HTML、CSS、JavaScript、图片、字体、favicon、manifest、robots 和 sitemap 文件。
 
-> "把时间线换成我的经历：2021 年毕业……"
-> "这是我的简历，帮我填进关于我"
-> "整站换成蓝色系，圆角小一点"
+导出包不包含：
 
-内置技能 `.claude/skills/customize-site/` 让 Claude 准确知道每样内容在哪个文件、怎么改、改完怎么校验。
+- `content/`
+- `templates/`
+- `plugins/`
+- `components/`
+- `scripts/`
+- `node_modules/`
+- `.git/`
+- `package.json`、Vite 配置和 Studio API
 
-## 📦 特性一览
+也可以在终端导出：
 
-| 能力 | 说明 |
-|---|---|
-| 内容与代码完全分离 | 所有文字/图片/配色都在 `content/`，代码不用碰 |
-| 中英双语 | 全站 i18n，语言一键切换 |
-| 深色模式 | 跟随系统 + 手动切换，全部主题变量化 |
-| 项目展示 | 卡片列表 + 详情弹窗（多图轮播、PRD/指南/技术文档 Tab） |
-| 博客卡片 | 按日期归档，链接到微信公众号 / X 原文 |
-| 严格内容校验 | `npm run content:check` 在构建前抓出缺图、格式错误 |
+```bash
+npm run export
+```
 
-## 🗂 内容都在哪
+命令行导出的 ZIP 会放到被 Git 忽略的 `exports/` 文件夹中。
+
+## 内容位置
 
 ```text
 content/
-  text/site/     # 首页、简历、联系方式文案（中英文）
-  text/projects/ # 每个项目一个文件夹
-  text/blog/     # 每篇文章一个日期文件夹
-  media/         # 头像、二维码、封面、截图
-  theme/         # 配色、圆角、字体、效果
-  config/        # 页脚署名等站点配置
+  text/site/       # 首页、简历、联系方式和技能
+  text/projects/  # 项目内容
+  text/blog/      # 博客内容
+  media/          # 头像、二维码、项目图和博客封面
+  theme/          # 颜色、字体、圆角和效果
+  config/         # 站点级配置
 ```
 
-完整规范见 [content/CONTENT_STRUCTURE.md](content/CONTENT_STRUCTURE.md)。
+内容与代码分离。通常只需要在 Studio 中修改，不需要碰 React 组件。
 
-## 🚀 部署
+## 校验命令
 
-`npm run build` 生成 `dist/`，拖进 [Netlify Drop](https://app.netlify.com/drop) 或 Cloudflare Pages 直传即可；也可以关联 Git 仓库自动部署（构建命令 `npm run build`，输出目录 `dist`）。Studio 定制器只在本地开发时存在，不会进入线上产物。
+```bash
+npm run content:check
+npm run verify
+npm run build
+npm run export
+```
 
-## 🙏 署名
+导出会拦截未处理的示例姓名、假邮箱、社交账号占位符、缺图和内容校验错误。空的可选社交链接、博客和简历字段不会阻止导出。
 
-页脚默认有一行"基于 folio-studio 开源模板搭建"的小字。它可以在 Studio 帮助页一键关闭——但如果这个模板帮到了你，留着它就是对项目最好的支持。
+## 开源说明
 
-## License
-
-[MIT](LICENSE) © RZC
+PhilWeb Studio 本身是开源工具。工具文档、开发配置和许可证只属于源码项目，不会进入用户下载的网站成品。

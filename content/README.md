@@ -27,6 +27,9 @@
 npm run content:check
 npm run content:sync
 npm run build
+npm run export
 ```
 
 完整维护说明见 `content/CONTENT_STRUCTURE.md`。
+
+最终部署请使用 `npm run export` 生成的独立 ZIP，不要直接上传源码目录。

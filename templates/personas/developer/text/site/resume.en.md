@@ -1,6 +1,6 @@
 ---
 heading: "About Me"
-name: "Yu Chen"
+name: "Alex Morgan"
 summary: "Turning ideas into shippable products with AI-assisted development"
 statement: "I break ideas into a minimal usable version, speed up build with AI, and iterate while shipping — letting the product grow from real usage."
 basicsTitle: "Basics"
@@ -16,9 +16,9 @@ basics:
   - label: "City"
     value: "Shenzhen"
   - label: "Email"
-    value: "hello@example.com"
+    value: ""
   - label: "GitHub"
-    value: "https://github.com/yourname"
+    value: ""
 strengths:
   - "TypeScript / React full-stack development"
   - "Serverless and cloud deployment"

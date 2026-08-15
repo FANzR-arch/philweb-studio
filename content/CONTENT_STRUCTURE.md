@@ -147,14 +147,17 @@ content/media/projects/my-project/
 5. 按需要补充 `prd.md`、`user-guide.md`、`tech-spec.md`
 6. 运行 `npm run content:check`
 
-## 修改后如何生效
+## 修改后如何生效与导出
 
 ```bash
 npm run content:sync
 npm run build
+npm run export
 ```
 
 `content:sync` 会把 `content/` 里的内容生成到 `data/content.generated.ts`。这个生成文件不要手动改。
+
+`npm run export` 会在临时目录完成生产构建，并生成只包含静态部署文件的 ZIP。导出包不包含 `content/`、Studio、模板或源代码。
 
 ## 复刻建议
 

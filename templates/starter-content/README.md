@@ -26,7 +26,7 @@
 ```bash
 npm run content:check
 npm run content:sync
-npm run build
+npm run export
 ```
 
 完整维护说明见 `content/CONTENT_STRUCTURE.md`。

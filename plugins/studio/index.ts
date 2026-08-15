@@ -7,11 +7,14 @@
  */
 
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import type { IncomingMessage, ServerResponse } from 'http';
 import type { Plugin, ViteDevServer } from 'vite';
 // @ts-ignore content-system 是 JS 模块，无类型声明
 import { scaffoldProject } from '../../content-system/core.js';
+// @ts-ignore 导出器是共享的 JavaScript 模块，无需为 Studio 单独复制一份实现
+import { ExportValidationError, exportSite } from '../../scripts/export-site.mjs';
 import {
   mustPatchScalar,
   mustPatchStringArray,
@@ -238,7 +241,7 @@ links:
     ['sidebar', 'mbti'],
     ['sidebar', 'experience'],
     ['sidebar', 'profileStatement'],
-    ['sidebar', 'explore'],
+    ['quickLinks', 'contact'],
     ['projectSection', 'title'],
     ['timeline', 'title'],
     ['footer', 'copyright'],
@@ -253,6 +256,14 @@ links:
     'science', 'storefront', 'fitness_center', 'music_note', 'camera_alt', 'construction',
   ];
 
+  /** 侧边栏底部数据指标可选图标（数值留空时显示，如"AI 探索者"）。 */
+  const METRIC_ICONS = [
+    'palette', 'apps', 'edit_note', 'auto_awesome', 'star', 'favorite',
+    'trending_up', 'work', 'code', 'brush', 'lightbulb', 'rocket_launch',
+    'groups', 'public', 'camera_alt', 'science', 'storefront', 'verified',
+    'emoji_events', 'school', 'menu_book', 'bolt',
+  ];
+
   const readHomeFields = (language: 'zh' | 'en') => {
     const raw = readTextFile(sitePath(`home.${language}.md`));
     const scalars = readYamlScalars(raw);
@@ -263,9 +274,16 @@ links:
       keywords: Array.isArray(item.keywords) ? item.keywords : [],
       detail: typeof item.detail === 'string' ? item.detail : '',
     }));
+    const metrics = readYamlObjectArray(raw, ['metrics']).map((item) => ({
+      label: typeof item.label === 'string' ? item.label : '',
+      value: typeof item.value === 'string' ? item.value : '',
+      icon: typeof item.icon === 'string' ? item.icon : 'star',
+    }));
     return {
       timelineItems,
       timelineIcons: TIMELINE_ICONS,
+      metrics,
+      metricIcons: METRIC_ICONS,
       greeting: scalars['hero.greeting'] ?? '',
       description: scalars['hero.description'] ?? '',
       name: scalars['sidebar.name'] ?? '',
@@ -273,7 +291,7 @@ links:
       mbti: scalars['sidebar.mbti'] ?? '',
       experience: scalars['sidebar.experience'] ?? '',
       profileStatement: scalars['sidebar.profileStatement'] ?? '',
-      explore: scalars['sidebar.explore'] ?? '',
+      explore: scalars['quickLinks.contact'] ?? '',
       projectTitle: scalars['projectSection.title'] ?? '',
       timelineTitle: scalars['timeline.title'] ?? '',
       footerStyle: scalars['footer.style'] ?? '',
@@ -296,7 +314,7 @@ links:
         'sidebar.mbti': fields.mbti,
         'sidebar.experience': fields.experience,
         'sidebar.profileStatement': fields.profileStatement,
-        'sidebar.explore': fields.explore,
+        'quickLinks.contact': fields.explore,
         'projectSection.title': fields.projectTitle,
         'timeline.title': fields.timelineTitle,
         'footer.copyright': fields.name,
@@ -335,6 +353,24 @@ links:
         const patched = patchYamlObjectArray(next, ['timeline', 'items'], items, ['id', 'icon', 'period', 'title', 'keywords', 'detail']);
         if (patched === null) {
           throw new Error(`在 ${label} 中找不到 timeline.items`);
+        }
+        next = patched;
+      }
+      if (Array.isArray(fields.metrics)) {
+        const items = fields.metrics.map((item: any, index: number) => {
+          const metricLabel = String(item?.label ?? '').trim();
+          if (!metricLabel) {
+            throw new Error(`数据指标第 ${index + 1} 个的"标题"不能为空。`);
+          }
+          return {
+            label: metricLabel,
+            value: String(item?.value ?? '').trim(),
+            icon: String(item?.icon ?? 'star').trim() || 'star',
+          };
+        });
+        const patched = patchYamlObjectArray(next, ['metrics'], items, ['label', 'value', 'icon']);
+        if (patched === null) {
+          throw new Error(`在 ${label} 中找不到 metrics`);
         }
         next = patched;
       }
@@ -779,7 +815,7 @@ links:
   // ── 完成度清单：对比 starter 示例默认值 + 记录一次性动作。 ──
   const uiStatePath = () => path.join(snapshotRoot(), 'ui-state.json');
 
-  const readUiState = (): Record<string, boolean> => {
+  const readUiState = (): Record<string, any> => {
     try {
       return JSON.parse(fs.readFileSync(uiStatePath(), 'utf8'));
     } catch {
@@ -787,7 +823,7 @@ links:
     }
   };
 
-  const writeUiState = (patch: Record<string, boolean>) => {
+  const writeUiState = (patch: Record<string, any>) => {
     fs.mkdirSync(snapshotRoot(), { recursive: true });
     fs.writeFileSync(uiStatePath(), JSON.stringify({ ...readUiState(), ...patch }, null, 2), 'utf8');
   };
@@ -837,10 +873,11 @@ links:
       hidden: uiState.checklistHidden === true,
       items: [
         { key: 'avatar', label: '换上自己的头像', done: avatarChanged, tab: 'basic' },
-        { key: 'name', label: '改成自己的名字', done: shared['person.displayName'] !== starterShared['person.displayName'], tab: 'basic' },
+        { key: 'name', label: '改成自己的名字', done: homeZh['sidebar.name'] !== starterHomeZh['sidebar.name'], tab: 'home' },
         { key: 'hero', label: '写好首屏介绍', done: homeZh['hero.greeting'] !== starterHomeZh['hero.greeting'] || homeZh['hero.description'] !== starterHomeZh['hero.description'], tab: 'home' },
         { key: 'theme', label: '挑一个喜欢的风格', done: themeChanged, tab: 'theme' },
         { key: 'project', label: '放上自己的项目', done: projectChanged, tab: 'projects' },
+        { key: 'export', label: '检查并导出网站', done: uiState.exported === true, tab: 'help' },
       ],
     };
   };
@@ -850,16 +887,16 @@ links:
     const scalars = fs.existsSync(configPath) ? readYamlScalars(readTextFile(configPath)) : {};
     return {
       attributionEnabled: scalars['attribution.enabled'] === 'true',
-      labelZh: scalars['attribution.labelZh'] ?? '本站基于 folio-studio 开源模板搭建',
-      labelEn: scalars['attribution.labelEn'] ?? 'Built with the folio-studio open-source template',
-      url: scalars['attribution.url'] ?? 'https://github.com/FANzR-arch/folio-studio',
+      labelZh: scalars['attribution.labelZh'] ?? '',
+      labelEn: scalars['attribution.labelEn'] ?? '',
+      url: scalars['attribution.url'] ?? '',
     };
   };
 
   const saveSiteFlags = (patch: { attributionEnabled?: boolean }) => {
     const current = readSiteFlags();
     const merged = { ...current, ...patch };
-    writeTextFile(path.join(contentRoot(), 'config', 'site.yml'), `attribution:
+  writeTextFile(path.join(contentRoot(), 'config', 'site.yml'), `attribution:
   enabled: ${merged.attributionEnabled ? 'true' : 'false'}
   labelZh: ${quoteScalar(merged.labelZh)}
   labelEn: ${quoteScalar(merged.labelEn)}
@@ -867,12 +904,42 @@ links:
 `);
   };
 
+  // 联系弹窗里显示的账号文字（channels.value）存在 contact.zh/en.md，linkKey 对应 shared.links。
+  // 与 shared.links 分处两地，容易"改了链接、显示账号却没变"，故随基本信息一并读写，保持一处编辑处处同步。
+  const CONTACT_CHANNEL_KEYS = ['id', 'label', 'value', 'linkKey'];
+  const contactPath = (language: 'zh' | 'en') => sitePath(`contact.${language}.md`);
+
+  const readSocialText = (): Record<string, string> => {
+    const byKey: Record<string, string> = {};
+    for (const ch of readYamlObjectArray(readTextFile(contactPath('zh')), ['channels'])) {
+      const key = typeof ch.linkKey === 'string' ? ch.linkKey : '';
+      if (key) byKey[key] = typeof ch.value === 'string' ? ch.value : '';
+    }
+    return byKey;
+  };
+
+  const writeSocialText = (values: Record<string, string>, emailAddress: string) => {
+    for (const language of ['zh', 'en'] as const) {
+      patchFrontmatterFile(contactPath(language), (frontmatter) => {
+        const channels = readYamlObjectArray(frontmatter, ['channels']);
+        if (channels.length === 0) return frontmatter;
+        const updated = channels.map((ch) => {
+          const key = typeof ch.linkKey === 'string' ? ch.linkKey : '';
+          let value = typeof ch.value === 'string' ? ch.value : '';
+          if (key === 'email') value = emailAddress || value;
+          else if (key && typeof values[key] === 'string' && values[key].trim()) value = values[key].trim();
+          return { ...ch, value };
+        });
+        const patched = patchYamlObjectArray(frontmatter, ['channels'], updated, CONTACT_CHANNEL_KEYS);
+        return patched === null ? frontmatter : patched;
+      });
+    }
+  };
+
   const collectState = () => {
     const shared = readShared();
     return {
       basic: {
-        displayName: shared['person.displayName'] ?? '',
-        legalName: shared['person.legalName'] ?? '',
         wechatId: shared['links.wechatId'] ?? '',
         x: shared['links.x'] ?? '',
         xiaohongshu: shared['links.xiaohongshu'] ?? '',
@@ -882,6 +949,7 @@ links:
         avatarDark: toMediaUrl(shared['assets.avatarDark']),
         wechatQr: toMediaUrl(shared['assets.wechatQr']),
         brandMark: toMediaUrl(shared['assets.brandMark']),
+        socialText: readSocialText(),
       },
       home: {
         zh: readHomeFields('zh'),
@@ -900,15 +968,17 @@ links:
 
   const saveBasic = (input: any) => {
     const email = String(input.email ?? '').trim();
+    const emailAddress = email.replace(/^mailto:/, '');
     updateShared((data) => {
-      data['person.displayName'] = String(input.displayName ?? '').trim();
-      data['person.legalName'] = String(input.legalName ?? '').trim();
+      // 名字（person.displayName/legalName）站点未渲染，改由「首页内容 → 侧边栏名字」统一管理，这里不再覆盖，保留原值。
       data['links.wechatId'] = String(input.wechatId ?? '').trim();
       data['links.x'] = String(input.x ?? '').trim();
       data['links.xiaohongshu'] = String(input.xiaohongshu ?? '').trim();
       data['links.github'] = String(input.github ?? '').trim();
-      data['links.email'] = email && !email.startsWith('mailto:') ? `mailto:${email}` : email;
+      data['links.email'] = emailAddress ? `mailto:${emailAddress}` : '';
     });
+    // 联系弹窗里显示的账号文字随基本信息一并更新（邮箱显示直接用邮箱地址），避免链接与显示账号脱节。
+    writeSocialText(input.socialText && typeof input.socialText === 'object' ? input.socialText : {}, emailAddress);
   };
 
   const serveMedia = (relPath: string, res: ServerResponse): void => {
@@ -977,6 +1047,23 @@ links:
           }
           if (req.method === 'GET' && url === '/studio/api/state') {
             sendJson(res, 200, collectState());
+            return;
+          }
+          if (req.method === 'POST' && url === '/studio/api/export') {
+            const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'philweb-download-'));
+            const archivePath = path.join(temporaryDirectory, 'website.zip');
+            try {
+              const result = await exportSite({ projectRoot, archivePath });
+              const archive = fs.readFileSync(result.archivePath);
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/zip');
+              res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(result.filename)}"`);
+              res.setHeader('Cache-Control', 'no-store');
+              res.setHeader('X-PhilWeb-File-Count', String(result.fileCount));
+              res.end(archive);
+            } finally {
+              fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+            }
             return;
           }
           if (req.method === 'POST') {
@@ -1086,6 +1173,10 @@ links:
         };
 
         handle().catch((error) => {
+          if (error instanceof ExportValidationError) {
+            sendJson(res, 422, { ok: false, code: 'export-validation', message: error.message, issues: error.issues });
+            return;
+          }
           sendJson(res, 400, { ok: false, message: error instanceof Error ? error.message : String(error) });
         });
       });

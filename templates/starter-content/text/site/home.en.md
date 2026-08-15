@@ -3,9 +3,9 @@ hero:
   greeting: "Design · Explore · Share"
   description: "A visual designer who loves amplifying creativity with AI tools."
 sidebar:
-  name: "Momo Lin"
-  targetRoleValue: "Momo Lin"
-  targetCityValue: "Hangzhou"
+  name: "Alex Morgan"
+  targetRoleValue: "Independent practitioner"
+  targetCityValue: "Remote"
   age: ""
   mbti: "INFP"
   experience: "Design + AI Exploration"
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "My method"
   casesLabel: "See work"
 footer:
-  copyright: "Momo Lin"
+  copyright: "Alex Morgan"
   style: "DESIGN · AI WORKFLOW · SIDE PROJECTS"
 metrics:
   - label: "Works"

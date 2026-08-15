@@ -53,7 +53,11 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onOpenProject }) => {
                             <div className="absolute inset-x-0 -top-px h-[2px] bg-gradient-to-r from-transparent via-[var(--project-color)] to-transparent opacity-0 group-hover:opacity-25 transition-opacity duration-500 z-20" />
 
                             {/* 左侧图片区承担项目第一印象，让封面在有限高度内仍能快速传达项目气质。 */}
-                            <div className="project-list-media relative w-[34%] sm:w-[38%] shrink-0 overflow-hidden border-r">
+                            <div
+                                data-edit={`project-cover:${project.id}`}
+                                data-edit-label={lang === 'zh' ? `项目「${display.title}」封面` : `Cover of "${display.title}"`}
+                                className="project-list-media relative w-[34%] sm:w-[38%] shrink-0 overflow-hidden border-r"
+                            >
                                 <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-110">
                                     {cover && (
                                         <>

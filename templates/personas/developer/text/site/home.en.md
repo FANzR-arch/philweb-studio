@@ -3,9 +3,9 @@ hero:
   greeting: "Build · Ship · Iterate"
   description: "An indie developer who loves turning ideas into shipped products with AI."
 sidebar:
-  name: "Yu Chen"
-  targetRoleValue: "Yu Chen"
-  targetCityValue: "Shenzhen"
+  name: "Alex Morgan"
+  targetRoleValue: "Independent practitioner"
+  targetCityValue: "Remote"
   age: ""
   mbti: "INTP"
   experience: "Full-stack + AI-assisted dev"
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "How I work"
   casesLabel: "See projects"
 footer:
-  copyright: "Yu Chen"
+  copyright: "Alex Morgan"
   style: "FULL-STACK · AI-ASSISTED · SHIP FAST"
 metrics:
   - label: "Shipped"

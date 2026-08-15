@@ -26,7 +26,7 @@ const COVER_SPECS = [
     output: 'home-1200x630.jpg',
     source: null,
     title: 'My Portfolio',
-    subtitle: 'Built with folio-studio',
+    subtitle: 'Personal Website Starter',
   },
 ];
 

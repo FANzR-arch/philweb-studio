@@ -1,6 +1,6 @@
 ---
 heading: "关于我"
-name: "江宁 Ning"
+name: "Alex Morgan"
 summary: "用数据和 AI 辅助判断，把复杂需求拆成能落地的产品方案"
 statement: "我习惯从真实场景和数据出发理清问题，再用 AI 加速方案验证，最后推动跨团队把它做出来、跑起来。"
 basicsTitle: "基本信息"
@@ -16,9 +16,9 @@ basics:
   - label: "所在城市"
     value: "上海"
   - label: "邮箱"
-    value: "hello@example.com"
+    value: ""
   - label: "微信"
-    value: "your-wechat-id"
+    value: ""
 strengths:
   - "需求分析与产品规划"
   - "用户研究与数据分析"
