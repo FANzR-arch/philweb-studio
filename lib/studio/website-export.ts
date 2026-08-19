@@ -84,6 +84,8 @@ export async function fetchSiteShell(base = './site-shell/'): Promise<{ manifest
   const files: Record<string, Uint8Array> = {};
   for (const entry of manifest.files || []) {
     if (entry.path === 'manifest.json') continue;
+    const parts = String(entry.path || '').split('/');
+    if (parts.some((part) => part.startsWith('.'))) continue;
     const response = await fetch(`${prefix}${entry.path}`);
     if (!response.ok) {
       throw new Error(`无法读取外壳文件：${entry.path}`);

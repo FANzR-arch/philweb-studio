@@ -35,7 +35,14 @@ if (fs.existsSync(siteHtml)) {
   fs.renameSync(siteHtml, indexHtml);
 }
 
-const files = walkFiles(shellDest).map((file) => posix(shellDest, file)).filter((name) => name !== 'manifest.json');
+const files = walkFiles(shellDest)
+  .map((file) => posix(shellDest, file))
+  .filter((name) => {
+    if (name === 'manifest.json') return false;
+    const parts = name.split('/');
+    if (parts.some((part) => part.startsWith('.'))) return false;
+    return true;
+  });
 const manifest = {
   schemaVersion: 1,
   files: files.map((entry) => ({
