@@ -86,3 +86,32 @@ export function isSafeProjectId(value: string): boolean {
 export function isSafeBlogDate(value: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
+
+export function localDateStamp(now = new Date()): string {
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function nextBlogPostId(existingIds: Iterable<string>, date = localDateStamp()): string {
+  if (!isSafeBlogDate(date)) {
+    throw new Error('日期格式应为 YYYY-MM-DD，例如 2026-08-20。');
+  }
+  const used = new Set(existingIds);
+  if (!used.has(date)) return date;
+  let index = 2;
+  while (used.has(`${date}-${index}`)) {
+    index += 1;
+  }
+  return `${date}-${index}`;
+}
+
+export function assertAvailableProjectId(id: string, existingIds: Iterable<string>): void {
+  if (!isSafeProjectId(id)) {
+    throw new Error('项目 id 只能使用小写字母、数字和连字符，例如 my-project。');
+  }
+  if (new Set(existingIds).has(id)) {
+    throw new Error(`项目 ID「${id}」已存在，请换一个。`);
+  }
+}

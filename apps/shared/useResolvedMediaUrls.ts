@@ -21,10 +21,6 @@ export function useResolvedMediaUrls(
           next[record.id] = `./${record.filename.replace(/^\.\//, '')}`;
           continue;
         }
-        if (record.source === 'builtin') {
-          next[record.id] = `./starter/media/${record.filename}`;
-          continue;
-        }
         const cached = cacheRef.current.get(record.id);
         if (cached) {
           next[record.id] = cached;
@@ -36,9 +32,13 @@ export function useResolvedMediaUrls(
             const url = URL.createObjectURL(stored.blob);
             cacheRef.current.set(record.id, url);
             next[record.id] = url;
+            continue;
           }
         } catch {
-          /* ignore missing blob */
+          /* fall through to starter assets only when this id was never restored locally */
+        }
+        if (record.source === 'builtin') {
+          next[record.id] = `./starter/media/${record.filename}`;
         }
       }
       for (const [id, url] of cacheRef.current.entries()) {

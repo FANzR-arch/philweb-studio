@@ -31,7 +31,7 @@ dist/site-shell/    # 预构建网站外壳，在线导出时打包进去
 5. **展示组件禁止直接依赖编译期 contentRegistry**：一律 `ContentProvider` / `useSiteContent`。
 6. **用户数据不得写入公共仓库**：只用 IndexedDB；导出 ZIP 不得包含 Studio 源码或 IndexedDB。
 7. **在线导出不得调用 Node**：使用预构建 site-shell + fflate。
-8. **改完必须验证**：`npm run content:check` → `npm run verify` → `npm run test` → `npm run build` → `npm run export`。
+8. **改完必须验证**：`npm run content:check` → `npm run verify` → `npm run test` → `npm run build` → `npm run test:e2e` → `npm run export`。
 
 ## 三个入口
 

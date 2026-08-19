@@ -3,7 +3,7 @@ import { CARD_TINT_SLOTS, FONT_PRESETS, IDENTITY_ICON_OPTIONS, METRIC_ICONS, STY
 import { cloneJson, createId } from '../../lib/studio/clone';
 import { postTo, readStudioMessage, STUDIO_MESSAGE } from '../../lib/studio/messages';
 import { applyAppearance, applyStylePack, readAppearance } from '../../lib/studio/theme-apply';
-import { computeChecklist, isSafeBlogDate, isSafeProjectId } from '../../lib/studio/project-ops';
+import { assertAvailableProjectId, computeChecklist, localDateStamp, nextBlogPostId } from '../../lib/studio/project-ops';
 import type { ContentLang, InteractionMode, PreviewMode, StudioProjectV1, StudioTab } from '../../lib/studio/types';
 import { Icon } from './icons';
 import { flashField, resolveEditTarget } from './editJump';
@@ -522,7 +522,7 @@ export const StudioApp: React.FC = () => {
                 <div className="card">
                   <h2>编辑文章</h2>
                   <div className="row">
-                    <Field label="日期"><input id="bl-date" type="date" value={currentPost.date || currentPost.id} onChange={(e) => patchPost(currentPost.id, { date: e.target.value, id: e.target.value })} /></Field>
+                    <Field label="日期"><input id="bl-date" type="date" value={currentPost.date || currentPost.id.slice(0, 10)} onChange={(e) => patchPost(currentPost.id, { date: e.target.value })} /></Field>
                     <Field label="分类">
                       <select id="bl-category" value={currentPost.categoryId || ''} onChange={(e) => patchPost(currentPost.id, { categoryId: e.target.value })}>
                         {project.blog.categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.title.zh}</option>)}
@@ -714,8 +714,11 @@ export const StudioApp: React.FC = () => {
   }
   function createProject() {
     const id = window.prompt('项目 id（小写字母、数字和连字符）', `project-${Date.now().toString(36)}`);
-    if (!id || !isSafeProjectId(id)) {
-      studio.showToast('项目 id 只能使用小写字母、数字和连字符', true);
+    if (!id) return;
+    try {
+      assertAvailableProjectId(id, project.projects.map((item) => item.id));
+    } catch (error) {
+      studio.showToast(error instanceof Error ? error.message : '项目 id 不合法', true);
       return;
     }
     updateProject((current) => ({
@@ -742,16 +745,19 @@ export const StudioApp: React.FC = () => {
     setProjectId(id);
   }
   function createPost() {
-    const date = new Date().toISOString().slice(0, 10);
-    if (!isSafeBlogDate(date)) return;
-    updateProject((current) => ({
-      ...current,
-      blog: {
-        ...current.blog,
-        posts: [{ id: date, date, title: '新文章', summary: '', categoryId: current.blog.categories[0]?.id }, ...current.blog.posts],
-      },
-    }), { history: true });
-    setBlogId(date);
+    const date = localDateStamp();
+    let createdId = '';
+    updateProject((current) => {
+      createdId = nextBlogPostId(current.blog.posts.map((item) => item.id), date);
+      return {
+        ...current,
+        blog: {
+          ...current.blog,
+          posts: [{ id: createdId, date, title: '新文章', summary: '', categoryId: current.blog.categories[0]?.id }, ...current.blog.posts],
+        },
+      };
+    }, { history: true });
+    if (createdId) setBlogId(createdId);
   }
   async function importBackup(mode: 'new' | 'overwrite') {
     const input = document.createElement('input');

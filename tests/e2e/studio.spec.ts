@@ -90,6 +90,25 @@ test('click-to-edit jumps to the name field', async ({ page }) => {
   await expect(page.locator('#h-name')).toBeVisible();
 });
 
+test('can create two posts on the same day', async ({ page }) => {
+  await waitStudio(page);
+  await page.getByRole('button', { name: '博客文章' }).click();
+  const before = await page.locator('.post-item').count();
+  await page.getByRole('button', { name: '新建文章' }).click();
+  await page.getByRole('button', { name: '新建文章' }).click();
+  await expect(page.locator('.post-item')).toHaveCount(before + 2);
+});
+
+test('duplicate project id is rejected immediately', async ({ page }) => {
+  await waitStudio(page);
+  await page.getByRole('button', { name: '项目作品' }).click();
+  page.once('dialog', async (dialog) => {
+    await dialog.accept('flowcard');
+  });
+  await page.getByRole('button', { name: '新建' }).click();
+  await expect(page.locator('#toast.show')).toContainText('已存在');
+});
+
 test('export website zip and project backup', async ({ page }) => {
   await waitStudio(page);
   const [website] = await Promise.all([

@@ -240,13 +240,17 @@ export function useStudioController() {
     const current = projectRef.current;
     if (!current) return;
     await flushSave();
-    const result = await exportProjectBackup(
-      current,
-      async (id) => (await getMedia(id))?.blob,
-      loadBuiltinMedia,
-    );
-    downloadBytes(result.filename, result.bytes);
-    showToast('工程备份已下载');
+    try {
+      const result = await exportProjectBackup(
+        current,
+        async (id) => (await getMedia(id))?.blob,
+        loadBuiltinMedia,
+      );
+      downloadBytes(result.filename, result.bytes);
+      showToast('工程备份已下载');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : '工程备份导出失败', true);
+    }
   }, [flushSave, showToast]);
 
   const doImportBackup = useCallback(async (file: File, mode: 'new' | 'overwrite') => {
