@@ -2,13 +2,13 @@
   "name": "我的个人主页",
   "short_name": "个人主页",
   "description": "一个用于展示作品、经历和想法的个人主页",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "./favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

@@ -1,5 +1,7 @@
 # PhilWeb Studio
 
+在线预览：<https://fanzr-arch.github.io/philweb-studio/>
+
 > 一个本地开源的网站定制器：修改内容，检查质量，导出可直接部署的网站 ZIP。
 
 PhilWeb Studio 是一个 React 19 + Vite + Tailwind 的静态网站工具。它把编辑器和网站运行时放在同一个开源项目中，但导出时只交付最终静态文件，不会把 Studio、模板源码或 Node 配置带给最终用户。

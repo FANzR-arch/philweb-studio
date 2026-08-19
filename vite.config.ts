@@ -14,6 +14,8 @@ import { studioPlugin } from './plugins/studio';
 
 export default defineConfig(() => {
   return {
+    // 使用相对路径生成静态资源，确保导出 ZIP、独立域名与 GitHub Pages 子目录都能直接打开。
+    base: './',
     server: {
       port: Number(process.env.PORT) || 3000,
       host: '0.0.0.0',
