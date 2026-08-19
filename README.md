@@ -4,7 +4,23 @@
 
 PhilWeb Studio 是一个 React 19 + Vite + Tailwind 的静态网站工具。它把编辑器和网站运行时放在同一个开源项目中，但导出时只交付最终静态文件，不会把 Studio、模板源码或 Node 配置带给最终用户。
 
-## 三分钟开始
+## 下载与一键启动
+
+GitHub 项目地址：[FANzR-arch/philweb-studio](https://github.com/FANzR-arch/philweb-studio)
+
+也可以直接下载源码 ZIP：[下载 main 分支 ZIP](https://github.com/FANzR-arch/philweb-studio/archive/refs/heads/main.zip)
+
+Windows 用户解压后，双击项目根目录里的 `启动 PhilWeb Studio.cmd`。脚本会检查 Node.js，首次启动自动执行 `npm install`，然后运行 Studio 并打开浏览器。
+
+首次使用需要：
+
+- 安装 [Node.js LTS](https://nodejs.org/)
+- 保持网络连接，以便首次安装项目依赖
+- 不要移动或删除项目根目录里的 `package.json`
+
+如果已经安装过依赖，之后再次双击即可启动。
+
+## 三分钟开始（手动方式）
 
 ```bash
 npm install
@@ -14,7 +30,7 @@ npm run studio
 打开 `http://localhost:3000/studio` 后：
 
 - 在左侧修改个人信息、首页、外观、项目和博客。
-- 在右侧预览实际网站，也可以使用“点哪改哪”。
+- 在右侧预览实际网站；需要操作弹窗、按钮和链接时切换到“正常预览”，需要定位编辑字段时切回“点哪改哪”。
 - 修改完成后点击“检查并导出网站”。
 - 浏览器会下载一个独立 ZIP，解压后即可上传到 Netlify、Cloudflare Pages、Vercel 等静态托管平台。
 
