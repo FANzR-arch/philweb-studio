@@ -6,12 +6,13 @@
 
 import React, { useMemo } from 'react';
 import { useLanguage } from '../../data/i18n';
-import { allProjects, getResumeContent } from '../../data/content';
+import { useAllProjects, useResumeContent } from '../../data/content';
 import { getProjectDisplay } from '../../data/projectDisplay';
 
 export const ResumeModalContent: React.FC = () => {
   const { lang } = useLanguage();
-  const copy = getResumeContent(lang);
+  const copy = useResumeContent(lang);
+  const allProjects = useAllProjects();
 
   const coreProjects = useMemo(
     () =>

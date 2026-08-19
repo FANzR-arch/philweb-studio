@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { useLanguage } from '../../data/i18n';
-import { getBlogArticles, getBlogCategories, getHomeContent } from '../../data/content';
+import { useBlogArticles, useBlogCategories, useHomeContent } from '../../data/content';
 import type { BlogArticle, BlogCategory } from '../../types';
 
 interface ArticleViewModel {
@@ -30,7 +30,7 @@ interface BlogIndexProps {
   mode?: 'embedded' | 'modal';
 }
 
-const FALLBACK_COVER = 'https://picsum.photos/id/1015/600/340';
+const FALLBACK_COVER = '';
 
 const UNCATEGORIZED_CATEGORY: BlogCategory = {
   id: 'uncategorized',
@@ -58,9 +58,9 @@ function formatDate(date?: string): string {
 
 export const BlogIndex: React.FC<BlogIndexProps> = ({ mode = 'modal' }) => {
   const { lang } = useLanguage();
-  const homeContent = getHomeContent(lang);
-  const rawArticles = getBlogArticles();
-  const rawCategories = getBlogCategories();
+  const homeContent = useHomeContent(lang);
+  const rawArticles = useBlogArticles();
+  const rawCategories = useBlogCategories();
   const [activeCategoryId, setActiveCategoryId] = React.useState('all');
 
   const articles = React.useMemo<ArticleViewModel[]>(() => {
@@ -121,16 +121,21 @@ export const BlogIndex: React.FC<BlogIndexProps> = ({ mode = 'modal' }) => {
     <article
       key={article.id}
       data-edit={`blog:${article.id}`}
+      data-edit-target={`blog:${article.id}`}
       data-edit-label={`文章「${article.title}」`}
       className={`blog-article-card theme-panel group relative z-[2] flex min-w-0 flex-col overflow-hidden border transition-all hover:z-[3] hover:border-[var(--site-accent)] ${isEmbedded ? 'rounded-lg' : 'rounded-xl hover:-translate-y-0.5'}`}
     >
       <div className={`flex items-center justify-center overflow-hidden border-b border-[var(--border-soft)] bg-[var(--surface-muted)] ${isEmbedded ? 'aspect-[16/8] p-1.5' : 'aspect-[16/9] p-2'}`}>
-        <img
-          src={article.cover}
-          alt={article.title}
-          className="h-full w-full object-contain"
-          loading="lazy"
-        />
+        {article.cover ? (
+          <img
+            src={article.cover}
+            alt={article.title}
+            className="h-full w-full object-contain"
+            loading="lazy"
+          />
+        ) : (
+          <div className="h-full w-full bg-[var(--image-skeleton)]" />
+        )}
       </div>
 
       <div className={`flex min-w-0 flex-1 flex-col ${isEmbedded ? 'p-3' : 'p-4'}`}>
@@ -191,9 +196,10 @@ export const BlogIndex: React.FC<BlogIndexProps> = ({ mode = 'modal' }) => {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div
             data-edit={isEmbedded ? 'home.blogTitle' : 'blog'}
+            data-edit-target={isEmbedded ? 'home.blogTitle' : 'blog'}
             data-edit-label={isEmbedded ? '文章板块标题' : '博客文章'}
           >
-            <h3 className="text-xl font-bold tracking-tight text-[var(--text-primary)] sm:text-2xl">
+            <h3 className="text-xl sm:text-2xl font-bold mb-2 text-[var(--text-primary)] tracking-tight">
               {isEmbedded ? homeContent.quickLinks.blog : (lang === 'zh' ? '文章索引' : 'Article Index')}
             </h3>
             <p className={`${isEmbedded ? 'mt-1 text-xs' : 'mt-2 text-sm'} max-w-2xl leading-relaxed text-[var(--text-muted)]`}>

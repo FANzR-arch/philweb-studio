@@ -3,8 +3,8 @@ hero:
   greeting: "创建 · 分享 · 连接"
   description: "一个用于展示作品、经验与想法的个人网站。"
 sidebar:
-  name: "Alex Morgan"
-  targetRoleValue: "Alex Morgan"
+  name: "江河"
+  targetRoleValue: "江河"
   targetCityValue: "远程"
   age: ""
   mbti: "INFP"
@@ -64,7 +64,7 @@ interviewerPath:
   methodLabel: "我的方法"
   casesLabel: "看作品"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "江河"
   style: "WORK · NOTES · PRACTICE"
 metrics:
   - label: "作品"

@@ -3,7 +3,7 @@ hero:
   greeting: "设计 · 探索 · 记录"
   description: "一名喜欢用 AI 工具放大创造力的视觉设计师。"
 sidebar:
-  name: "Alex Morgan"
+  name: "江河"
   targetRoleValue: "独立实践者"
   targetCityValue: "远程"
   age: ""
@@ -64,7 +64,7 @@ interviewerPath:
   methodLabel: "我的方法"
   casesLabel: "看作品"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "江河"
   style: "DESIGN · AI WORKFLOW · SIDE PROJECTS"
 metrics:
   - label: "作品"

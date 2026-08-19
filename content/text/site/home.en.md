@@ -3,7 +3,7 @@ hero:
   greeting: "Create · Share · Connect"
   description: "A personal website for showing work, notes, and ongoing practice."
 sidebar:
-  name: "Alex Morgan"
+  name: "Jiang He"
   targetRoleValue: "Independent practitioner"
   targetCityValue: "Remote"
   age: ""
@@ -64,7 +64,7 @@ interviewerPath:
   methodLabel: "My method"
   casesLabel: "See work"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "Jiang He"
   style: "WORK · NOTES · PRACTICE"
 metrics:
   - label: "Works"

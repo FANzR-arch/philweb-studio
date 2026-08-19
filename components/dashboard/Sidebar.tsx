@@ -7,8 +7,8 @@
 
 import React from 'react';
 import { useLanguage } from '../../data/i18n';
-import { getHomeContent } from '../../data/content';
-import { getAvatarImages } from '../../data/useImages';
+import { useHomeContent } from '../../data/content';
+import { useAvatarImages } from '../../data/useImages';
 import { ImageWithSkeleton } from '../ui/ImageWithSkeleton';
 import { Card } from '../ui/Card';
 
@@ -16,8 +16,8 @@ const FALLBACK_IDENTITY_ICONS = ['conversion_path', 'neurology', 'build', 'handy
 
 export const Sidebar: React.FC = () => {
   const { lang } = useLanguage();
-  const avatarImages = getAvatarImages();
-  const homeContent = getHomeContent(lang);
+  const avatarImages = useAvatarImages();
+  const homeContent = useHomeContent(lang);
   const sidebar = homeContent.sidebar;
   const identityItems = sidebar.skillList.map((text, index) => ({
     text,
@@ -30,6 +30,7 @@ export const Sidebar: React.FC = () => {
       {/* 头像区负责建立第一印象，并通过大图比例撑起左列的视觉重心。 */}
       <div
         data-edit="basic.avatar"
+        data-edit-target="basic.avatar"
         data-edit-label="头像"
         className="w-full bg-[var(--surface-panel)] overflow-hidden relative group aspect-[3/3.3] rounded-[var(--card-radius-sm)] shrink-0 border border-[var(--border-soft)] shadow-inner"
       >
@@ -62,6 +63,7 @@ export const Sidebar: React.FC = () => {
         <div data-edit="home.name" data-edit-label="名字与定位" className="flex items-baseline justify-between mb-6">
           <h2
             data-edit="home.name"
+            data-edit-target="home.name"
             data-edit-label="名字"
             className="text-[34px] md:text-4xl font-black tracking-tighter text-[var(--text-primary)] leading-none"
           >

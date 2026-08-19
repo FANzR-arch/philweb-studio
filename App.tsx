@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { ModalType, Project } from './types';
 import { Modal } from './components/ui/Modal';
 import { Sidebar } from './components/dashboard/Sidebar';
-import { allProjects, getHomeContent, getSharedContent, siteConfig } from './data/content';
+import { useAllProjects, useHomeContent, useSharedContent, useSiteConfig, useSiteContent } from './data/content';
 import { ProjectsModalContent } from './components/modals/ProjectsModalContent';
 import { ContactModalContent } from './components/modals/ContactModalContent';
 import { TimelineModalContent } from './components/modals/TimelineModalContent';
@@ -21,16 +21,19 @@ import { BlogSection } from './components/dashboard/BlogSection';
 import { ProjectList } from './components/dashboard/ProjectList';
 import { QuickLinks } from './components/dashboard/QuickLinks';
 import { Toaster } from 'sonner';
-import { themeCssVars, ensureThemeWebfonts, siteTheme } from './data/theme';
+import { applyThemeToRoot } from './data/theme';
 
 const App: React.FC = () => {
   const [activeModal, setActiveModal] = useState<ModalType>(ModalType.NONE);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { lang } = useLanguage();
-  const homeContent = getHomeContent(lang);
-  const sharedContent = getSharedContent();
-  const backgroundMode = siteTheme.effects.background?.mode ?? 'default';
-  const backgroundPattern = siteTheme.effects.background?.pattern ?? 'grid';
+  const homeContent = useHomeContent(lang);
+  const sharedContent = useSharedContent();
+  const siteConfig = useSiteConfig();
+  const allProjects = useAllProjects();
+  const { theme } = useSiteContent();
+  const backgroundMode = theme.effects?.background?.mode ?? 'default';
+  const backgroundPattern = theme.effects?.background?.pattern ?? 'grid';
   const projectModalTitle = selectedProject?.locales?.[lang]?.title ?? selectedProject?.title;
   const projectModalAriaLabel =
     lang === 'zh'
@@ -66,21 +69,18 @@ const App: React.FC = () => {
   // 首屏挂载时一次性完成主题变量注入与访问埋点，
   // 让全局启动逻辑集中在同一个入口，后续排查副作用也更直接。
   useEffect(() => {
-    // 1. 注入站点级 CSS 变量，让 data/theme.ts 成为全站配色与组件 token 的唯一来源。
-    const root = document.documentElement;
-    // 统一批量写入 CSS 变量，避免逐行 setProperty 时遗漏主题字段。
-    const setVars = (vars: Record<string, string | number>) => {
-      Object.entries(vars).forEach(([key, value]) => {
-        root.style.setProperty(key, String(value));
-      });
-    };
+    applyThemeToRoot(theme);
+  }, [theme]);
 
-    setVars(themeCssVars);
-    // 液态玻璃总开关：主题标记为 off 时，液态卡片回落成普通实心卡。
-    root.classList.toggle('no-glass', String(themeCssVars['--theme-effects-cards-glass-state'] ?? 'on').trim() === 'off');
-    ensureThemeWebfonts();
+  useEffect(() => {
+    if (!selectedProject) return;
+    const next = allProjects.find((item) => item.id === selectedProject.id);
+    if (next && next !== selectedProject) {
+      setSelectedProject(next);
+    }
+  }, [allProjects, selectedProject]);
 
-    // 2. 首次进入时记录页面访问，并根据 URL 参数恢复项目深链状态。
+  useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     const projectId = query.get('project');
     const pack = query.get('pack');
@@ -98,7 +98,6 @@ const App: React.FC = () => {
         openProjectDetail(project, 'deep_link');
       }
     }
-
   }, []);
 
   useEffect(() => {
@@ -324,6 +323,7 @@ const App: React.FC = () => {
       </div>
       <main
         data-edit="theme.background"
+        data-edit-target="theme.background"
         data-edit-label="页面背景"
         data-edit-default
         className="flex-grow flex flex-col items-center justify-center px-4 md:px-6 xl:px-10 py-3 md:py-4 min-h-screen"

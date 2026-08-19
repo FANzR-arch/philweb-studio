@@ -1,6 +1,6 @@
 ---
 heading: "About Me"
-name: "Alex Morgan"
+name: "Jiang He"
 summary: "Turning ideas into visible work with design and AI tools"
 statement: "I like to sketch vague ideas first, validate them quickly with AI tools, and turn the promising ones into finished work."
 basicsTitle: "Basics"

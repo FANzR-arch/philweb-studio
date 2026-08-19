@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { getHomeContent } from '../../data/content';
+import { useHomeContent } from '../../data/content';
 import { useLanguage } from '../../data/i18n';
 import { Card } from '../ui/Card';
 
@@ -15,7 +15,7 @@ interface TimelineContentProps {
 
 export const TimelineContent: React.FC<TimelineContentProps> = ({ mode = 'card' }) => {
   const { lang } = useLanguage();
-  const homeContent = getHomeContent(lang);
+  const homeContent = useHomeContent(lang);
   const timeline = homeContent.timeline.items;
   const skillTags = homeContent.sidebar.skillTags;
   const [expandedItemId, setExpandedItemId] = React.useState<string | null>(null);

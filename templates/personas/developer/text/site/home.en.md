@@ -3,7 +3,7 @@ hero:
   greeting: "Build · Ship · Iterate"
   description: "An indie developer who loves turning ideas into shipped products with AI."
 sidebar:
-  name: "Alex Morgan"
+  name: "Jiang He"
   targetRoleValue: "Independent practitioner"
   targetCityValue: "Remote"
   age: ""
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "How I work"
   casesLabel: "See projects"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "Jiang He"
   style: "FULL-STACK · AI-ASSISTED · SHIP FAST"
 metrics:
   - label: "Shipped"

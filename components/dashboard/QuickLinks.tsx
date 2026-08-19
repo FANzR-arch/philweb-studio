@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { useLanguage } from '../../data/i18n';
-import { getHomeContent } from '../../data/content';
+import { useHomeContent } from '../../data/content';
 import { Card } from '../ui/Card';
 
 interface QuickLinksProps {
@@ -17,7 +17,7 @@ interface QuickLinksProps {
 
 export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenTimeline }) => {
   const { lang } = useLanguage();
-  const homeContent = getHomeContent(lang);
+  const homeContent = useHomeContent(lang);
 
   return (
     <div className="flex flex-col gap-3 animate-fade-in-up delay-4 shrink-0">

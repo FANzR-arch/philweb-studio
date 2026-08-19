@@ -9,12 +9,12 @@ import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../data/i18n';
 import { track } from '../../data/analytics';
-import { getContactContent, getSharedContent } from '../../data/content';
+import { useContactContent, useSharedContent } from '../../data/content';
 
 export const ContactModalContent: React.FC = () => {
   const { lang } = useLanguage();
-  const copy = getContactContent(lang);
-  const shared = getSharedContent();
+  const copy = useContactContent(lang);
+  const shared = useSharedContent();
   const wechatId = shared.links.wechatId;
   const [copied, setCopied] = React.useState(false);
   const [qrError, setQrError] = React.useState(false);

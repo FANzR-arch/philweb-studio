@@ -9,7 +9,7 @@ import React from 'react';
 import { Card } from '../ui/Card';
 import { useLanguage } from '../../data/i18n';
 import { track } from '../../data/analytics';
-import { getHomeContent } from '../../data/content';
+import { useHomeContent } from '../../data/content';
 
 interface InterviewerPathCardProps {
   onOpenProject: () => void;
@@ -21,7 +21,7 @@ export const InterviewerPathCard: React.FC<InterviewerPathCardProps> = ({
   onOpenContact,
 }) => {
   const { lang } = useLanguage();
-  const homeContent = getHomeContent(lang);
+  const homeContent = useHomeContent(lang);
 
   const handleStep = (step: 'project' | 'contact', action: () => void) => {
     track('interview_pack_step_click', {

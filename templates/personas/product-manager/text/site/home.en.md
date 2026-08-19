@@ -3,7 +3,7 @@ hero:
   greeting: "Insight · Judgment · Delivery"
   description: "A product manager who uses data and AI to judge, and breaks complex problems into deliverable plans."
 sidebar:
-  name: "Alex Morgan"
+  name: "Jiang He"
   targetRoleValue: "Independent practitioner"
   targetCityValue: "Remote"
   age: ""
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "My method"
   casesLabel: "See products"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "Jiang He"
   style: "PRODUCT · DATA-DRIVEN · GROWTH"
 metrics:
   - label: "Products"

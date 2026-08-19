@@ -30,7 +30,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build static site
+      - name: Content check
+        run: npm run content:check
+
+      - name: Verify
+        run: npm run verify
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Build GitHub Pages app
         run: npm run build
 
       - name: Configure GitHub Pages

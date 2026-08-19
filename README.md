@@ -1,91 +1,70 @@
 # PhilWeb Studio
 
-在线预览：<https://fanzr-arch.github.io/philweb-studio/>
+在线编辑器：<https://fanzr-arch.github.io/philweb-studio/>
 
-> 一个本地开源的网站定制器：修改内容，检查质量，导出可直接部署的网站 ZIP。
+> 打开 GitHub Pages 链接即可编辑、保存和导出个人网站。不需要安装 Node，也不需要登录。
 
-PhilWeb Studio 是一个 React 19 + Vite + Tailwind 的静态网站工具。它把编辑器和网站运行时放在同一个开源项目中，但导出时只交付最终静态文件，不会把 Studio、模板源码或 Node 配置带给最终用户。
+PhilWeb Studio 2.0 是一个浏览器优先的开源网站定制器。正式入口就是编辑器本身：左侧改内容，右侧实时预览。所有用户数据只保存在**当前浏览器**，不会写入公共 GitHub 仓库，也不会被其他访问者看到。
 
-## 下载与一键启动
+## 直接使用（推荐）
+
+1. 打开 [PhilWeb Studio](https://fanzr-arch.github.io/philweb-studio/)。
+2. 左侧编辑基本信息、首页、简历、联系方式、技能、外观、项目和博客。
+3. 右侧可切换电脑 / 手机预览，以及「正常预览 / 点哪改哪」。
+4. 改动会自动保存到当前浏览器；左下角也可以随时手动保存，或按 `Ctrl+S` / `Cmd+S`。
+5. 完成后导出：
+   - **网站 ZIP**：只包含可部署的静态网站，上传到 Netlify、Cloudflare Pages、Vercel 等即可。
+   - **工程备份**：包含完整项目和全部媒体，用来换电脑、换浏览器或清理数据前保存进度。
+
+## 必须知道的数据边界
+
+- 数据只保存在当前浏览器的 IndexedDB 中。
+- 不同设备、不同浏览器、无痕窗口都不会自动同步。
+- 清理站点数据、卸载浏览器或换电脑前，必须先导出工程备份。
+- 网站 ZIP 不能用来继续编辑；要继续改，请导入工程备份。
+
+## 网站 ZIP 和工程备份的区别
+
+| | 网站 ZIP | 工程备份 |
+| --- | --- | --- |
+| 用途 | 部署给访客看 | 给自己继续编辑 |
+| 内容 | `index.html`、静态资源、`project.json`、用到的 `media/` | `manifest.json`、`project.json`、全部媒体 |
+| 能否继续在 Studio 里改 | 不能 | 能，导入即可 |
+| 是否包含编辑器 | 否 | 否 |
+
+## 如何部署导出的网站
+
+解压网站 ZIP 后，把其中的文件上传到：
+
+- Netlify Drop
+- Cloudflare Pages
+- Vercel
+- 任何支持静态 HTML 的托管服务
+
+相对路径已处理，可以放在域名根目录或子目录。
+
+## 本地开发
 
 GitHub 项目地址：[FANzR-arch/philweb-studio](https://github.com/FANzR-arch/philweb-studio)
-
-也可以直接下载源码 ZIP：[下载 main 分支 ZIP](https://github.com/FANzR-arch/philweb-studio/archive/refs/heads/main.zip)
-
-Windows 用户解压后，双击项目根目录里的 `启动 PhilWeb Studio.cmd`。脚本会检查 Node.js，首次启动自动执行 `npm install`，然后运行 Studio 并打开浏览器。
-
-首次使用需要：
-
-- 安装 [Node.js LTS](https://nodejs.org/)
-- 保持网络连接，以便首次安装项目依赖
-- 不要移动或删除项目根目录里的 `package.json`
-
-如果已经安装过依赖，之后再次双击即可启动。
-
-## 三分钟开始（手动方式）
 
 ```bash
 npm install
 npm run studio
 ```
 
-打开 `http://localhost:3000/studio` 后：
-
-- 在左侧修改个人信息、首页、外观、项目和博客。
-- 在右侧预览实际网站；需要操作弹窗、按钮和链接时切换到“正常预览”，需要定位编辑字段时切回“点哪改哪”。
-- 修改完成后点击“检查并导出网站”。
-- 浏览器会下载一个独立 ZIP，解压后即可上传到 Netlify、Cloudflare Pages、Vercel 等静态托管平台。
-
-以后需要修改时，回到 PhilWeb Studio 修改并重新导出，不要直接编辑已经导出的 ZIP。
-
-## 导出内容
-
-导出 ZIP 只包含网站部署所需的 HTML、CSS、JavaScript、图片、字体、favicon、manifest、robots 和 sitemap 文件。
-
-导出包不包含：
-
-- `content/`
-- `templates/`
-- `plugins/`
-- `components/`
-- `scripts/`
-- `node_modules/`
-- `.git/`
-- `package.json`、Vite 配置和 Studio API
-
-也可以在终端导出：
-
-```bash
-npm run export
-```
-
-命令行导出的 ZIP 会放到被 Git 忽略的 `exports/` 文件夹中。
-
-## 内容位置
-
-```text
-content/
-  text/site/       # 首页、简历、联系方式和技能
-  text/projects/  # 项目内容
-  text/blog/      # 博客内容
-  media/          # 头像、二维码、项目图和博客封面
-  theme/          # 颜色、字体、圆角和效果
-  config/         # 站点级配置
-```
-
-内容与代码分离。通常只需要在 Studio 中修改，不需要碰 React 组件。
-
-## 校验命令
+这会打开与线上相同的浏览器编辑器。维护者仍可用 `content/` 作为默认模板和 CLI 数据源。
 
 ```bash
 npm run content:check
 npm run verify
+npm run test
 npm run build
 npm run export
+npm run test:e2e
 ```
 
-导出会拦截未处理的示例姓名、假邮箱、社交账号占位符、缺图和内容校验错误。空的可选社交链接、博客和简历字段不会阻止导出。
+`npm run export` 会从当前 `content/` 生成可部署网站 ZIP，供维护者使用；在线编辑器导出不依赖 Node。
 
 ## 开源说明
 
-PhilWeb Studio 本身是开源工具。工具文档、开发配置和许可证只属于源码项目，不会进入用户下载的网站成品。
+PhilWeb Studio 是开源工具品牌。工具文档、开发配置和许可证只属于源码项目，默认不会进入用户导出的个人网站署名。

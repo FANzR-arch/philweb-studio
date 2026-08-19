@@ -1,6 +1,6 @@
 ---
 heading: "About Me"
-name: "Alex Morgan"
+name: "Jiang He"
 summary: "Turning ideas into shippable products with AI-assisted development"
 statement: "I break ideas into a minimal usable version, speed up build with AI, and iterate while shipping — letting the product grow from real usage."
 basicsTitle: "Basics"

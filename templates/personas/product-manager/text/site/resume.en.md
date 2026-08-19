@@ -1,6 +1,6 @@
 ---
 heading: "About Me"
-name: "Alex Morgan"
+name: "Jiang He"
 summary: "Using data and AI to break complex needs into products that ship"
 statement: "I clarify problems from real scenarios and data, validate solutions faster with AI, and drive cross-team delivery to actually make it happen."
 basicsTitle: "Basics"

@@ -8,7 +8,7 @@
 import React from 'react';
 import { Card } from '../ui/Card';
 import { useLanguage } from '../../data/i18n';
-import { getSkillsContent } from '../../data/content';
+import { useSkillsContent } from '../../data/content';
 
 interface SkillsSectionProps {
     onOpenSkills: () => void;
@@ -16,7 +16,7 @@ interface SkillsSectionProps {
 
 export const SkillsSection: React.FC<SkillsSectionProps> = ({ onOpenSkills }) => {
     const { lang } = useLanguage();
-    const skills = getSkillsContent();
+    const skills = useSkillsContent();
     const dashboard = skills.dashboard;
 
     return (

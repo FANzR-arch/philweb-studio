@@ -3,7 +3,7 @@ hero:
   greeting: "洞察 · 判断 · 落地"
   description: "一名习惯用数据和 AI 辅助判断、把复杂问题拆成可交付方案的产品经理。"
 sidebar:
-  name: "Alex Morgan"
+  name: "江河"
   targetRoleValue: "Independent practitioner"
   targetCityValue: "Remote"
   age: ""
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "我的方法"
   casesLabel: "看产品"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "江河"
   style: "PRODUCT · DATA-DRIVEN · GROWTH"
 metrics:
   - label: "负责产品"
