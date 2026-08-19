@@ -14,6 +14,10 @@ sidebar:
     - "Content creator"
     - "Problem solver"
     - "Independent practitioner"
+  skillIcons:
+    - "edit_note"
+    - "conversion_path"
+    - "build"
   skillTags:
     - "Project showcase"
     - "Clear communication"

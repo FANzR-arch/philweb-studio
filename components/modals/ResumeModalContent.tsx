@@ -26,7 +26,7 @@ export const ResumeModalContent: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col h-full bg-[var(--surface-panel)] relative">
+    <div data-edit="resume" data-edit-label="简历内容" className="flex flex-col h-full bg-[var(--surface-panel)] relative">
       <div className="p-8 md:p-12 overflow-y-auto custom-scrollbar flex-1 space-y-10 bg-[var(--surface-panel)]">
         <header className="border-b border-[var(--border-soft)] pb-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

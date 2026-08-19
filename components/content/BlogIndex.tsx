@@ -120,7 +120,9 @@ export const BlogIndex: React.FC<BlogIndexProps> = ({ mode = 'modal' }) => {
   const renderArticleCard = (article: ArticleViewModel) => (
     <article
       key={article.id}
-      className={`theme-panel group flex min-w-0 flex-col overflow-hidden border transition-all hover:-translate-y-0.5 hover:border-[var(--site-accent)] ${isEmbedded ? 'rounded-lg' : 'rounded-xl'}`}
+      data-edit={`blog:${article.id}`}
+      data-edit-label={`文章「${article.title}」`}
+      className={`blog-article-card theme-panel group relative z-[2] flex min-w-0 flex-col overflow-hidden border transition-all hover:z-[3] hover:border-[var(--site-accent)] ${isEmbedded ? 'rounded-lg' : 'rounded-xl hover:-translate-y-0.5'}`}
     >
       <div className={`flex items-center justify-center overflow-hidden border-b border-[var(--border-soft)] bg-[var(--surface-muted)] ${isEmbedded ? 'aspect-[16/8] p-1.5' : 'aspect-[16/9] p-2'}`}>
         <img
@@ -184,13 +186,16 @@ export const BlogIndex: React.FC<BlogIndexProps> = ({ mode = 'modal' }) => {
   );
 
   return (
-    <div className={isEmbedded ? 'flex h-full min-h-0 flex-col p-4 sm:p-5' : 'p-6 md:p-8'}>
+    <div data-edit="blog" data-edit-label="博客文章" className={`blog-content-surface ${isEmbedded ? 'flex h-full min-h-0 flex-col p-4 sm:p-5' : 'p-6 md:p-8'}`}>
       <div className={`shrink-0 border-b border-[var(--border-soft)] ${isEmbedded ? 'mb-4 pb-4' : 'mb-6 pb-5'}`}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--site-accent)]">
+          <div
+            data-edit={isEmbedded ? 'home.blogTitle' : 'blog'}
+            data-edit-label={isEmbedded ? '文章板块标题' : '博客文章'}
+          >
+            <h3 className="text-xl font-bold tracking-tight text-[var(--text-primary)] sm:text-2xl">
               {isEmbedded ? homeContent.quickLinks.blog : (lang === 'zh' ? '文章索引' : 'Article Index')}
-            </div>
+            </h3>
             <p className={`${isEmbedded ? 'mt-1 text-xs' : 'mt-2 text-sm'} max-w-2xl leading-relaxed text-[var(--text-muted)]`}>
               {lang === 'zh'
                 ? '按系列、方法和个人思考重新整理的文章。'
@@ -242,7 +247,7 @@ export const BlogIndex: React.FC<BlogIndexProps> = ({ mode = 'modal' }) => {
         </div>
       </div>
 
-      <div className={isEmbedded ? 'min-h-0 flex-1 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'space-y-8'}>
+      <div className={isEmbedded ? 'min-h-0 flex-1 overflow-y-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : 'space-y-8'}>
         {visibleSections.length === 0
           ? emptyState
           : isEmbedded

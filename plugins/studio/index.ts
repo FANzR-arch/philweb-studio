@@ -28,7 +28,9 @@ import {
   writeTextFile,
 } from './contentStore';
 
-const MAX_BODY_BYTES = 32 * 1024 * 1024;
+const MAX_UPLOAD_BYTES = 32 * 1024 * 1024;
+// 文件转成 base64 后会膨胀约 1/3；请求体上限必须高于可见的 32MB 文件上限。
+const MAX_BODY_BYTES = 45 * 1024 * 1024;
 const IMAGE_MIME_EXT: Record<string, string> = {
   'image/png': 'png',
   'image/jpeg': 'jpg',
@@ -37,7 +39,13 @@ const IMAGE_MIME_EXT: Record<string, string> = {
   'image/svg+xml': 'svg',
   'image/avif': 'avif',
 };
+const VIDEO_MIME_EXT: Record<string, string> = {
+  'video/mp4': 'mp4',
+  'video/webm': 'webm',
+};
 const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.avif']);
+const VIDEO_EXTENSIONS = new Set(['.mp4', '.webm']);
+const UPLOAD_EXTENSIONS = new Set([...IMAGE_EXTENSIONS, ...VIDEO_EXTENSIONS]);
 const EXT_MIME: Record<string, string> = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
@@ -46,6 +54,8 @@ const EXT_MIME: Record<string, string> = {
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.avif': 'image/avif',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
 };
 
 /** 各类图片的最大宽度，上传时自动压缩，避免小白传原图导致资源超预算。 */
@@ -99,7 +109,7 @@ function readJsonBody(req: IncomingMessage): Promise<any> {
     req.on('data', (chunk: Buffer) => {
       size += chunk.length;
       if (size > MAX_BODY_BYTES) {
-        reject(new Error('上传内容过大（超过 32MB），请压缩后再试。'));
+        reject(new Error('上传请求过大，请把文件压缩到 32MB 以内再试。'));
         req.destroy();
         return;
       }
@@ -135,16 +145,21 @@ async function optimizeImage(buffer: Buffer, ext: string, maxWidth: number): Pro
   }
 }
 
-function parseDataUrl(dataUrl: string): { buffer: Buffer; ext: string } {
+function parseDataUrl(dataUrl: string): { buffer: Buffer; ext: string; kind: 'image' | 'video' } {
   const match = /^data:([a-z0-9+/.-]+);base64,(.+)$/i.exec(dataUrl || '');
   if (!match) {
     throw new Error('图片数据格式不正确，请重新选择文件。');
   }
-  const ext = IMAGE_MIME_EXT[match[1].toLowerCase()];
+  const mime = match[1].toLowerCase();
+  const ext = IMAGE_MIME_EXT[mime] ?? VIDEO_MIME_EXT[mime];
   if (!ext) {
-    throw new Error(`暂不支持该图片格式（${match[1]}），请使用 PNG / JPG / WebP。`);
+    throw new Error(`暂不支持该文件格式（${match[1]}），图片请使用 PNG / JPG / WebP，视频请使用 MP4 / WebM。`);
   }
-  return { buffer: Buffer.from(match[2], 'base64'), ext };
+  const buffer = Buffer.from(match[2], 'base64');
+  if (buffer.length > MAX_UPLOAD_BYTES) {
+    throw new Error('文件超过 32MB，请压缩后再试。');
+  }
+  return { buffer, ext, kind: VIDEO_MIME_EXT[mime] ? 'video' : 'image' };
 }
 
 /** 删除同目录下同基础名但不同扩展名的旧文件，避免新旧两张图并存。 */
@@ -152,7 +167,7 @@ function removeSiblingVariants(dir: string, baseName: string, keepFile: string):
   if (!fs.existsSync(dir)) return;
   for (const file of fs.readdirSync(dir)) {
     if (file === keepFile) continue;
-    if (path.parse(file).name.toLowerCase() === baseName.toLowerCase() && IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase())) {
+    if (path.parse(file).name.toLowerCase() === baseName.toLowerCase() && UPLOAD_EXTENSIONS.has(path.extname(file).toLowerCase())) {
       fs.rmSync(path.join(dir, file));
     }
   }
@@ -215,6 +230,8 @@ assets:
   avatarDark: ${quoteScalar(d['assets.avatarDark'] ?? '')}
   wechatQr: ${quoteScalar(d['assets.wechatQr'] ?? '')}
   brandMark: ${quoteScalar(d['assets.brandMark'] ?? '')}
+  backgroundImage: ${quoteScalar(d['assets.backgroundImage'] ?? '')}
+  backgroundVideo: ${quoteScalar(d['assets.backgroundVideo'] ?? '')}
 links:
   wechatId: ${quoteScalar(d['links.wechatId'] ?? '')}
   x: ${quoteScalar(d['links.x'] ?? '')}
@@ -242,6 +259,7 @@ links:
     ['sidebar', 'experience'],
     ['sidebar', 'profileStatement'],
     ['quickLinks', 'contact'],
+    ['quickLinks', 'blog'],
     ['projectSection', 'title'],
     ['timeline', 'title'],
     ['footer', 'copyright'],
@@ -292,10 +310,12 @@ links:
       experience: scalars['sidebar.experience'] ?? '',
       profileStatement: scalars['sidebar.profileStatement'] ?? '',
       explore: scalars['quickLinks.contact'] ?? '',
+      blogTitle: scalars['quickLinks.blog'] ?? '',
       projectTitle: scalars['projectSection.title'] ?? '',
       timelineTitle: scalars['timeline.title'] ?? '',
       footerStyle: scalars['footer.style'] ?? '',
       skillList: readYamlStringArray(raw, ['sidebar', 'skillList']),
+      skillIcons: readYamlStringArray(raw, ['sidebar', 'skillIcons']),
       skillTags: readYamlStringArray(raw, ['sidebar', 'skillTags']),
     };
   };
@@ -315,6 +335,7 @@ links:
         'sidebar.experience': fields.experience,
         'sidebar.profileStatement': fields.profileStatement,
         'quickLinks.contact': fields.explore,
+        'quickLinks.blog': fields.blogTitle,
         'projectSection.title': fields.projectTitle,
         'timeline.title': fields.timelineTitle,
         'footer.copyright': fields.name,
@@ -329,6 +350,9 @@ links:
       }
       if (Array.isArray(fields.skillList)) {
         next = mustPatchStringArray(next, ['sidebar', 'skillList'], fields.skillList, label);
+      }
+      if (Array.isArray(fields.skillIcons)) {
+        next = mustPatchStringArray(next, ['sidebar', 'skillIcons'], fields.skillIcons, label);
       }
       if (Array.isArray(fields.skillTags)) {
         next = mustPatchStringArray(next, ['sidebar', 'skillTags'], fields.skillTags, label);
@@ -462,6 +486,7 @@ links:
 
   const readThemeState = () => {
     const theme = JSON.parse(readTextFile(themePath()));
+    const shared = readShared();
     const radius = parseInt(String(theme.effects?.cards?.radius ?? '24'), 10) || 24;
     const auroraOpacity = Number(theme.effects?.aurora?.light?.opacity ?? AURORA_BASE_LIGHT);
     const rootSize = theme.typography?.rootFontSize ?? '16px';
@@ -480,6 +505,14 @@ links:
       shadowStyle: SHADOW_PRESETS[theme.effects?.cards?.shadowStyle] ? theme.effects.cards.shadowStyle : 'soft',
       cardTints: Object.fromEntries(CARD_TINT_SLOTS.map((slot) => [slot, tintToHex(theme.effects?.cardTints?.[slot])])),
       tintOpacity: typeof theme.effects?.cardTintOpacity === 'number' ? theme.effects.cardTintOpacity : TINT_ALPHA,
+      backgroundMode: ['default', 'image', 'video'].includes(theme.effects?.background?.mode) ? theme.effects.background.mode : 'default',
+      backgroundPattern: ['grid', 'dots', 'none'].includes(theme.effects?.background?.pattern) ? theme.effects.background.pattern : 'grid',
+      backgroundGridSize: Math.min(100, Math.max(20, parseInt(String(theme.effects?.background?.gridSize ?? '40'), 10) || 40)),
+      backgroundDotSize: Math.min(48, Math.max(10, parseInt(String(theme.effects?.background?.dotSize ?? '20'), 10) || 20)),
+      backgroundColor: hexToRgb(String(theme.effects?.background?.color ?? '')) ? theme.effects.background.color : '#E0745C',
+      backgroundOpacity: Math.min(0.8, Math.max(0.05, Number(theme.effects?.background?.opacity ?? 0.42))),
+      backgroundImage: toMediaUrl(shared['assets.backgroundImage']),
+      backgroundVideo: toMediaUrl(shared['assets.backgroundVideo']),
       customPacks: readCustomPacks(),
     };
   };
@@ -508,6 +541,34 @@ links:
     theme.effects.cards.radiusSmall = `${Math.max(4, Math.round(radius * 0.75))}px`;
     theme.effects.aurora.light.opacity = Number(((auroraLevel / 100) * AURORA_BASE_LIGHT).toFixed(3));
     theme.effects.aurora.dark.opacity = Number(((auroraLevel / 100) * AURORA_BASE_DARK).toFixed(3));
+
+    const backgroundMode = ['default', 'image', 'video'].includes(input.backgroundMode) ? input.backgroundMode : 'default';
+    const backgroundPattern = ['grid', 'dots', 'none'].includes(input.backgroundPattern) ? input.backgroundPattern : 'grid';
+    const backgroundGridSize = Math.min(100, Math.max(20, Math.round(Number(input.backgroundGridSize ?? 40))));
+    const backgroundDotSize = Math.min(48, Math.max(10, Math.round(Number(input.backgroundDotSize ?? 20))));
+    const backgroundColor = String(input.backgroundColor ?? '#E0745C').trim();
+    const backgroundOpacity = Math.min(0.8, Math.max(0.05, Number(input.backgroundOpacity ?? 0.42)));
+    if (!hexToRgb(backgroundColor)) {
+      throw new Error('图案颜色不是合法的十六进制颜色（例如 #E0745C）。');
+    }
+    const shared = readShared();
+    if (backgroundMode === 'image' && !shared['assets.backgroundImage']) {
+      throw new Error('请先上传一张背景图片，再切换到“图片背景”。');
+    }
+    if (backgroundMode === 'video' && !shared['assets.backgroundVideo']) {
+      throw new Error('请先上传一个背景视频，再切换到“视频背景”。');
+    }
+    theme.effects.background = {
+      mode: backgroundMode,
+      pattern: backgroundPattern,
+      gridSize: `${backgroundGridSize}px`,
+      dotSize: `${backgroundDotSize}px`,
+      color: backgroundColor,
+      opacity: Number(backgroundOpacity.toFixed(2)),
+      lineColor: rgba(backgroundColor, Number((backgroundOpacity * 0.2).toFixed(3))),
+      dotColor: rgba(backgroundColor, Number(backgroundOpacity.toFixed(3))),
+      dotAccentColor: rgba(backgroundColor, Number(Math.min(0.9, backgroundOpacity * 1.38).toFixed(3))),
+    };
 
     const fontPreset = FONT_PRESETS[input.fontPreset] ? input.fontPreset : 'modern';
     const rootFontSize = DENSITY_ROOT_SIZE[input.density] ?? '16px';
@@ -718,9 +779,9 @@ links:
 
   // ── 图片上传。 ──
   const handleUpload = async (payload: UploadPayload) => {
-    const { buffer, ext } = parseDataUrl(payload.dataUrl);
+    const { buffer, ext, kind } = parseDataUrl(payload.dataUrl);
     const maxWidth = UPLOAD_MAX_WIDTH[payload.target] ?? 1600;
-    const optimized = await optimizeImage(buffer, ext, maxWidth);
+    const optimized = kind === 'image' ? await optimizeImage(buffer, ext, maxWidth) : buffer;
 
     const writeAsset = (dir: string, baseName: string): string => {
       const fileName = `${baseName}.${ext}`;
@@ -731,6 +792,29 @@ links:
     };
 
     switch (payload.target) {
+      case 'backgroundImage':
+      case 'backgroundVideo': {
+        const expectedKind = payload.target === 'backgroundVideo' ? 'video' : 'image';
+        if (kind !== expectedKind) {
+          throw new Error(expectedKind === 'video' ? '这里请选择 MP4 或 WebM 视频。' : '这里请选择 PNG、JPG、WebP 等图片。');
+        }
+        const base = payload.target === 'backgroundVideo' ? 'background-video' : 'background-image';
+        const fileName = writeAsset(path.join(mediaRoot(), 'background'), base);
+        updateShared((data) => {
+          data[`assets.${payload.target}`] = `../../media/background/${fileName}`;
+        });
+        const theme = JSON.parse(readTextFile(themePath()));
+        theme.effects = theme.effects ?? {};
+        theme.effects.background = {
+          ...(theme.effects.background ?? {}),
+          mode: payload.target === 'backgroundVideo' ? 'video' : 'image',
+          pattern: ['grid', 'dots', 'none'].includes(theme.effects.background?.pattern)
+            ? theme.effects.background.pattern
+            : 'grid',
+        };
+        writeTextFile(themePath(), JSON.stringify(theme, null, 2));
+        return { theme: readThemeState() };
+      }
       case 'avatarLight':
       case 'avatarDark':
       case 'wechatQr':

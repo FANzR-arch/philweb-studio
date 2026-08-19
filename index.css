@@ -81,6 +81,7 @@
     --site-accent: var(--theme-accent-light, #c13b25);
     --card-bg: var(--surface-card);
     --card-bg-secondary: var(--surface-card-secondary);
+    --dashboard-card-surface: color-mix(in srgb, var(--surface-panel) 94%, var(--surface-page));
     --card-border: var(--border-soft);
     --card-border-hover: var(--interactive-hover-border);
     --card-shadow: var(
@@ -173,6 +174,53 @@
 
     -ms-overflow-style: none;
     position: relative;
+    isolation: isolate;
+  }
+
+  .site-background-media {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--surface-page);
+  }
+
+  .site-background-image,
+  .site-background-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 240ms ease-out;
+  }
+
+  .site-background-image {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .site-background-video {
+    object-fit: cover;
+  }
+
+  :root[data-site-background-mode='image'] .site-background-image,
+  :root[data-site-background-mode='video'] .site-background-video {
+    opacity: 1;
+  }
+
+  .site-background-scrim {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: color-mix(in srgb, var(--surface-page) 38%, transparent);
+  }
+
+  :root[data-site-background-mode='image'] .site-background-scrim,
+  :root[data-site-background-mode='video'] .site-background-scrim {
+    opacity: 1;
   }
 
   ::selection {
@@ -245,13 +293,28 @@
       z-index: -1;
       pointer-events: none;
       background-image:
-        linear-gradient(var(--site-grid-line-horizontal) 1px, transparent 1px),
-        linear-gradient(90deg, var(--site-grid-line-vertical) 1px, transparent 1px);
-      background-size: 40px 40px;
+        linear-gradient(var(--theme-effects-background-line-color, var(--site-grid-line-horizontal)) 1px, transparent 1px),
+        linear-gradient(90deg, var(--theme-effects-background-line-color, var(--site-grid-line-vertical)) 1px, transparent 1px);
+      background-size: var(--theme-effects-background-grid-size, 40px) var(--theme-effects-background-grid-size, 40px);
       background-color: transparent;
       box-shadow: inset 0 0 100px var(--site-grid-vignette);
       filter: hue-rotate(var(--site-grid-hue-shift)) saturate(var(--site-grid-sat-boost));
       will-change: filter;
+    }
+
+    :root[data-site-background-pattern='dots'] body::before {
+      background-image:
+        radial-gradient(circle, var(--theme-effects-background-dot-color, color-mix(in srgb, var(--site-accent) 42%, transparent)) 0 1.5px, transparent 1.8px),
+        radial-gradient(circle, var(--theme-effects-background-dot-accent-color, color-mix(in srgb, var(--site-accent) 58%, transparent)) 0 3px, transparent 3.4px);
+      background-position: 0 0, calc(var(--theme-effects-background-dot-size, 20px) / 2) calc(var(--theme-effects-background-dot-size, 20px) / 2);
+      background-size:
+        var(--theme-effects-background-dot-size, 20px) var(--theme-effects-background-dot-size, 20px),
+        calc(var(--theme-effects-background-dot-size, 20px) * 4) calc(var(--theme-effects-background-dot-size, 20px) * 4);
+    }
+
+    :root[data-site-background-pattern='none'] body::before {
+      background-image: none;
+      box-shadow: none;
     }
   }
 
@@ -408,8 +471,8 @@
   @media (min-width: 768px) {
     html.dark body::before {
       background-image:
-        linear-gradient(var(--site-grid-line-horizontal) 1px, transparent 1px),
-        linear-gradient(90deg, var(--site-grid-line-vertical) 1px, transparent 1px);
+        linear-gradient(var(--theme-effects-background-line-color, var(--site-grid-line-horizontal)) 1px, transparent 1px),
+        linear-gradient(90deg, var(--theme-effects-background-line-color, var(--site-grid-line-vertical)) 1px, transparent 1px);
       box-shadow: inset 0 0 150px var(--site-grid-vignette);
     }
   }
@@ -722,6 +785,27 @@
   .theme-panel {
     background-color: var(--surface-panel);
     border-color: var(--border-soft);
+  }
+
+  /* 首页同级卡片统一使用同一层实体底色，避免背景网格/点阵在部分卡片中穿透。 */
+  .dashboard-surface-card {
+    --card-bg: var(--dashboard-card-surface);
+    --card-bg-secondary: var(--dashboard-card-surface);
+    --liquid-surface: var(--dashboard-card-surface);
+  }
+
+  .blog-content-surface {
+    position: relative;
+    z-index: 11;
+  }
+
+  .blog-article-card {
+    position: relative;
+    z-index: 12;
+  }
+
+  .blog-article-card:hover {
+    z-index: 13;
   }
 
   .theme-panel-muted {

@@ -115,7 +115,7 @@ content/theme/site-theme.json
 - `modes.dark.surface`：暗色模式背景和卡片颜色
 - `accent`：全站强调色
 - `projects`：项目专属色
-- `effects`：背景网格、卡片阴影、液态玻璃等视觉效果
+- `effects`：默认/图片/视频背景、网格或点阵细节、卡片阴影、液态玻璃等视觉效果
 
 项目卡片和详情页优先使用 `content/text/projects/<id>/meta.yml` 里的 `themeColor`。如果要改某个项目的主色，改这里最直接：
 

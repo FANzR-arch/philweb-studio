@@ -194,6 +194,7 @@ export interface SiteHomeContent {
     experience: string;
     profileStatement: string;
     skillList: string[];
+    skillIcons: string[];
     skillTags: string[];
     explore: string;
   };
@@ -349,6 +350,8 @@ export interface SiteSharedContent {
     avatarDark?: string;
     wechatQr?: string;
     brandMark?: string;
+    backgroundImage?: string;
+    backgroundVideo?: string;
   };
 }
 

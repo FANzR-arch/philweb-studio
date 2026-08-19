@@ -4,7 +4,7 @@ hero:
   description: "一个用于展示作品、经验与想法的个人网站。"
 sidebar:
   name: "Alex Morgan"
-  targetRoleValue: "独立实践者"
+  targetRoleValue: "Alex Morgan"
   targetCityValue: "远程"
   age: ""
   mbti: "INFP"
@@ -13,7 +13,11 @@ sidebar:
   skillList:
     - "内容创作者"
     - "问题解决者"
-    - "持续实践者"
+    - "问题解决者"
+  skillIcons:
+    - "edit_note"
+    - "conversion_path"
+    - "neurology"
   skillTags:
     - "项目展示"
     - "内容表达"

@@ -295,6 +295,17 @@
     "glow": "rgba(193, 59, 37, 0.35)"
   },
   "effects": {
+    "background": {
+      "mode": "default",
+      "pattern": "grid",
+      "gridSize": "40px",
+      "dotSize": "20px",
+      "color": "#E0745C",
+      "opacity": 0.42,
+      "lineColor": "rgba(224, 116, 92, 0.084)",
+      "dotColor": "rgba(224, 116, 92, 0.42)",
+      "dotAccentColor": "rgba(224, 116, 92, 0.58)"
+    },
     "aurora": {
       "light": {
         "opacity": 0.19,

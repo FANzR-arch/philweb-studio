@@ -14,7 +14,7 @@
     var style = document.createElement('style');
     style.textContent = [
       '.studio-edit-on [data-edit] { cursor: pointer !important; }',
-      '.studio-edit-on [data-edit]:hover { outline: 2px dashed #E0745C !important; outline-offset: 3px; border-radius: 4px; }',
+      '.studio-edit-on [data-edit]:not([data-edit-default]):hover { outline: 2px dashed #E0745C !important; outline-offset: -2px !important; border-radius: 4px; }',
       '#studio-edit-hint { position: fixed; z-index: 2147483647; bottom: 16px; left: 50%; transform: translateX(-50%);',
       '  background: rgba(15,23,42,.88); color: #fff; font-size: 13px; padding: 7px 16px; border-radius: 999px;',
       '  pointer-events: none; opacity: 0; transition: opacity .15s; font-family: sans-serif; white-space: nowrap; }',
@@ -39,6 +39,10 @@
         Object.keys(data.vars).forEach(function (key) {
           document.documentElement.style.setProperty(key, String(data.vars[key]));
         });
+        if (data.background) {
+          document.documentElement.dataset.siteBackgroundMode = data.background.mode || 'default';
+          document.documentElement.dataset.siteBackgroundPattern = data.background.pattern || 'grid';
+        }
         if ('--theme-effects-cards-glass-state' in data.vars) {
           document.documentElement.classList.toggle('no-glass', String(data.vars['--theme-effects-cards-glass-state']).trim() === 'off');
         }
@@ -53,9 +57,15 @@
       }
     });
 
+    // 所有可视内容都有所属编辑区；若点击的是留白或装饰层，则回退到页面的默认编辑区。
+    function findEditTarget(node) {
+      var directTarget = node && node.closest ? node.closest('[data-edit]') : null;
+      return directTarget || document.querySelector('[data-edit-default]');
+    }
+
     document.addEventListener('mouseover', function (event) {
       if (!editOn) return;
-      var target = event.target && event.target.closest ? event.target.closest('[data-edit]') : null;
+      var target = findEditTarget(event.target);
       if (target) {
         var label = target.getAttribute('data-edit-label') || '这块内容';
         var isHint = (target.getAttribute('data-edit') || '').indexOf('hint:') === 0;
@@ -69,7 +79,7 @@
     // 捕获阶段拦截，阻止页面自身的弹窗 / 跳转逻辑。
     document.addEventListener('click', function (event) {
       if (!editOn) return;
-      var target = event.target && event.target.closest ? event.target.closest('[data-edit]') : null;
+      var target = findEditTarget(event.target);
       if (!target) return;
       event.preventDefault();
       event.stopPropagation();

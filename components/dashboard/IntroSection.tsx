@@ -23,7 +23,7 @@ export const IntroSection: React.FC = () => {
 
   return (
     <div className="flex flex-row gap-4 md:gap-5 shrink-0 animate-fade-in-up delay-2 h-[120px] md:h-[140px]">
-      <Card variant="liquid" className="card-slot-intro liquid-float-b flex-1 relative h-full !p-0">
+      <Card data-edit="home.overview" data-edit-label="首页内容" variant="liquid" className="dashboard-surface-card card-slot-intro liquid-float-b flex-1 relative h-full !p-0">
         <div className="flex-1 flex items-center justify-between gap-5 text-left w-full px-6 md:px-10">
           <div className="min-w-0">
             <h2
@@ -63,7 +63,9 @@ export const IntroSection: React.FC = () => {
       <div className="flex flex-col justify-between shrink-0 w-14 md:w-16 h-full">
         <Card
           variant="secondary"
-          className="w-full h-[56px] md:h-[64px] shrink-0 flex items-center justify-center p-0 cursor-pointer hover:bg-[var(--interactive-hover-surface)] hover:border-[var(--interactive-hover-border)] transition-colors"
+          data-edit="theme"
+          data-edit-label="外观风格"
+          className="dashboard-surface-card w-full h-[56px] md:h-[64px] shrink-0 flex items-center justify-center p-0 cursor-pointer hover:bg-[var(--interactive-hover-surface)] hover:border-[var(--interactive-hover-border)] transition-colors"
           onClick={(e) => {
             e.stopPropagation();
             toggleLanguage();
@@ -78,7 +80,9 @@ export const IntroSection: React.FC = () => {
 
         <Card
           variant="secondary"
-          className="w-full h-[56px] md:h-[64px] shrink-0 flex items-center justify-center p-0 group cursor-pointer hover:bg-[var(--interactive-hover-surface)] hover:border-[var(--interactive-hover-border)] transition-colors"
+          data-edit="theme"
+          data-edit-label="外观风格"
+          className="dashboard-surface-card w-full h-[56px] md:h-[64px] shrink-0 flex items-center justify-center p-0 group cursor-pointer hover:bg-[var(--interactive-hover-surface)] hover:border-[var(--interactive-hover-border)] transition-colors"
           onClick={(e) => {
             e.stopPropagation();
             toggleTheme();

@@ -68,7 +68,7 @@ export const ContactModalContent: React.FC = () => {
   };
 
   return (
-    <div className="p-8 md:p-12 bg-[var(--surface-panel)]">
+    <div data-edit="basic.contact" data-edit-label="联系方式" className="p-8 md:p-12 bg-[var(--surface-panel)]">
       <div className="space-y-8">
         <section className="theme-panel-inset rounded-xl border p-5">
           <div className="flex items-center gap-2 mb-3">

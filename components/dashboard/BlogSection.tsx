@@ -11,7 +11,7 @@ import { BlogIndex } from '../content/BlogIndex';
 export const BlogSection: React.FC = () => (
   <Card
     variant="liquid"
-    className="card-slot-blog liquid-float-c flex-1 h-full min-h-0 overflow-hidden animate-fade-in-up delay-1"
+    className="dashboard-surface-card card-slot-blog liquid-float-c flex-1 h-full min-h-0 overflow-hidden animate-fade-in-up delay-1"
   >
     <BlogIndex mode="embedded" />
   </Card>

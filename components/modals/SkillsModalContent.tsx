@@ -14,7 +14,7 @@ export const SkillsModalContent: React.FC = () => {
   const copy = skills.modal;
 
   return (
-    <div className="p-8 md:p-12">
+    <div data-edit="skills" data-edit-label="技能内容" className="p-8 md:p-12">
       <div className="mb-8 p-4 bg-[var(--surface-inset)] border-l-4 border-[var(--text-primary)]">
         <p className="text-sm text-[var(--text-muted)]">
           {copy.intro[lang]}

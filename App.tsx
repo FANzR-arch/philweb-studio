@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { ModalType, Project } from './types';
 import { Modal } from './components/ui/Modal';
 import { Sidebar } from './components/dashboard/Sidebar';
-import { allProjects, getHomeContent, siteConfig } from './data/content';
+import { allProjects, getHomeContent, getSharedContent, siteConfig } from './data/content';
 import { ProjectsModalContent } from './components/modals/ProjectsModalContent';
 import { ContactModalContent } from './components/modals/ContactModalContent';
 import { TimelineModalContent } from './components/modals/TimelineModalContent';
@@ -21,13 +21,16 @@ import { BlogSection } from './components/dashboard/BlogSection';
 import { ProjectList } from './components/dashboard/ProjectList';
 import { QuickLinks } from './components/dashboard/QuickLinks';
 import { Toaster } from 'sonner';
-import { themeCssVars, ensureThemeWebfonts } from './data/theme';
+import { themeCssVars, ensureThemeWebfonts, siteTheme } from './data/theme';
 
 const App: React.FC = () => {
   const [activeModal, setActiveModal] = useState<ModalType>(ModalType.NONE);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { lang } = useLanguage();
   const homeContent = getHomeContent(lang);
+  const sharedContent = getSharedContent();
+  const backgroundMode = siteTheme.effects.background?.mode ?? 'default';
+  const backgroundPattern = siteTheme.effects.background?.pattern ?? 'grid';
   const projectModalTitle = selectedProject?.locales?.[lang]?.title ?? selectedProject?.title;
   const projectModalAriaLabel =
     lang === 'zh'
@@ -97,6 +100,12 @@ const App: React.FC = () => {
     }
 
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.siteBackgroundMode = backgroundMode;
+    root.dataset.siteBackgroundPattern = backgroundPattern;
+  }, [backgroundMode, backgroundPattern]);
 
   useEffect(() => {
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
@@ -293,7 +302,32 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-[var(--text-primary)] antialiased">
-      <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-6 xl:px-10 py-3 md:py-4 min-h-screen">
+      <div className="site-background-media" aria-hidden="true">
+        {sharedContent.assets.backgroundImage && (
+          <div
+            className="site-background-image"
+            style={{ backgroundImage: `url(${sharedContent.assets.backgroundImage})` }}
+          />
+        )}
+        {sharedContent.assets.backgroundVideo && (
+          <video
+            className="site-background-video"
+            src={sharedContent.assets.backgroundVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          />
+        )}
+        <div className="site-background-scrim" />
+      </div>
+      <main
+        data-edit="theme.background"
+        data-edit-label="页面背景"
+        data-edit-default
+        className="flex-grow flex flex-col items-center justify-center px-4 md:px-6 xl:px-10 py-3 md:py-4 min-h-screen"
+      >
         <div className="w-full max-w-[1440px] grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 items-stretch">
 
           {/* 左侧列承载个人信息与品牌展示。 */}
@@ -350,6 +384,8 @@ const App: React.FC = () => {
         onClose={closeModal}
         ariaLabel={projectModalAriaLabel}
         maxWidth="max-w-3xl"
+        editTarget={selectedProject ? `project:${selectedProject.id}` : 'projects'}
+        editLabel={selectedProject ? `项目「${projectModalTitle ?? selectedProject.id}」` : '项目作品'}
       >
         <ProjectsModalContent
           project={selectedProject}
@@ -362,6 +398,8 @@ const App: React.FC = () => {
         onClose={closeModal}
         title={lang === 'zh' ? '联系方式 / Contact' : 'Contact'}
         maxWidth="max-w-xl"
+        editTarget="basic.contact"
+        editLabel="联系方式"
       >
         <ContactModalContent />
       </Modal>
@@ -372,11 +410,20 @@ const App: React.FC = () => {
         title={homeContent.timeline.title}
         maxWidth="max-w-3xl"
         contentClassName="scrollbar-hide"
+        editTarget="home.timeline"
+        editLabel="成长轨迹"
       >
         <TimelineModalContent />
       </Modal>
 
-      <Modal isOpen={activeModal === ModalType.SKILLS} onClose={closeModal} title="Skills" maxWidth="max-w-2xl">
+      <Modal
+        isOpen={activeModal === ModalType.SKILLS}
+        onClose={closeModal}
+        title="Skills"
+        maxWidth="max-w-2xl"
+        editTarget="skills"
+        editLabel="技能内容"
+      >
         <SkillsModalContent />
       </Modal>
 

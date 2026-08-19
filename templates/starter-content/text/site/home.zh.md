@@ -14,6 +14,10 @@ sidebar:
     - "视觉设计师"
     - "AI 工具重度使用者"
     - "独立小产品作者"
+  skillIcons:
+    - "palette"
+    - "auto_awesome"
+    - "rocket_launch"
   skillTags:
     - "品牌视觉"
     - "AI 绘图"

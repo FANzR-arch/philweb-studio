@@ -21,11 +21,13 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenTim
 
   return (
     <div className="flex flex-col gap-3 animate-fade-in-up delay-4 shrink-0">
-      <div data-edit="hint:quicklinks" data-edit-label="快捷入口" className="grid grid-cols-2 gap-3 h-[78px] sm:h-[82px]">
+      <div className="grid grid-cols-2 gap-3 h-[78px] sm:h-[82px]">
         <Card
           variant="secondary"
+          data-edit="basic.contact"
+          data-edit-label="联系方式"
           onClick={onOpenContact}
-          className="card-slot-quicklinks !p-0 group"
+          className="dashboard-surface-card card-slot-quicklinks !p-0 group"
         >
           <div className="flex flex-row items-center justify-start gap-4 w-full h-full pl-6 sm:pl-8">
             <svg
@@ -49,8 +51,10 @@ export const QuickLinks: React.FC<QuickLinksProps> = ({ onOpenContact, onOpenTim
 
         <Card
           variant="secondary"
+          data-edit="home.timeline"
+          data-edit-label="成长轨迹"
           onClick={onOpenTimeline}
-          className="card-slot-quicklinks !p-0 group"
+          className="dashboard-surface-card card-slot-quicklinks !p-0 group"
         >
           <div className="flex flex-row items-center justify-start gap-4 w-full h-full pl-6 sm:pl-8">
             <span className="material-symbols-outlined text-[var(--icon-muted)] group-hover:text-[var(--site-accent)] transition-colors flex-shrink-0 text-[26px]">

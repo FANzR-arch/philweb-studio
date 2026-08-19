@@ -56,7 +56,7 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({ mode = 'card' 
           }}
         />
 
-        <div data-edit="hint:timeline" data-edit-label="时间线内容" className="flex flex-col gap-4 sm:gap-5">
+        <div data-edit="home.timeline" data-edit-label="成长轨迹" className="flex flex-col gap-4 sm:gap-5">
           {timeline.map((item, index) => {
             const isExpanded = expandedItemId === item.id;
             const collapsedTextClass = isExpanded
@@ -129,7 +129,7 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({ mode = 'card' 
         </div>
       </div>
 
-      <div className="mt-3 shrink-0 border-t border-[var(--border-soft)] pt-3">
+      <div data-edit="home.skillTags" data-edit-label="技能标签" className="mt-3 shrink-0 border-t border-[var(--border-soft)] pt-3">
         <div className="flex flex-wrap gap-1.5">
           {skillTags.map((tag) => (
             <span

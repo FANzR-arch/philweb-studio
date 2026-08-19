@@ -14,6 +14,10 @@ sidebar:
     - "Visual designer"
     - "Heavy AI tool user"
     - "Indie side-project maker"
+  skillIcons:
+    - "palette"
+    - "auto_awesome"
+    - "rocket_launch"
   skillTags:
     - "Brand Visuals"
     - "AI Imaging"

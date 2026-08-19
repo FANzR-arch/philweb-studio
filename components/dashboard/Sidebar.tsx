@@ -12,17 +12,21 @@ import { getAvatarImages } from '../../data/useImages';
 import { ImageWithSkeleton } from '../ui/ImageWithSkeleton';
 import { Card } from '../ui/Card';
 
+const FALLBACK_IDENTITY_ICONS = ['conversion_path', 'neurology', 'build', 'handyman', 'auto_awesome', 'star'] as const;
+
 export const Sidebar: React.FC = () => {
   const { lang } = useLanguage();
   const avatarImages = getAvatarImages();
   const homeContent = getHomeContent(lang);
   const sidebar = homeContent.sidebar;
-  const introLines = [sidebar.profileStatement, ...sidebar.skillList];
-  const introIcons = ['waving_hand', 'conversion_path', 'neurology', 'build'] as const;
+  const identityItems = sidebar.skillList.map((text, index) => ({
+    text,
+    icon: sidebar.skillIcons[index] || FALLBACK_IDENTITY_ICONS[index % FALLBACK_IDENTITY_ICONS.length],
+  }));
   const metrics = homeContent.metrics;
 
   return (
-    <Card variant="liquid" className="card-slot-sidebar liquid-float-a !p-7 md:!p-9 relative flex flex-col h-full overflow-hidden">
+    <Card data-edit="home.overview" data-edit-label="首页内容" variant="liquid" className="dashboard-surface-card card-slot-sidebar liquid-float-a !p-7 md:!p-9 relative flex flex-col h-full overflow-hidden">
       {/* 头像区负责建立第一印象，并通过大图比例撑起左列的视觉重心。 */}
       <div
         data-edit="basic.avatar"
@@ -55,7 +59,7 @@ export const Sidebar: React.FC = () => {
       <div className="flex flex-col flex-1 pt-8 px-1">
 
         {/* 顶部保留品牌名与定位标签，让左栏依旧维持清晰的识别结构。 */}
-        <div className="flex items-baseline justify-between mb-6">
+        <div data-edit="home.name" data-edit-label="名字与定位" className="flex items-baseline justify-between mb-6">
           <h2
             data-edit="home.name"
             data-edit-label="名字"
@@ -74,7 +78,7 @@ export const Sidebar: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-3 mb-7">
           <div className="flex items-center gap-2">
             {sidebar.age && (
-              <span className="theme-pill px-2.5 py-1 rounded-md border text-[12px] font-bold">
+              <span data-edit="home.mbti" data-edit-label="个人信息" className="theme-pill px-2.5 py-1 rounded-md border text-[12px] font-bold">
                 {sidebar.age}
               </span>
             )}
@@ -103,23 +107,26 @@ export const Sidebar: React.FC = () => {
         </div>
 
         {/* 四行 intro block 改成统一图标行，语气更像个人主页自我介绍。 */}
-        <div data-edit="home.profileStatement" data-edit-label="个人签名与技能列表" className="space-y-3.5 mb-6">
-          {introLines.map((line, index) => (
-            <div key={`${introIcons[index]}-${line}`} className="flex items-center gap-3.5">
+        <div className="space-y-3.5 mb-6">
+          <div data-edit="home.profileStatement" data-edit-label="个人签名" className="flex items-center gap-3.5">
+            <span className="theme-pill size-10 rounded-[var(--card-radius-sm)] border flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-[18px] text-[var(--site-accent)]">waving_hand</span>
+            </span>
+            <p className="leading-relaxed font-bold tracking-tight text-[15px] sm:text-[15.5px] text-[var(--text-primary)]">
+              {sidebar.profileStatement}
+            </p>
+          </div>
+          {identityItems.map((item, index) => (
+            <div
+              key={`${item.icon}-${item.text}-${index}`}
+              data-edit={`home.skillList:${index}`}
+              data-edit-label={`技能 / 身份第 ${index + 1} 项`}
+              className="flex items-center gap-3.5"
+            >
               <span className="theme-pill size-10 rounded-[var(--card-radius-sm)] border flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-[18px] text-[var(--site-accent)]">
-                  {introIcons[index]}
-                </span>
+                <span className="material-symbols-outlined text-[18px] text-[var(--site-accent)]">{item.icon}</span>
               </span>
-              <p
-                className={`leading-relaxed font-bold tracking-tight ${
-                  index === 0
-                    ? 'text-[15px] sm:text-[15.5px] text-[var(--text-primary)]'
-                    : 'text-[14.5px] text-[var(--text-secondary)]'
-                }`}
-              >
-                {line}
-              </p>
+              <p className="leading-relaxed font-bold tracking-tight text-[14.5px] text-[var(--text-secondary)]">{item.text}</p>
             </div>
           ))}
         </div>

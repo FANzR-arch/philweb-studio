@@ -15,6 +15,9 @@ export interface ModalProps {
   ariaLabel?: string;
   maxWidth?: string;
   contentClassName?: string;
+  /** Studio 预览中的点击定位目标；线上产物不会注入对应的编辑覆盖层。 */
+  editTarget?: string;
+  editLabel?: string;
 }
 
 const FOCUSABLE_SELECTOR = [
@@ -47,6 +50,8 @@ export const Modal: React.FC<ModalProps> = ({
   ariaLabel,
   maxWidth = 'max-w-4xl',
   contentClassName = '',
+  editTarget,
+  editLabel,
 }) => {
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -205,6 +210,8 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
       <div
+        data-edit={editTarget}
+        data-edit-label={editLabel}
         className={`absolute inset-0 bg-[var(--overlay-backdrop)] backdrop-blur-xl pointer-events-auto modal-backdrop-transition ${isAnimating ? 'opacity-100' : 'opacity-0'
           }`}
         onClick={onClose}
@@ -212,6 +219,8 @@ export const Modal: React.FC<ModalProps> = ({
 
       <div
         ref={dialogRef}
+        data-edit={editTarget}
+        data-edit-label={editLabel}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}

@@ -7,7 +7,7 @@ const GENERATED_FILE_RELATIVE_PATH = 'data/content.generated.ts';
 const CONTENT_ROOT_NAME = 'content';
 const CONTENT_TEXT_ROOT_NAME = 'text';
 const CONTENT_MEDIA_ROOT_NAME = 'media';
-const ASSET_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.pdf', '.avif']);
+const ASSET_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.pdf', '.avif', '.mp4', '.webm']);
 
 const normalizeSlashes = (value) => value.replace(/\\/g, '/');
 const stripBom = (value) => value.replace(/^\uFEFF/, '');
@@ -476,6 +476,7 @@ function readHomeContent(filePath) {
       experience: assertString(sidebar.experience, `${normalizeSlashes(filePath)} sidebar.experience is required.`),
       profileStatement: assertString(sidebar.profileStatement, `${normalizeSlashes(filePath)} sidebar.profileStatement is required.`),
       skillList: ensureArray(sidebar.skillList ?? [], `${normalizeSlashes(filePath)} sidebar.skillList must be an array.`).map(String),
+      skillIcons: ensureArray(sidebar.skillIcons ?? [], `${normalizeSlashes(filePath)} sidebar.skillIcons must be an array.`).map(String),
       skillTags: ensureArray(sidebar.skillTags ?? [], `${normalizeSlashes(filePath)} sidebar.skillTags must be an array.`).map(String),
       explore: assertString(sidebar.explore, `${normalizeSlashes(filePath)} sidebar.explore is required.`),
     },
@@ -828,6 +829,8 @@ export function buildContentRegistry(projectRoot) {
           avatarDark: createAssetRef(projectRoot, sharedPath, sharedAssets.avatarDark),
           wechatQr: createAssetRef(projectRoot, sharedPath, sharedAssets.wechatQr),
           brandMark: createAssetRef(projectRoot, sharedPath, sharedAssets.brandMark),
+          backgroundImage: createAssetRef(projectRoot, sharedPath, sharedAssets.backgroundImage),
+          backgroundVideo: createAssetRef(projectRoot, sharedPath, sharedAssets.backgroundVideo),
         },
       },
       home: {

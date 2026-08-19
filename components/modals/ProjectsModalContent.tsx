@@ -137,7 +137,7 @@ export const ProjectsModalContent: FC<ProjectsModalContentProps> = ({ project })
   ) : null;
 
   return (
-    <div className="flex flex-col h-full bg-[var(--surface-panel)] text-[var(--text-primary)] rounded-2xl overflow-hidden">
+    <div data-edit={`project:${project.id}`} data-edit-label={`项目「${display.title}」`} className="flex flex-col h-full bg-[var(--surface-panel)] text-[var(--text-primary)] rounded-2xl overflow-hidden">
       {/* 顶部摘要区先交代年份、版本、角色与结果，帮助用户在最短时间内建立项目全貌。 */}
       <div className="sticky top-0 bg-[var(--surface-panel-muted)] backdrop-blur-sm z-10 border-b border-[var(--border-soft)] px-6 sm:px-8 py-6">
         <div className="flex items-start justify-between">
