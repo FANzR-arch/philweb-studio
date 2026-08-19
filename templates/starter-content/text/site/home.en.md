@@ -3,7 +3,7 @@ hero:
   greeting: "Design · Explore · Share"
   description: "A visual designer who loves amplifying creativity with AI tools."
 sidebar:
-  name: "Alex Morgan"
+  name: "Jiang He"
   targetRoleValue: "Independent practitioner"
   targetCityValue: "Remote"
   age: ""
@@ -64,7 +64,7 @@ interviewerPath:
   methodLabel: "My method"
   casesLabel: "See work"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "Jiang He"
   style: "DESIGN · AI WORKFLOW · SIDE PROJECTS"
 metrics:
   - label: "Works"

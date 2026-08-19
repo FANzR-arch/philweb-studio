@@ -1,6 +1,6 @@
 ---
 heading: "关于我"
-name: "Alex Morgan"
+name: "江河"
 summary: "通过清晰表达和持续实践，把想法变成作品"
 statement: "我习惯先理解问题，再整理信息、验证方案，最后把可行的想法做成完整的作品。"
 basicsTitle: "基本信息"

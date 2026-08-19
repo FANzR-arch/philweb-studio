@@ -1,6 +1,6 @@
 ---
 heading: "关于我"
-name: "Alex Morgan"
+name: "江河"
 summary: "用数据和 AI 辅助判断，把复杂需求拆成能落地的产品方案"
 statement: "我习惯从真实场景和数据出发理清问题，再用 AI 加速方案验证，最后推动跨团队把它做出来、跑起来。"
 basicsTitle: "基本信息"

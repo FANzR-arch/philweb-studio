@@ -1,6 +1,6 @@
 ---
 heading: "关于我"
-name: "Alex Morgan"
+name: "江河"
 summary: "用设计和 AI 工具，把想法变成看得见的作品"
 statement: "我习惯先把模糊的想法画出来，再用 AI 工具快速验证，最后把可行的方案做成完整的作品。"
 basicsTitle: "基本信息"

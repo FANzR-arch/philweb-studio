@@ -31,6 +31,11 @@ data/imageManifest.ts
 # Studio 本地快照（撤销/重置备份）
 .studio-snapshots/
 exports/
+generated/starter/
+dist-site-shell/
+playwright-report/
+test-results/
+blob-report/
 
 # Local tooling state
 .wrangler/

@@ -9,13 +9,13 @@ import React from 'react';
 import { Card } from '../ui/Card';
 import { useLanguage } from '../../data/i18n';
 import { useTheme } from '../../data/useTheme';
-import { getHomeContent, getSharedContent } from '../../data/content';
+import { useHomeContent, useSharedContent } from '../../data/content';
 
 export const IntroSection: React.FC = () => {
   const { lang, setLang } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
-  const homeContent = getHomeContent(lang);
-  const brandMark = getSharedContent().assets.brandMark;
+  const homeContent = useHomeContent(lang);
+  const brandMark = useSharedContent().assets.brandMark;
 
   const toggleLanguage = () => {
     setLang(lang === 'zh' ? 'en' : 'zh');

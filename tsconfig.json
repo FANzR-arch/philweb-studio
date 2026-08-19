@@ -34,6 +34,11 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "dist-site-shell",
+    "generated",
+    "tests",
+    "playwright.config.ts",
+    "vitest.config.ts"
   ]
 }

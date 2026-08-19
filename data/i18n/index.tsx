@@ -22,10 +22,19 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 interface LanguageProviderProps {
   children: ReactNode;
+  lang?: Language;
+  persist?: boolean;
+  onLangChange?: (lang: Language) => void;
 }
 
-export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [lang, setLang] = useState<Language>(() => {
+export const LanguageProvider: React.FC<LanguageProviderProps> = ({
+  children,
+  lang: controlledLang,
+  persist = true,
+  onLangChange,
+}) => {
+  const [innerLang, setInnerLang] = useState<Language>(() => {
+    if (controlledLang) return controlledLang;
     if (typeof window === 'undefined') {
       return 'zh';
     }
@@ -43,12 +52,20 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     return 'zh';
   });
 
+  const lang = controlledLang ?? innerLang;
   const translations: Record<Language, Translations> = { zh, en };
   const t = translations[lang];
 
+  const setLang = (next: Language) => {
+    if (!controlledLang) setInnerLang(next);
+    onLangChange?.(next);
+  };
+
   useEffect(() => {
-    writeLocalStorage('lang', lang);
-  }, [lang]);
+    if (persist && !controlledLang) {
+      writeLocalStorage('lang', lang);
+    }
+  }, [lang, persist, controlledLang]);
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>

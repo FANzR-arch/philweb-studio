@@ -10,7 +10,7 @@ import { Project } from '../../types';
 import { useLanguage } from '../../data/i18n';
 import { getProjectDisplay } from '../../data/projectDisplay';
 import { track } from '../../data/analytics';
-import { getDetailImages } from '../../data/useImages';
+import { useDetailImages } from '../../data/useImages';
 
 const SectionTitle: FC<{ title: string; icon: string }> = ({ title, icon }) => (
   <div className="flex items-center gap-2 mb-4">
@@ -28,7 +28,7 @@ export const ProjectsModalContent: FC<ProjectsModalContentProps> = ({ project })
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { lang } = useLanguage();
 
-  const manifestDetailImages = useMemo(() => project ? getDetailImages(project.id) : [], [project]);
+  const manifestDetailImages = useDetailImages(project?.id || '');
   const detailImages = useMemo(() => {
     if (!project) return [];
     return manifestDetailImages.length > 0 ? [...manifestDetailImages] : (project.detailImages || []);

@@ -6,6 +6,26 @@
 
 ---
 
+## [2.0.0] - 2026-08-20
+
+### Added
+- **浏览器优先编辑器**：GitHub Pages 主链接打开后直接进入完整 Studio，不再依赖本机 `/studio/api/*`。
+- **本地项目存储**：项目和媒体保存在当前浏览器 IndexedDB，刷新后仍在；自动保存、左下角固定保存、`Ctrl+S` / `Cmd+S` 与离开提醒。
+- **网站 ZIP 与工程备份**：在线导出可独立部署的网站 ZIP，以及可重新导入的完整工程备份；导入可另存为新项目或覆盖当前项目。
+- **React Studio**：正式编辑器改为 React + TypeScript，包含基本信息、首页、简历、联系方式、技能、外观、项目、博客、帮助与导出。
+- **预构建网站外壳**：构建阶段生成 `site-shell/`，浏览器使用 fflate 打包，不在客户端运行 Node 或 Vite。
+- **点哪改哪协议**：PreviewApp 与 StudioApp 通过校验 origin 的 postMessage 通信，切换正常预览时不重新加载 iframe。
+- **测试**：新增 `npm run test`（Vitest）与 `npm run test:e2e`（Playwright）。
+
+### Changed
+- 版本提升到 2.0.0。这是破坏性架构升级：展示组件从运行时 `ContentProvider` 读取项目数据，不再直接依赖编译期 `contentRegistry`。
+- `npm run studio` 打开与线上相同的浏览器编辑器；`npm run build` 构建 GitHub Pages 在线工具（含 StudioApp、PreviewApp、site-shell）。
+- 默认示例身份改为中性的「江河 / Jiang He」，不再使用 Alex Morgan。
+- 文档明确：在线版无需安装；数据只在当前浏览器；设备间不同步；清数据前必须导出工程备份。
+
+### Removed
+- 正式在线版不再把 `panel.html` 内联脚本和 Vite `/studio/api/*` 中间件作为编辑器核心。
+
 ## [1.7.0] - 2026-08-19
 
 ### Added

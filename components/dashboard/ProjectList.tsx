@@ -8,10 +8,9 @@
 import React from 'react';
 import { Card } from '../ui/Card';
 import { Project } from '../../types';
-import { getHomeContent, publishedProjects } from '../../data/content';
+import { useHomeContent, usePublishedProjects } from '../../data/content';
 import { useLanguage } from '../../data/i18n';
 import { getProjectDisplay } from '../../data/projectDisplay';
-import { getCoverImages } from '../../data/useImages';
 
 interface ProjectListProps {
     onOpenProject: (project: Project) => void;
@@ -19,9 +18,8 @@ interface ProjectListProps {
 
 export const ProjectList: React.FC<ProjectListProps> = ({ onOpenProject }) => {
     const { lang } = useLanguage();
-    const homeContent = getHomeContent(lang);
-
-    // 项目顺序由 content/text/projects/<id>/meta.yml 的 order 决定（registry 已按 order 排序）。
+    const homeContent = useHomeContent(lang);
+    const publishedProjects = usePublishedProjects();
     const primaryProjects = publishedProjects.filter((project) => project.isPrimary !== false);
 
     return (
@@ -36,7 +34,12 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onOpenProject }) => {
             <div className="flex-1 flex flex-col gap-3 sm:gap-4 min-h-0">
                 {primaryProjects.map((project) => {
                     const display = getProjectDisplay(project, lang);
-                    const cover = getCoverImages(project.id);
+                    const cover = project.assets?.coverLight || project.cover
+                      ? {
+                          light: project.assets?.coverLight || project.cover,
+                          dark: project.assets?.coverDark || project.assets?.coverLight || project.cover,
+                        }
+                      : null;
 
                     return (
                         <button

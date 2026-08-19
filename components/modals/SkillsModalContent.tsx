@@ -6,11 +6,11 @@
  */
 import React from 'react';
 import { useLanguage } from '../../data/i18n';
-import { getSkillsContent } from '../../data/content';
+import { useSkillsContent } from '../../data/content';
 
 export const SkillsModalContent: React.FC = () => {
   const { lang } = useLanguage();
-  const skills = getSkillsContent();
+  const skills = useSkillsContent();
   const copy = skills.modal;
 
   return (

@@ -4,6 +4,7 @@ import os from 'node:os';
 import { spawn } from 'node:child_process';
 import { deflateRawSync } from 'node:zlib';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { generateStarterProject } from './generate-starter-project.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -22,6 +23,7 @@ const BLOCKED_MARKERS = [
   ['阿哲phil', '个人示例姓名'],
   ['formulasearch', '模板作者品牌'],
   ['folio-studio', '旧模板品牌'],
+  ['alex morgan', '模板示例姓名'],
 ];
 
 const TEXT_EXTENSIONS = new Set([
@@ -56,13 +58,6 @@ function readTextIfSupported(filePath) {
   }
 }
 
-function getSiteName(projectRoot) {
-  const homePath = path.join(projectRoot, 'content', 'text', 'site', 'home.zh.md');
-  const raw = fs.existsSync(homePath) ? fs.readFileSync(homePath, 'utf8') : '';
-  const match = raw.match(/^\s{2}name:\s*["']([^"']*)["']/m);
-  return String(match?.[1] || '').trim();
-}
-
 function slugify(value) {
   const slug = String(value || '')
     .normalize('NFKD')
@@ -85,43 +80,30 @@ function getDefaultArchivePath(projectRoot, siteName) {
   return archivePath;
 }
 
-function collectContentIssues(projectRoot) {
+function collectContentIssues(projectRoot, project) {
   const issues = [];
-  const scanRoots = [
-    path.join(projectRoot, 'content'),
-    path.join(projectRoot, 'index.html'),
-    path.join(projectRoot, 'public'),
-  ];
-  const files = scanRoots.flatMap((entry) => fs.existsSync(entry) && fs.statSync(entry).isDirectory()
-    ? walkFiles(entry)
-    : fs.existsSync(entry) ? [entry] : []);
+  const zhName = project?.home?.zh?.sidebar?.name?.trim();
+  const enName = project?.home?.en?.sidebar?.name?.trim();
+  if (!zhName) issues.push({ code: 'missing-name', file: 'home.zh', message: '首页侧边栏名字不能为空。' });
+  if (!enName) issues.push({ code: 'missing-name', file: 'home.en', message: '首页侧边栏名字不能为空。' });
 
-  const names = [
-    path.join(projectRoot, 'content', 'text', 'site', 'home.zh.md'),
-    path.join(projectRoot, 'content', 'text', 'site', 'home.en.md'),
-  ];
-  for (const filePath of names) {
-    const raw = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
-    const match = raw.match(/^\s{2}name:\s*["']([^"']*)["']/m);
-    if (!match?.[1]?.trim()) {
-      issues.push({ code: 'missing-name', file: path.relative(projectRoot, filePath), message: '首页侧边栏名字不能为空。' });
+  const texts = JSON.stringify(project || {});
+  const lower = texts.toLowerCase();
+  for (const [marker, label] of BLOCKED_MARKERS) {
+    if (lower.includes(marker.toLowerCase())) {
+      issues.push({ code: 'placeholder', file: 'project.json', marker, message: `${label}仍存在：${marker}` });
     }
   }
 
-  for (const filePath of files) {
-    const text = readTextIfSupported(filePath);
-    if (text === null) continue;
-    const lower = text.toLowerCase();
-    for (const [marker, label] of BLOCKED_MARKERS) {
-      if (lower.includes(marker.toLowerCase())) {
-        issues.push({
-          code: 'placeholder',
-          file: path.relative(projectRoot, filePath),
-          marker,
-          message: `${label}仍存在：${marker}`,
-        });
-      }
-    }
+  const ids = new Set();
+  for (const item of project?.projects || []) {
+    if (ids.has(item.id)) issues.push({ code: 'duplicate-project', file: item.id, message: `项目 ID 重复：${item.id}` });
+    ids.add(item.id);
+  }
+  const postIds = new Set();
+  for (const post of project?.blog?.posts || []) {
+    if (postIds.has(post.id)) issues.push({ code: 'duplicate-blog', file: post.id, message: `文章 ID 重复：${post.id}` });
+    postIds.add(post.id);
   }
   return issues;
 }
@@ -191,7 +173,6 @@ function createZipFromDirectory(directory) {
       u32(checksum), u32(payload.length), u32(source.length), u16(name.length), u16(0), name, payload,
     ]);
     localParts.push(local);
-
     const central = Buffer.concat([
       u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(method), u16(0), u16(0),
       u32(checksum), u32(payload.length), u32(source.length), u16(name.length), u16(0), u16(0),
@@ -210,37 +191,46 @@ function createZipFromDirectory(directory) {
   return Buffer.concat([local, central, end]);
 }
 
-async function buildToDirectory(projectRoot, outputDirectory) {
-  const runNodeScript = async (relativePath, args = []) => {
-    await runCommand(process.execPath, [path.join(projectRoot, relativePath), ...args], projectRoot);
-  };
-  await runNodeScript('scripts/sync-content-registry.mjs');
-  await runNodeScript('scripts/sync-image-manifest.mjs');
-  await runNodeScript('scripts/check-content.mjs');
-  const tscBin = path.join(projectRoot, 'node_modules', 'typescript', 'bin', 'tsc');
-  if (!fs.existsSync(tscBin)) throw new Error('找不到 TypeScript，请先运行 npm install。');
-  await runCommand(process.execPath, [tscBin, '--noEmit'], projectRoot);
-  await runNodeScript('scripts/check-asset-budget.mjs');
+async function ensureSiteShell(projectRoot) {
   const viteBin = path.join(projectRoot, 'node_modules', 'vite', 'bin', 'vite.js');
   if (!fs.existsSync(viteBin)) throw new Error('找不到 Vite，请先运行 npm install。');
-  await runCommand(process.execPath, [viteBin, 'build', '--outDir', outputDirectory, '--emptyOutDir'], projectRoot);
+  await runCommand(process.execPath, [viteBin, 'build', '--config', 'vite.site.config.ts'], projectRoot);
+}
+
+function writeExportTree(projectRoot, outputDirectory, project) {
+  const shellSrc = path.join(projectRoot, 'dist-site-shell');
+  fs.cpSync(shellSrc, outputDirectory, { recursive: true });
+  const siteHtml = path.join(outputDirectory, 'site.html');
+  if (fs.existsSync(siteHtml)) fs.renameSync(siteHtml, path.join(outputDirectory, 'index.html'));
+  const exported = structuredClone(project);
+  exported.mediaManifest = Object.fromEntries(Object.entries(project.mediaManifest || {}).map(([id, record]) => [
+    id,
+    { ...record, filename: `media/${record.filename.replace(/^media\//, '')}`, source: 'export' },
+  ]));
+  fs.writeFileSync(path.join(outputDirectory, 'project.json'), `${JSON.stringify(exported, null, 2)}\n`);
+  const mediaSrc = path.join(projectRoot, 'generated', 'starter', 'media');
+  const mediaDest = path.join(outputDirectory, 'media');
+  if (fs.existsSync(mediaSrc)) fs.cpSync(mediaSrc, mediaDest, { recursive: true });
 }
 
 /** @param {{projectRoot?: string, archivePath?: string}} [options] */
 export async function exportSite({ projectRoot = ROOT, archivePath: requestedArchivePath } = {}) {
   const absoluteRoot = path.resolve(projectRoot);
-  const issues = collectContentIssues(absoluteRoot);
+  const { outputDir } = generateStarterProject(absoluteRoot);
+  const project = JSON.parse(fs.readFileSync(path.join(outputDir, 'project.json'), 'utf8'));
+  const issues = collectContentIssues(absoluteRoot, project);
   if (issues.length > 0) throw new ExportValidationError(issues);
 
+  await ensureSiteShell(absoluteRoot);
   const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'philweb-export-'));
   const buildDirectory = path.join(temporaryRoot, 'site');
   const resolvedArchivePath = requestedArchivePath
     ? path.resolve(requestedArchivePath)
-    : getDefaultArchivePath(absoluteRoot, getSiteName(absoluteRoot));
+    : getDefaultArchivePath(absoluteRoot, project.home?.zh?.sidebar?.name || 'My Website');
 
   try {
     fs.mkdirSync(buildDirectory, { recursive: true });
-    await buildToDirectory(absoluteRoot, buildDirectory);
+    writeExportTree(absoluteRoot, buildDirectory, project);
 
     const buildIssues = [];
     for (const filePath of walkFiles(buildDirectory)) {
@@ -261,7 +251,7 @@ export async function exportSite({ projectRoot = ROOT, archivePath: requestedArc
     return {
       archivePath: resolvedArchivePath,
       filename: path.basename(resolvedArchivePath),
-      siteName: getSiteName(absoluteRoot) || 'My Website',
+      siteName: project.home?.zh?.sidebar?.name || 'My Website',
       fileCount: walkFiles(buildDirectory).filter((filePath) => path.basename(filePath) !== '.gitkeep').length,
       bytes: zip.length,
       warnings: [],

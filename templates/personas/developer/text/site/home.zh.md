@@ -3,7 +3,7 @@ hero:
   greeting: "构建 · 上线 · 迭代"
   description: "一名喜欢用 AI 把想法快速做成能上线产品的独立开发者。"
 sidebar:
-  name: "Alex Morgan"
+  name: "江河"
   targetRoleValue: "Independent practitioner"
   targetCityValue: "Remote"
   age: ""
@@ -60,7 +60,7 @@ interviewerPath:
   methodLabel: "我怎么做"
   casesLabel: "看项目"
 footer:
-  copyright: "Alex Morgan"
+  copyright: "江河"
   style: "FULL-STACK · AI-ASSISTED · SHIP FAST"
 metrics:
   - label: "上线项目"

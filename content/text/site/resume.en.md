@@ -1,6 +1,6 @@
 ---
 heading: "About Me"
-name: "Alex Morgan"
+name: "Jiang He"
 summary: "Turning ideas into clear work through communication and practice"
 statement: "I start by understanding the problem, organize the information, test possible directions, and turn the useful ones into finished work."
 basicsTitle: "Basics"
