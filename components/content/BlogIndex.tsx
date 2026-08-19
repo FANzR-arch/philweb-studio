@@ -210,7 +210,7 @@ export const BlogIndex: React.FC<BlogIndexProps> = ({ mode = 'modal' }) => {
         <div
           role="tablist"
           aria-label={lang === 'zh' ? '文章分类' : 'Article categories'}
-          className={`${isEmbedded ? 'mt-3' : 'mt-5'} flex gap-2 overflow-x-auto pb-1`}
+          className={`${isEmbedded ? 'mt-3' : 'mt-5'} scrollbar-hide flex gap-2 overflow-x-auto`}
         >
           <button
             type="button"

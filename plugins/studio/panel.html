@@ -12,7 +12,8 @@
     --ink: #0f172a; --muted: #64748b; --line: #e2e8f0; --bg: #f1f5f9;
     --card: #ffffff; --accent: #c13b25; --ok: #047857; --err: #b91c1c;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; }
+  *::-webkit-scrollbar { display: none; width: 0; height: 0; }
   body {
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
     color: var(--ink); background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden;
